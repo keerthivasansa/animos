@@ -1,7 +1,7 @@
 {
   "version": "0.0.1",
   "name": "animos",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "CC-BY-NC-ND-4.0",
   "author": {
     "name": "Keerthi Vasan S A",
@@ -10,9 +10,12 @@
   },
   "description": "Animos is an application to discover and stream Animes with ease",
   "scripts": {
-    "webdev": "cd svelte-src & yarn dev",
+    "svelte:dev": "cd svelte-src & yarn dev",
+    "svelte:build": "cd svelte-src && yarn build",
     "start": "electron-forge start",
-    "premake": "cd svelte-src && yarn build",
+    "premake": "npm run svelte:dev",
+    "electron:dev": "tsc index.ts && electron dist/index.js",
+    "dev": "nodemon --exec 'npm run electron:dev'",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
@@ -28,6 +31,7 @@
     "electron": "^21.2.1",
     "flowbite": "^1.5.3",
     "flowbite-svelte": "^0.27.14",
+    "nodemon": "^2.0.20",
     "prisma": "^4.5.0"
   },
   "dependencies": {

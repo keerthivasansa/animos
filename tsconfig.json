@@ -1,0 +1,8 @@
+{
+  "include": ["index.ts", "electron-src/preload.ts"],
+  "exclude": ["svelte-src/*/**"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "esModuleInterop": true
+  }
+}
