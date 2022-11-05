@@ -1,0 +1,54 @@
+{
+  "version": "0.0.1",
+  "name": "animos",
+  "main": "index.js",
+  "license": "CC-BY-NC-ND-4.0",
+  "author": {
+    "name": "Keerthi Vasan S A",
+    "email": "sakeerthi23@gmail.com",
+    "url": "https://github.com/Nectres/"
+  },
+  "description": "Animos is an application to discover and stream Animes with ease",
+  "scripts": {
+    "webdev": "cd svelte-src & yarn dev",
+    "start": "electron-forge start",
+    "premake": "cd svelte-src && yarn build",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.75",
+    "@electron-forge/maker-deb": "^6.0.0-beta.75",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.75",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.75",
+    "@electron-forge/maker-zip": "^6.0.0-beta.75",
+    "@popperjs/core": "^2.11.6",
+    "@sveltejs/adapter-static": "^1.0.0-next.47",
+    "classnames": "^2.3.2",
+    "electron": "^21.2.1",
+    "flowbite": "^1.5.3",
+    "flowbite-svelte": "^0.27.14",
+    "prisma": "^4.5.0"
+  },
+  "dependencies": {
+    "@mateoaranda/jikanjs": "^1.2.4",
+    "@prisma/client": "^4.5.0",
+    "@vime/svelte": "^5.4.0",
+    "axios": "^1.1.3",
+    "cheerio": "^1.0.0-rc.12",
+    "cloudflare-bypasser": "^0.0.3",
+    "cloudscraper": "^4.6.0",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.1.1",
+    "electron-serve": "^1.1.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "express": "^4.18.2",
+    "fast-xml-parser": "^4.0.11",
+    "mime-types": "^2.1.35",
+    "performance-now": "^2.1.0",
+    "puppeteer": "^19.2.2",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-stealth": "^2.11.1",
+    "svelte-plyr": "^0.1.3"
+  }
+}

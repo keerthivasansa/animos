@@ -1,0 +1,32 @@
+/* Write your global styles here, in PostCSS syntax */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.duration-250 {
+    transition-duration: 275ms;
+}
+
+:root {
+    --plyr-color-main: red;
+}
+
+section {
+    @apply px-4 py-10;
+    max-width: 97.5vw;
+}
+
+.icon {
+    width: 16px;
+    cursor: pointer;
+    height: 16px;
+}
+
+.center {
+    @apply justify-center items-center;
+}
+
+body {
+    font-family: 'Inter' sans-serif;
+    overflow-x: hidden;
+}

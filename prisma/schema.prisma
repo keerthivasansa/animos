@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Settings {
+  id             Int     @id
+  currentAnime   String?
+  currentEpisode Int?
+  googleId       String
+  userId         String
+}
+
+model Episode {
+  watched      Int
+  title        String
+  episodeId    Int
+  animeId      Int
+  synopsis     String?
+  source       String?
+  sourceBackup String?
+
+  @@id([animeId, episodeId])
+}
+
+model Anime {
+  animeId       String?
+  malId         Int     @id
+  title         String
+  englishTitle  String
+  img           String
+  totalEpisodes Int
+  synopsis      String
+  type          String
+  currentEp     Int
+  status        String
+  score         Float
+}
