@@ -1,27 +1,14 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const serve = require("electron-serve");
-const { startWebServer } = require("./anime-scraper");
-const now = require("performance-now");
-const { fetchPopular } = require("./anime-scraper/scraper/scrape");
 const {
   standardGetInfo,
   standardSearch,
   standardEpisodeSrc,
   standardGetEpisodes,
-} = require("./standard");
+  standardGetPopular
+} = require("./src/standard");
 
 const loadPath = serve({ directory: "output" });
-
-// const isDev = false
-const timers = {};
-function timeStart(timer) {
-  timers[timer] = now();
-}
-function timeEnd(timer) {
-  let ms = now() - timers[timer];
-  console.log(`${timer}: ${ms.toFixed(3)}ms`);
-  timers[timer] = null;
-}
 
 app.commandLine.appendSwitch("disable-pinch");
 
@@ -31,7 +18,7 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: __dirname + "/preload.js",
+      preload: __dirname + "/src/preload.js",
     },
     show:false,
     autoHideMenuBar: true,
@@ -79,7 +66,7 @@ ipcMain.handle("get-episodes", async (event, animeId) => {
 })
 
 ipcMain.handle("get-popular-anime", async (event) => {
-  let popularAnime = await fetchPopular({});
+  let popularAnime = await standardGetPopular({});
   console.dir(popularAnime);
   return popularAnime;
 });
@@ -97,7 +84,6 @@ ipcMain.on("hello", (event, name, age) => {
   });
 });
 app.whenReady().then(() => {
-  startWebServer();
   createWindow();
 });
 

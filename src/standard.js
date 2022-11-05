@@ -2,7 +2,8 @@ const {
   fetchAnimixAnimeInfo,
   fetchGogoanimeEpisodeSource,
   fetchGogoAnimeInfo,
-} = require("./anime-scraper/scraper/scrape");
+  fetchPopular,
+} = require("./scraper");
 
 const express = require("express");
 const axios = require("axios");
@@ -72,7 +73,9 @@ async function standardSearch(keyword, nocache = false) {
 }
 
 async function standardGetInfo(malId) {
-  let doc = await prisma.anime.findUnique({ where: { malId: parseInt(malId) } });
+  let doc = await prisma.anime.findUnique({
+    where: { malId: parseInt(malId) },
+  });
   if (!doc) {
     return {};
   }
@@ -81,9 +84,9 @@ async function standardGetInfo(malId) {
     let doc2 = await fetchAnimixAnimeInfo({ malId });
     let { animeId, episodes } = doc2;
     if (!episodes) {
-        let info = await fetchGogoAnimeInfo({ animeId });
-        episodes = info.eptotal
-        console.log("got episode count from gogoanime: ", episodes);
+      let info = await fetchGogoAnimeInfo({ animeId });
+      episodes = info.eptotal;
+      console.log("got episode count from gogoanime: ", episodes);
     }
     doc = await prisma.anime.update({
       where: { malId: parseInt(malId) },
@@ -126,12 +129,13 @@ async function standardGetEpisodeInfo(animeMalId, episodeNum) {
       },
     },
     create: doc,
-    update: {}
+    update: {},
   });
   return doc;
 }
 
 async function standardEpisodeSrc(animeMalId, episodeId) {
+  console.log("Trying to fetch episode src:", animeMalId, episodeId)
   let doc = await standardGetEpisodeInfo(animeMalId, episodeId);
   if (doc && doc.source) {
     console.log("cache hit for", animeMalId, episodeId);
@@ -142,16 +146,17 @@ async function standardEpisodeSrc(animeMalId, episodeId) {
       malId: animeMalId,
     },
   });
-  let epUri = `${animeId}-episode-${episodeId}`
+  let epUri = `${animeId}-episode-${episodeId}`;
   console.log({ animeId, epUri });
   let gogoDoc = await fetchGogoanimeEpisodeSource({
     episodeId: epUri,
   });
-  console.log(gogoDoc)
+  console.log(gogoDoc);
   let source = {
     source: gogoDoc.sources[0].file,
     sourceBackup: gogoDoc.sources_bk[0].file,
   };
+  console.log({ source })
   await prisma.episode.update({
     where: {
       animeId_episodeId: {
@@ -166,6 +171,7 @@ async function standardEpisodeSrc(animeMalId, episodeId) {
   return doc;
 }
 
+// TODO account for animes with episode zero like re:zero
 async function standardGetEpisodes(animeMalId) {
   let episodes = await prisma.episode.findMany({
     where: {
@@ -195,7 +201,7 @@ async function standardGetEpisodes(animeMalId) {
             episodeId: ep.episodeId,
           },
         },
-        update: { watched: { increment: 0 }},
+        update: { watched: { increment: 0 } },
         create: ep,
       })
     )
@@ -240,4 +246,5 @@ module.exports = {
   standardGetInfo,
   standardSearch,
   standardGetEpisodes,
+  standardGetPopular: fetchPopular,
 };
