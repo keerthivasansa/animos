@@ -35,6 +35,7 @@
 	"type": "module",
 	"dependencies": {
 		"hls.js": "^1.2.4",
+		"plyr": "^3.7.2",
 		"svelte-icons": "^2.1.0"
 	}
 }
