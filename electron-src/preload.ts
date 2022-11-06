@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
-export const Endpoints = {
+const endpoints = {
   hello: (name: string, age: number) => ipcRenderer.send('hello', name, age),
   searchAnime: (keyw: string) => ipcRenderer.send('search-anime', keyw),
   search: (name: string) => ipcRenderer.invoke('search-anime', name),
@@ -16,6 +16,6 @@ export const Endpoints = {
   getWatchTime: (animeId:number, episodeId:number) => ipcRenderer.invoke("get-playtime", animeId, episodeId) as Promise<number>
 }
 
-export type EndpointType = typeof Endpoints;
+export type EndpointType = typeof endpoints;
 
-contextBridge.exposeInMainWorld('api', Endpoints);
+contextBridge.exposeInMainWorld('api', endpoints);
