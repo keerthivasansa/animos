@@ -1,7 +1,8 @@
 <script lang="ts">
-    import Hls, { type HlsConfig } from "hls.js"
+	import { Video } from "flowbite-svelte";
+    import Hls from "hls.js"
     import Plyr from "plyr"
-	import { onDestroy, onMount } from "svelte";
+	import { onMount } from "svelte";
 
     export let src = "";
     export let type = "";
@@ -66,7 +67,6 @@
         // default options with no quality update in case Hls is not supported
         
         let player = await initVideoPlayer();
-        
         window.player = player;
         let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
         

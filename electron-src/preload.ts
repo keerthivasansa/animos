@@ -13,7 +13,8 @@ const endpoints = {
     ipcRenderer.send('fullscreen', makeFullscreen),
   setWatchTime: (animeMalId: number, episodeId: number, time: number) =>
     ipcRenderer.send('set-watchtime', animeMalId, episodeId, time),
-  getWatchTime: (animeId:number, episodeId:number) => ipcRenderer.invoke("get-playtime", animeId, episodeId) as Promise<number>
+  getWatchTime: (animeId:number, episodeId:number) => ipcRenderer.invoke("get-playtime", animeId, episodeId) as Promise<number>,
+  getLastPlayed: () => ipcRenderer.invoke("get-last-played") 
 }
 
 export type EndpointType = typeof endpoints;

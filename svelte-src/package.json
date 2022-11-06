@@ -34,10 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@vidstack/player-svelte": "^1.6.0",
 		"hls.js": "^1.2.4",
-		"mime-types": "^2.1.35",
-		"plyr": "^3.7.2",
 		"svelte-icons": "^2.1.0"
 	}
 }

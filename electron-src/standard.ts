@@ -17,7 +17,7 @@ function selectFields(obj, fields) {
   return newobj
 }
 
-export { fetchPopular as standardGetPopular } from "./scraper"
+export { fetchPopular as standardGetPopular } from './scraper'
 
 export async function standardSearch(keyword: string, nocache = false) {
   let docs = []
@@ -115,13 +115,6 @@ export async function standardGetEpisodeInfo(animeMalId, episodeNum) {
     `https://api.jikan.moe/v4/anime/${animeMalId}/episodes/${episodeNum}`,
   )
   let { data } = res.data
-  doc = {
-    episodeId: parseInt(data.mal_id),
-    title: data.title,
-    synopsis: data.synopsis,
-    animeId: animeMalId,
-    watched: 0,
-  }
   await prisma.episode.upsert({
     where: {
       animeId_episodeId: {
@@ -129,7 +122,13 @@ export async function standardGetEpisodeInfo(animeMalId, episodeNum) {
         episodeId: parseInt(episodeNum),
       },
     },
-    create: doc,
+    create: {
+      episodeId: parseInt(data.mal_id),
+      title: data.title,
+      synopsis: data.synopsis,
+      animeId: animeMalId,
+      watchTime: 0,
+    },
     update: {},
   })
   return doc
@@ -154,7 +153,7 @@ export async function standardEpisodeSrc(animeMalId, episodeId) {
   })
   console.log(gogoDoc)
   if (!gogoDoc.sources) {
-    throw new Error("Failed to get source for the given episode");
+    throw new Error('Failed to get source for the given episode')
   }
   let source = {
     source: gogoDoc.sources[0].file,

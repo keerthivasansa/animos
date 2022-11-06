@@ -11,6 +11,8 @@
         currentEp:Episode, 
         allEpisodes:Episode[]
     };
+    let currentSrc = "";
+
     enum State {
         Loading,
         Finished 
@@ -37,6 +39,7 @@
             currentEp: src,
             allEpisodes
         };
+        currentSrc = result.currentEp.source ?? "";
         console.dir(result);
         pageState = State.Finished;
     }
@@ -60,9 +63,17 @@
                     <div class="animate-pulse bg-slate-700 w-52 h-10 rounded-lg"></div>
                 </div>
             {:else} 
-                <VideoPlayer src={result.currentEp.source ?? ""} animeMalId={animeId} episodeId={episodeId}/>  
+                {#if currentSrc == result.currentEp.source}
+                    <VideoPlayer src={currentSrc} animeMalId={animeId} episodeId={episodeId} />        
+                {:else}
+                    <VideoPlayer src={currentSrc} animeMalId={animeId} episodeId={episodeId} />        
+                {/if}
                 <div class="mx-5 my-4">
-                    <h3 class="text-xl font-bold">{result.currentEp.title}</h3>
+                    <h3 class="text-xl font-bold">{result.currentEp.title}</h3><br>
+                    <div class="text-xs font-semibold">
+                        <button on:click={_ => currentSrc = result.currentEp.source ?? ""} class="px-3 py-2 rounded-md {currentSrc == result.currentEp.source? "bg-green-800 text-white" : "bg-slate-400 text-black"}">GOGO</button>
+                        <button on:click={_ => currentSrc = result.currentEp.sourceBackup ?? ""} class="px-3 mx-2 py-2 rounded-md {currentSrc == result.currentEp.sourceBackup? "bg-green-800 text-white" : "bg-slate-400 text-black"}text-black">GOGO-BK</button>
+                    </div>
                 </div>
             {/if}  
         </div>

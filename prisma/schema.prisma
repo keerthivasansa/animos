@@ -19,9 +19,11 @@ model Settings {
 }
 
 model Episode {
-  watched      Int
+  watchTime    Int       @default(0)
+  lastWatched  DateTime?
   title        String
   episodeId    Int
+  anime        Anime     @relation(fields: [animeId], references: [malId])
   animeId      Int
   synopsis     String?
   source       String?
@@ -30,18 +32,9 @@ model Episode {
   @@id([animeId, episodeId])
 }
 
-model Playing {
-  animeMalId  Int
-  episodeId   Int
-  watch       Int
-  lastWatched DateTime
-
-  @@id([animeMalId, episodeId])
-}
-
 model Anime {
   animeId       String?
-  malId         Int     @id
+  malId         Int       @id
   title         String
   englishTitle  String
   img           String
@@ -51,4 +44,5 @@ model Anime {
   currentEp     Int
   status        String
   score         Float
+  Episode       Episode[]
 }

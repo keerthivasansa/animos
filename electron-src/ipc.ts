@@ -12,19 +12,46 @@ const prisma = new PrismaClient()
 
 ipcMain.handle(
   'get-playtime',
-  async (event, animeMalId: number, episodeId: number) => {
-    let doc = await prisma.playing.findUnique({
+  async (event, animeId: number, episodeId: number) => {
+    let doc = await prisma.episode.findUnique({
       where: {
-        animeMalId_episodeId: {
-          animeMalId,
+        animeId_episodeId: {
+          animeId,
           episodeId,
         },
       },
     })
-    if (doc) return doc.watch
+    if (doc) return doc.watchTime
     else return 0
   },
 )
+
+ipcMain.handle('get-last-played', async (event) => {
+  let docs = await prisma.episode.findMany({
+    distinct: 'animeId',
+    select: {
+      anime: {
+        select: {
+          img: true,
+          title: true,
+        },
+      },
+      episodeId: true,
+      watchTime: true,
+    },
+    orderBy: {
+      lastWatched: 'desc',
+    },
+    where: {
+      lastWatched: {
+        not: null,
+      },
+    },
+  })
+  console.log(docs)
+  return docs
+})
+
 ipcMain.handle('search-anime', async (event, keyw: string) => {
   let newDocs = await standardSearch(keyw)
   return newDocs
@@ -32,22 +59,16 @@ ipcMain.handle('search-anime', async (event, keyw: string) => {
 
 ipcMain.on(
   'set-watchtime',
-  async (event, animeMalId: number, episodeId: number, time: number) => {
+  async (event, animeId: number, episodeId: number, time: number) => {
     console.log({ time })
-    await prisma.playing.upsert({
+    await prisma.episode.update({
       where: {
-        animeMalId_episodeId: {
-          animeMalId,
+        animeId_episodeId: {
+          animeId,
           episodeId,
         },
       },
-      create: {
-        animeMalId,
-        episodeId,
-        watch: time,
-        lastWatched: new Date(),
-      },
-      update: { lastWatched: new Date(), watch: time },
+      data: { lastWatched: new Date(), watchTime: time },
     })
   },
 )

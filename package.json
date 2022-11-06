@@ -13,9 +13,9 @@
     "svelte:dev": "cd svelte-src & yarn dev",
     "svelte:build": "cd svelte-src && yarn build",
     "start": "electron-forge start",
-    "premake": "npm run svelte:dev",
+    "premake": "npm run svelte:build",
     "electron:dev": "tsc && electron dist/index.js",
-    "dev": "nodemon --exec \"npm run electron:dev\" --watch index.ts electron-src",
+    "dev": "nodemon --watch index.ts electron-src --exec \"npm run electron:dev\"",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
@@ -35,24 +35,13 @@
     "prisma": "^4.5.0"
   },
   "dependencies": {
-    "@mateoaranda/jikanjs": "^1.2.4",
     "@prisma/client": "^4.5.0",
-    "@vime/svelte": "^5.4.0",
     "axios": "^1.1.3",
     "cheerio": "^1.0.0-rc.12",
-    "cloudflare-bypasser": "^0.0.3",
-    "cloudscraper": "^4.6.0",
-    "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "electron-serve": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
     "express": "^4.18.2",
-    "fast-xml-parser": "^4.0.11",
-    "mime-types": "^2.1.35",
-    "performance-now": "^2.1.0",
-    "puppeteer": "^19.2.2",
-    "puppeteer-extra": "^3.3.4",
-    "puppeteer-extra-plugin-stealth": "^2.11.1",
-    "svelte-plyr": "^0.1.3"
+    "fast-xml-parser": "^4.0.11"
   }
 }
