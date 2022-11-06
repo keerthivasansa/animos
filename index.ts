@@ -1,6 +1,9 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import serve from 'electron-serve'
 
+// register all the ipc functions
+import "./electron-src/ipc"
+
 // TODO add strong type support for electron files
 const loadPath = serve({ directory: 'output' })
 
