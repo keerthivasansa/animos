@@ -23,6 +23,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 18.12.1
+      
+      - name: Install NPM packages
+        run: npm install
 
       - name: Build/release Electron app
         run: npm run make
