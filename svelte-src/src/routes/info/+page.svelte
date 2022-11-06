@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores";
 
-    let animeId = "";
+    let animeId:number;
 
     function generateRange(end:number) {
         let arr = []
@@ -17,8 +17,8 @@
             location.href = "/"
             id = "";
         }
-        animeId = id;
-        let res = await window.api.animeInfo(id);
+        animeId = parseInt(id);
+        let res = await window.api.animeInfo(animeId);
         console.log(res);
         return res;
     }

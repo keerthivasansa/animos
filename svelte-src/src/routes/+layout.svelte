@@ -20,11 +20,14 @@
 			<div class="mx-8 w-40 focus-within:w-96 ease-linear duration-250 transition-all ">
 				<input bind:value={keyw} placeholder="Search" name="keyw" class="outline-none text-black bg-slate-200 w-full rounded-lg py-2 px-4 font-semibold overflow-ellipsis"/>
 			</div>
-			<div class="p-3 rounded-md dark:bg-blue-400 bg-blue-800 text-white dark:text-black">
-				<div class="icon">
-					<FaSearch />
+			<button type="submit">
+				<div class="p-3 rounded-md dark:bg-blue-400 bg-blue-800 text-white dark:text-black">
+					<div class="icon">
+						<FaSearch />
+					</div>
 				</div>
-			</div>
+			</button>
+
 		</form>
 	</nav>
     <slot/>
