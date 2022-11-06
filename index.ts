@@ -8,6 +8,7 @@ import {
   standardGetPopular,
 } from './electron-src/standard'
 
+// TODO add strong type support for electron files
 const loadPath = serve({ directory: 'output' })
 
 app.commandLine.appendSwitch('disable-pinch')
@@ -15,7 +16,7 @@ app.commandLine.appendSwitch('disable-pinch')
 const isDev = !app.isPackaged
 const createWindow = () => {
   let preloadPath = __dirname + '/electron-src/preload.js'
-  console.log({preloadPath});   
+  console.log({ preloadPath })
   const win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -39,26 +40,26 @@ const createWindow = () => {
     loadPath(win)
   }
 
-  ipcMain.on('fullscreen', (event, makeFullscreen) => {
+  ipcMain.on('fullscreen', (event, makeFullscreen: boolean) => {
     win.setFullScreen(makeFullscreen)
   })
   win.show()
   win.focus()
 }
 
-ipcMain.handle('search-anime', async (event, keyw) => {
+ipcMain.handle('search-anime', async (event, keyw: string) => {
   let newDocs = await standardSearch(keyw)
   return newDocs
 })
 
-ipcMain.handle('get-anime-info', async (event, animeId) => {
+ipcMain.handle('get-anime-info', async (event, animeId: number) => {
   console.log(`Searching for anime: ${animeId}`)
   let animeInfo = await standardGetInfo(animeId)
   console.log(animeInfo)
   return animeInfo
 })
 
-ipcMain.handle('get-episodes', async (event, animeId) => {
+ipcMain.handle('get-episodes', async (event, animeId: number) => {
   console.log(`Fetching episodes for ${animeId}`)
   let episodes = await standardGetEpisodes(animeId)
   console.dir(episodes)
@@ -71,13 +72,16 @@ ipcMain.handle('get-popular-anime', async (event) => {
   return popularAnime
 })
 
-ipcMain.handle('get-episode', async (event, animeId, episodeId) => {
-  let docs = await standardEpisodeSrc(animeId, episodeId)
-  console.log(docs)
-  return docs
-})
+ipcMain.handle(
+  'get-episode',
+  async (event, animeId: number, episodeId: number) => {
+    let docs = await standardEpisodeSrc(animeId, episodeId)
+    console.log(docs)
+    return docs
+  },
+)
 
-ipcMain.on('hello', (event, name, age) => {
+ipcMain.on('hello', (event, name: string, age: number) => {
   console.log(event)
   dialog.showMessageBox({
     message: `Hello ${name}! you are ${age} years old.`,
