@@ -5,7 +5,8 @@
     import FaPlay from "svelte-icons/fa/FaPlay.svelte"
 	import { onMount } from "svelte";
 
-    let animeId:string;
+    let animeId:number;
+    let episodeId:number;
     let result: {
         currentEp:Episode, 
         allEpisodes:Episode[]
@@ -20,18 +21,18 @@
     async function fetchEpisodeSrc() {
         pageState = State.Loading;
         let params = $page.url.searchParams;
-        let episodeId = params.get("episodeId");
+        let episodeTempId = params.get("episodeId");
         let animeTempId = params.get("animeId");
-        if (!animeTempId || !episodeId) {
+        if (!animeTempId || !episodeTempId) {
             location.href = "/"
-            animeTempId = episodeId = "";
+            animeTempId = episodeTempId = "";
         }
-        animeId = animeTempId;
-        let episodeNum = parseInt(episodeId);
-        let animeMalId= parseInt(animeId);
-        console.log({ episodeNum, animeMalId})
-        let allEpisodes = await window.api.getEpisodes(animeMalId);
-        let src = await window.api.getEpisode(animeMalId, episodeNum);
+        animeId = parseInt(animeTempId);
+        episodeId = parseInt(episodeTempId)
+
+        console.log({ episodeId, animeId })
+        let allEpisodes = await window.api.getEpisodes(animeId);
+        let src = await window.api.getEpisode(animeId, episodeId);
         result = {
             currentEp: src,
             allEpisodes
@@ -59,7 +60,7 @@
                     <div class="animate-pulse bg-slate-700 w-52 h-10 rounded-lg"></div>
                 </div>
             {:else} 
-                <VideoPlayer src={result.currentEp.source ?? ""}/>  
+                <VideoPlayer src={result.currentEp.source ?? ""} animeMalId={animeId} episodeId={episodeId}/>  
                 <div class="mx-5 my-4">
                     <h3 class="text-xl font-bold">{result.currentEp.title}</h3>
                 </div>

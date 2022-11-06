@@ -14,8 +14,8 @@
     "svelte:build": "cd svelte-src && yarn build",
     "start": "electron-forge start",
     "premake": "npm run svelte:dev",
-    "electron:dev": "tsc index.ts && electron dist/index.js",
-    "dev": "nodemon --exec 'npm run electron:dev'",
+    "electron:dev": "tsc && electron dist/index.js",
+    "dev": "nodemon --exec \"npm run electron:dev\" --watch index.ts electron-src",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },

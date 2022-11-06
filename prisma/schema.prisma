@@ -30,6 +30,15 @@ model Episode {
   @@id([animeId, episodeId])
 }
 
+model Playing {
+  animeMalId  Int
+  episodeId   Int
+  watch       Int
+  lastWatched DateTime
+
+  @@id([animeMalId, episodeId])
+}
+
 model Anime {
   animeId       String?
   malId         Int     @id

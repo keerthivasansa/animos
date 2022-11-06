@@ -1,30 +1,16 @@
 <script lang="ts">
-    import Hls from "hls.js"
+    import Hls, { type HlsConfig } from "hls.js"
     import Plyr from "plyr"
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 
     export let src = "";
     export let type = "";
+    export let episodeId: number;
+    export let animeMalId: number;
 
     function getExtension() {
         let parts = src.split(".");
         return parts.pop();
-    }
-
-    function getMime():Promise<string> {
-        let xhr = new XMLHttpRequest();
-        xhr.open('HEAD', src, true);
-        return new Promise((res, rej) => {
-            xhr.onload = function() {
-                var contentType = xhr.getResponseHeader('Content-Type');
-                if (contentType) {
-                    xhr.abort();
-                    res(contentType);
-                } else rej("Failed to get the content type")
-            };
-            xhr.send();
-        })
-        
     }
 
     function updateQuality(newQuality:number) {
@@ -37,9 +23,9 @@
     }
     
     function initVideoPlayer(): Promise<Plyr> {
-        return new Promise((res, rej) => {
+        return new Promise((res, _) => {
             const video = document.getElementById("player") as HTMLVideoElement;
-        const defaultOptions = {};
+        const defaultOptions: { quality?: { default:number, options:number[], forced:boolean, onChange: (num:number) => void} } = {};
         if (Hls.isSupported() && getExtension() == "m3u8") {
             const hls = new Hls();
             hls.loadSource(src);
@@ -51,7 +37,7 @@
                 // Transform available levels into an array of integers (height values).
                 const availableQualities = hls.levels.map((l) => l.height)
                 // Add new qualities to option
-                defaultOptions.quality = {
+                let quality = {
                     default: 720,
                     options: availableQualities,
                     // this ensures Plyr to use Hls to update quality level
@@ -61,7 +47,10 @@
                 }
                 // Initialize new Plyr player with quality options
                 hls.attachMedia(video);
-                const player = new Plyr(video, defaultOptions);
+                const player = new Plyr(video, {
+                    quality, 
+                    
+                });
                 res(player)
             });
             window.hls = hls;
@@ -77,6 +66,12 @@
         // default options with no quality update in case Hls is not supported
         
         let player = await initVideoPlayer();
+        
+        window.player = player;
+        let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
+        
+        await player.play();
+        player.currentTime = PrevwatchTime
 
         player.on("enterfullscreen", () => {
             window.api.fullscreen(true);
@@ -85,8 +80,16 @@
         player.on("exitfullscreen", () => {
             window.api.fullscreen(false);
         })
-        
+
+        player.on("play", () => {
+            setInterval(()  => {
+            let watchTime = parseInt(player.currentTime.toString());
+            window.api.setWatchTime(animeMalId, episodeId, watchTime)
+            }, 3500)
+        })
     })
+
+    
 
 </script>
 

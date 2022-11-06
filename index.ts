@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client'
 import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import serve from 'electron-serve'
 import {
@@ -14,6 +15,9 @@ const loadPath = serve({ directory: 'output' })
 app.commandLine.appendSwitch('disable-pinch')
 
 const isDev = !app.isPackaged
+
+const prisma = new PrismaClient()
+
 const createWindow = () => {
   let preloadPath = __dirname + '/electron-src/preload.js'
   console.log({ preloadPath })
@@ -47,10 +51,49 @@ const createWindow = () => {
   win.focus()
 }
 
+ipcMain.handle(
+  'get-playtime',
+  async (event, animeMalId: number, episodeId: number) => {
+    let doc = await prisma.playing.findUnique({
+      where: {
+        animeMalId_episodeId: {
+          animeMalId,
+          episodeId,
+        },
+      },
+    })
+    if (doc)
+      return doc.watch;
+    else 
+      return 0;
+  },
+)
 ipcMain.handle('search-anime', async (event, keyw: string) => {
   let newDocs = await standardSearch(keyw)
   return newDocs
 })
+
+ipcMain.on(
+  'set-watchtime',
+  async (event, animeMalId: number, episodeId: number, time: number) => {
+    console.log({ time })
+    await prisma.playing.upsert({
+      where: {
+        animeMalId_episodeId: {
+          animeMalId,
+          episodeId,
+        },
+      },
+      create: {
+        animeMalId,
+        episodeId,
+        watch: time,
+        lastWatched: new Date(),
+      },
+      update: { lastWatched: new Date(), watch: time },
+    })
+  },
+)
 
 ipcMain.handle('get-anime-info', async (event, animeId: number) => {
   console.log(`Searching for anime: ${animeId}`)

@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
-contextBridge.exposeInMainWorld('api', {
+export const Endpoints = {
   hello: (name: string, age: number) => ipcRenderer.send('hello', name, age),
   searchAnime: (keyw: string) => ipcRenderer.send('search-anime', keyw),
   search: (name: string) => ipcRenderer.invoke('search-anime', name),
@@ -11,4 +11,11 @@ contextBridge.exposeInMainWorld('api', {
   getEpisodes: (animeId: number) => ipcRenderer.invoke('get-episodes', animeId),
   fullscreen: (makeFullscreen: boolean) =>
     ipcRenderer.send('fullscreen', makeFullscreen),
-})
+  setWatchTime: (animeMalId: number, episodeId: number, time: number) =>
+    ipcRenderer.send('set-watchtime', animeMalId, episodeId, time),
+  getWatchTime: (animeId:number, episodeId:number) => ipcRenderer.invoke("get-playtime", animeId, episodeId) as Promise<number>
+}
+
+export type EndpointType = typeof Endpoints;
+
+contextBridge.exposeInMainWorld('api', Endpoints);
