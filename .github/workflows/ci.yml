@@ -28,7 +28,7 @@ jobs:
       - name: Install packages for Svelte
         run: |
           cd svelte-src
-          npm run build
+          npm install
 
       - name: Build/release Electron app
         run: npm run make
