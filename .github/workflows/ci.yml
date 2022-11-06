@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - "master"
-    tags:
-      - v[0-9]+.[0-9]+.[0-9]+*
 
 jobs:
   release:
@@ -23,16 +21,20 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 18.12.1
-      
-      - name: Install NPM packages
+
+      - name: Install NPM packages for electron
         run: npm install
+
+      - name: Install packages for Svelte
+        run: |
+          cd svelte-src
+          npm run build
 
       - name: Build/release Electron app
         run: npm run make
-      
+
       - name: Step 3 - Use the Upload Artifact GitHub Action
         uses: actions/upload-artifact@v3
-        with: 
+        with:
           name: assets
           path: out/make/
-      
