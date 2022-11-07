@@ -16,8 +16,7 @@
 
 
 	<div>
-		<a href="/search">Episode</a>
-		<a href="/episode">Episode</a>
+		<a href="/episode?episodeId=1&animeId=1535">Episode</a>
 	</div>
 	<section>
 		<h1 class="text-3xl mx-10 font-black">Trending Anime:</h1>

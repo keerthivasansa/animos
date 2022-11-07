@@ -23,7 +23,6 @@
     }
     
     function initVideoPlayer(): Promise<Plyr> {
-        src = "http://localhost:4500/" + src;
         console.log("src:", src);
         return new Promise((res, _) => {
             const video = document.getElementById("player") as HTMLVideoElement;

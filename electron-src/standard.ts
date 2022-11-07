@@ -1,12 +1,12 @@
+import { Episode } from '@prisma/client'
 import {
   fetchAnimixAnimeInfo,
   fetchGogoanimeEpisodeSource,
   fetchGogoAnimeInfo,
 } from './scraper'
-
-const express = require('express')
-const axios = require('axios')
-const { PrismaClient } = require('@prisma/client')
+import express from 'express'
+import axios from 'axios'
+import { PrismaClient } from '@prisma/client'
 
 const app = express()
 const prisma = new PrismaClient()
@@ -21,7 +21,6 @@ export { fetchPopular as standardGetPopular } from './scraper'
 
 export async function standardSearch(keyword: string, nocache = false) {
   let docs = []
-  console.log({ nocache, keyword })
   if (!nocache)
     docs = await prisma.anime.findMany({
       where: {
@@ -46,7 +45,6 @@ export async function standardSearch(keyword: string, nocache = false) {
   let res = await axios.get(`https://api.jikan.moe/v4/anime?q=${keyword}&sfw`)
   let { data } = res.data
   let result = data.map((d) => {
-    console.log(d)
     let data = {
       malId: d.mal_id,
       englishTitle: d.title_english ?? '',
@@ -98,12 +96,15 @@ export async function standardGetInfo(malId: number) {
   return doc
 }
 
-export async function standardGetEpisodeInfo(animeMalId, episodeNum) {
+export async function standardGetEpisodeInfo(
+  animeMalId: number,
+  episodeNum: number,
+): Promise<Episode> {
   let doc = await prisma.episode.findUnique({
     where: {
       animeId_episodeId: {
-        animeId: parseInt(animeMalId),
-        episodeId: parseInt(episodeNum),
+        animeId: animeMalId,
+        episodeId: episodeNum,
       },
     },
   })
@@ -118,8 +119,8 @@ export async function standardGetEpisodeInfo(animeMalId, episodeNum) {
   await prisma.episode.upsert({
     where: {
       animeId_episodeId: {
-        animeId: parseInt(animeMalId),
-        episodeId: parseInt(episodeNum),
+        animeId: animeMalId,
+        episodeId: episodeNum,
       },
     },
     create: {
@@ -134,13 +135,21 @@ export async function standardGetEpisodeInfo(animeMalId, episodeNum) {
   return doc
 }
 
-export async function standardEpisodeSrc(animeMalId, episodeId) {
+// TODO the source process is very slow, optimise it.
+
+export async function standardEpisodeSrc(
+  animeMalId: number,
+  episodeId: number,
+): Promise<Episode> {
   console.log('Trying to fetch episode src:', animeMalId, episodeId)
+  let prevDay = new Date(Date.now() - 86400 * 1000)
   let doc = await standardGetEpisodeInfo(animeMalId, episodeId)
-  if (doc && doc.source) {
+  if (doc && doc.source && doc.linkFetchedOn > prevDay) {
     console.log('cache hit for', animeMalId, episodeId)
     return doc
   }
+  if (doc.linkFetchedOn < prevDay)
+    console.log('Source links expired, fetching new ones . . .')
   let { animeId } = await prisma.anime.findUnique({
     where: {
       malId: animeMalId,
@@ -151,15 +160,14 @@ export async function standardEpisodeSrc(animeMalId, episodeId) {
   let gogoDoc = await fetchGogoanimeEpisodeSource({
     episodeId: epUri,
   })
-  console.log(gogoDoc)
   if (!gogoDoc.sources) {
     throw new Error('Failed to get source for the given episode')
   }
   let source = {
     source: gogoDoc.sources[0].file,
     sourceBackup: gogoDoc.sources_bk[0].file,
+    linkFetchedOn: new Date(),
   }
-  console.log({ source })
   await prisma.episode.update({
     where: {
       animeId_episodeId: {
@@ -169,8 +177,7 @@ export async function standardEpisodeSrc(animeMalId, episodeId) {
     },
     data: source, // add source fields to existing data
   })
-  doc.source = source.source
-  doc.sourceBackup = source.sourceBackup
+  doc = { ...doc, ...source }
   return doc
 }
 
@@ -204,7 +211,7 @@ export async function standardGetEpisodes(animeMalId) {
             episodeId: ep.episodeId,
           },
         },
-        update: { watched: { increment: 0 } },
+        update: { watchTime: { increment: 0 } },
         create: ep,
       }),
     ),
@@ -222,7 +229,7 @@ app.get('/episode/:anime/:episode/watch', async (req, res) => {
     where: { malId: parseInt(anime) },
     select: { animeId: true },
   })
-  res.json(await standardEpisodeSrc(animeId, episode))
+  res.json(await standardEpisodeSrc(parseInt(animeId), episode))
 })
 
 app.get('/episode/:anime/:episode/info', async (req, res) => {
