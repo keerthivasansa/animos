@@ -16,8 +16,8 @@
     "premake": "tsc && npm run svelte:build",
     "electron:dev": "tsc && electron dist/index.js",
     "dev": "nodemon --watch index.ts electron-src --exec \"npm run electron:dev\"",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "package": "electron-builder --dir",
+    "make": "electron-builder"
   },
   "build": {
     "appId": "com.keerthivasan.animos",
