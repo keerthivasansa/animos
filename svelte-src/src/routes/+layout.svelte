@@ -1,7 +1,6 @@
 <script>
 	import '../app.postcss';
 
-	import { DarkMode } from "flowbite-svelte";
 	import FaSearch from "svelte-icons/fa/FaSearch.svelte";
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
@@ -32,10 +31,6 @@
 	</nav>
     <slot/>
 </main>
-
-<DarkMode btnClass="cursor-pointer hover:bg-black fixed bottom-10 right-10 border-2 border-slate-800 text-black hover:text-white p-2 rounded-md"/>
-
-
 
 <style>
 	main {

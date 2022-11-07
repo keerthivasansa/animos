@@ -13,17 +13,17 @@
     "svelte:dev": "cd svelte-src & yarn dev",
     "svelte:build": "cd svelte-src && yarn build",
     "start": "electron-forge start",
-    "premake": "tsc && npm run svelte:build",
-    "electron:dev": "tsc && electron dist/index.js",
-    "dev": "nodemon --watch index.ts electron-src --exec \"npm run electron:dev\"",
+    "prepackage": "tsc && npm run svelte:build",
+    "dev": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run svelte:dev\" \"npm run electron:dev\"",
+    "electron:start": "tsc &&electron dist/index.js",
+    "electron:dev": "nodemon --watch index.ts electron-src --exec \"npm run electron:start\"",
     "package": "electron-builder --dir",
-    "make": "electron-builder"
+    "make": "npm run package && electron-builder"
   },
   "build": {
     "appId": "com.keerthivasan.animos",
     "productName": "Animos",
     "asar": true,
-    "compression": "maximum",
     "directories": {
       "output": "out"
     },
@@ -38,11 +38,7 @@
     ]
   },
   "devDependencies": {
-    "@electron-forge/cli": "6.0.0",
-    "@electron-forge/maker-deb": "6.0.0",
-    "@electron-forge/maker-rpm": "6.0.0",
-    "@electron-forge/maker-squirrel": "6.0.0",
-    "@electron-forge/maker-zip": "6.0.0",
+    "concurrently": "^7.5.0",
     "electron": "^21.2.1",
     "electron-builder": "^23.6.0",
     "nodemon": "^2.0.20",
@@ -53,7 +49,6 @@
     "@prisma/client": "^4.5.0",
     "axios": "^1.1.3",
     "cheerio": "^1.0.0-rc.12",
-    "cors-anywhere": "^0.4.4",
     "crypto-js": "^4.1.1",
     "electron-serve": "^1.1.0",
     "express": "^4.18.2",

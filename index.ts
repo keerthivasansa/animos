@@ -1,13 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import serve from 'electron-serve'
 import { join } from 'path'
-import corsProxy from 'cors-anywhere'
 
-
-const host = process.env.HOST || '0.0.0.0';
-// Listen on a specific port via the PORT environment variable
-
-
+// register url for prisma
 process.env.DATABASE_URL = 'file:./cache.db'
 
 // register all the ipc functions
