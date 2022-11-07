@@ -15,6 +15,10 @@
 </script>
 
 
+	<div>
+		<a href="/search">Episode</a>
+		<a href="/episode">Episode</a>
+	</div>
 	<section>
 		<h1 class="text-3xl mx-10 font-black">Trending Anime:</h1>
 		<div class="my-10 flex gap-4 flex-wrap items-center justify-center" data-sveltekit-prefetch="off">

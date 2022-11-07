@@ -34,6 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@sveltejs/adapter-static": "^1.0.0-next.48",
 		"hls.js": "^1.2.4",
 		"plyr": "^3.7.2",
 		"svelte-icons": "^2.1.0"

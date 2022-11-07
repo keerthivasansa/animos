@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./cache.db"
 }
 
 model Settings {
@@ -19,15 +19,16 @@ model Settings {
 }
 
 model Episode {
-  watchTime    Int       @default(0)
-  lastWatched  DateTime?
-  title        String
-  episodeId    Int
-  anime        Anime     @relation(fields: [animeId], references: [malId])
-  animeId      Int
-  synopsis     String?
-  source       String?
-  sourceBackup String?
+  watchTime     Int       @default(0)
+  lastWatched   DateTime?
+  title         String
+  episodeId     Int
+  anime         Anime     @relation(fields: [animeId], references: [malId])
+  animeId       Int
+  synopsis      String?
+  source        String?
+  sourceBackup  String?
+  linkFetchedOn DateTime?
 
   @@id([animeId, episodeId])
 }

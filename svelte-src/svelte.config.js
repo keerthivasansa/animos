@@ -13,8 +13,12 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			pages: "../output"
-		})
+			pages: '../output',
+			fallback: 'index.html'
+		}),
+		prerender: {
+			entries: []
+		}
 	}
 };
 

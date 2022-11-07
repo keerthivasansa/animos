@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { page } from "$app/stores";
     import { Skeleton } from "flowbite-svelte"
-	import { onMount } from "svelte";
 
     let keyword = ". . ."
 
     async function getSearch() {
         let query = $page.url.searchParams.get("keyw");
         if (!query) {
-            location.href = "/";
+            console.log("no search");
             query = "";
         }
         keyword = query;

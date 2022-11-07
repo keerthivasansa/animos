@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Video } from "flowbite-svelte";
     import Hls from "hls.js"
     import Plyr from "plyr"
 	import { onMount } from "svelte";
@@ -24,6 +23,8 @@
     }
     
     function initVideoPlayer(): Promise<Plyr> {
+        src = "http://localhost:4500/" + src;
+        console.log("src:", src);
         return new Promise((res, _) => {
             const video = document.getElementById("player") as HTMLVideoElement;
         const defaultOptions: { quality?: { default:number, options:number[], forced:boolean, onChange: (num:number) => void} } = {};
@@ -67,6 +68,9 @@
         // default options with no quality update in case Hls is not supported
         
         let player = await initVideoPlayer();
+        player.on("error", (err) => {
+            console.log(err)
+        });
         window.player = player;
         let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
         
@@ -93,7 +97,7 @@
 
 </script>
 
-<video id="player" controls style="border-radius: 12px;">
+<video id="player" crossorigin="anonymous" controls style="border-radius: 12px;">
     <source src={src} type={type} label="480p">
         <source src={src} type={type} label="720p">
 </video>

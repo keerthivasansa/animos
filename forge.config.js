@@ -1,7 +1,7 @@
 module.exports = {
   packagerConfig: {
     ignore: [
-      "/svelte-src"
+      "/svelte-src/src/"
     ]
   },
   rebuildConfig: {},
