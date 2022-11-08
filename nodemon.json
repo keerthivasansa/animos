@@ -1,0 +1,5 @@
+{
+  "watch": ["index.ts", "electron-src"],
+  "ext": ".js, .ts", 
+  "exec": "npm run electron:start"
+}

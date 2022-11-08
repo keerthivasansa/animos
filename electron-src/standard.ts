@@ -1,9 +1,6 @@
 import { Episode } from '@prisma/client'
-import {
-  fetchAnimixAnimeInfo,
-  fetchGogoanimeEpisodeSource,
-  fetchGogoAnimeInfo,
-} from './scraper'
+import { fetchGogoanimeEpisodeSource, fetchGogoAnimeInfo } from './scraper'
+import { fetchAnimixEpisodeSource, fetchAnimixAnimeInfo } from './animix'
 import express from 'express'
 import axios from 'axios'
 import { PrismaClient } from '@prisma/client'
@@ -80,7 +77,7 @@ export async function standardGetInfo(malId: number) {
   }
   if (!doc.animeId || !doc.totalEpisodes) {
     console.log('Missing one of the required fields')
-    let doc2 = await fetchAnimixAnimeInfo({ malId })
+    let doc2 = (await fetchAnimixAnimeInfo({ malId })) as any
     let { animeId, episodes } = doc2
     if (!episodes) {
       let info = await fetchGogoAnimeInfo({ animeId })
@@ -112,6 +109,7 @@ export async function standardGetEpisodeInfo(
     console.log('cache hit for ', animeMalId, episodeNum)
     return doc
   }
+  // TODO jikan moe often times out
   let res = await axios.get(
     `https://api.jikan.moe/v4/anime/${animeMalId}/episodes/${episodeNum}`,
   )
@@ -137,16 +135,22 @@ export async function standardGetEpisodeInfo(
 
 // TODO the source process is very slow, optimise it.
 
-export async function renewEpisodeSource(animeMalId:number, episodeId:number): Promise<{ source:string, sourceBackup:string }> {
+export async function renewEpisodeSource(
+  animeMalId: number,
+  episodeId: number,
+): Promise<{ source: string; sourceBackup: string }> {
   let { animeId } = await prisma.anime.findUnique({
     where: {
       malId: animeMalId,
     },
   })
-  let result = await fetchGogoanimeEpisodeSource({ episodeId: `${animeId}-episode-${episodeId}`})
+  let result = await fetchAnimixEpisodeSource({
+    episodeId: `${animeId}-episode-${episodeId}`,
+  })
+  console.log(result)
   let source = {
-    source: result.sources[0].file,
-    sourceBackup: result.sources_bk[0].file,
+    source: result.sources,
+    sourceBackup: '',
     linkFetchedOn: new Date(),
   }
   await prisma.episode.update({
@@ -158,7 +162,7 @@ export async function renewEpisodeSource(animeMalId:number, episodeId:number): P
     },
     data: source, // add source fields to existing data
   })
-  return source;
+  return source
 }
 
 export async function standardEpisodeSrc(
@@ -172,7 +176,7 @@ export async function standardEpisodeSrc(
     console.log('cache hit for', animeMalId, episodeId)
     return doc
   } else {
-    console.log("Searching for links . . . ")
+    console.log('Searching for links . . . ')
   }
   let { animeId } = await prisma.anime.findUnique({
     where: {
@@ -181,15 +185,16 @@ export async function standardEpisodeSrc(
   })
   let epUri = `${animeId}-episode-${episodeId}`
   console.log({ animeId, epUri })
-  let gogoDoc = await fetchGogoanimeEpisodeSource({
-    episodeId: epUri,
+  let gogoDoc = await fetchAnimixEpisodeSource({
+    episodeId: `${animeId}-episode-${episodeId}`,
   })
-  if (!gogoDoc.sources) {
+  console.log(gogoDoc);
+  if (!gogoDoc) {
     throw new Error('Failed to get source for the given episode')
   }
   let source = {
-    source: gogoDoc.sources[0].file,
-    sourceBackup: gogoDoc.sources_bk[0].file,
+    source: gogoDoc.sources,
+    sourceBackup: '',
     linkFetchedOn: new Date(),
   }
   await prisma.episode.update({
@@ -205,24 +210,32 @@ export async function standardEpisodeSrc(
   return doc
 }
 
+function sleep(ms: number) {
+  return new Promise((res, rej) => {
+    setTimeout(res, ms)
+  })
+}
+
 // TODO account for animes with episode zero like re:zero
-export async function standardGetEpisodes(animeMalId) {
-  let episodes = await prisma.episode.findMany({
+export async function standardGetEpisodes(animeMalId: number) {
+  let episodes: Episode[] = await prisma.episode.findMany({
     where: {
-      animeId: parseInt(animeMalId),
+      animeId: animeMalId,
     },
   })
   if (episodes.length > 1) return episodes
   let result = await axios.get(
     `https://api.jikan.moe/v4/anime/${animeMalId}/episodes`,
   )
+  // sleep to prevent hitting rate limit in jikan moe api
+  await sleep(1200)
   let { data } = result.data
   episodes = data.map((d) => {
     return {
       title: d.title,
       episodeId: parseInt(d.mal_id),
       animeId: animeMalId,
-      watched: 0,
+      watchTime: 0,
       // TODO add filler
     }
   })
@@ -231,7 +244,7 @@ export async function standardGetEpisodes(animeMalId) {
       prisma.episode.upsert({
         where: {
           animeId_episodeId: {
-            animeId: parseInt(animeMalId),
+            animeId: animeMalId,
             episodeId: ep.episodeId,
           },
         },

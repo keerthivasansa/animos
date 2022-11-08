@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, session } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import serve from 'electron-serve'
 import { join } from 'path'
 
@@ -15,6 +15,9 @@ console.log({ loadPath })
 
 app.enableSandbox()
 
+// disable cors checking 
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+
 const isDev = !app.isPackaged
 
 let currentWindow: BrowserWindow
@@ -24,7 +27,6 @@ const createWindow = () => {
   console.log({ preloadPath })
   const win = new BrowserWindow({
     webPreferences: {
-      nodeIntegration: false,
       preload: join(__dirname, '/electron-src/preload.js'),
     },
     show: false,

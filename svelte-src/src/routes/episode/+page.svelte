@@ -21,7 +21,6 @@
     let pageState:State = State.Loading;
 
     async function fetchEpisodeSrc() {
-        pageState = State.Loading;
         let params = $page.url.searchParams;
         let episodeTempId = params.get("episodeId");
         let animeTempId = params.get("animeId");
@@ -33,8 +32,10 @@
         episodeId = parseInt(episodeTempId)
 
         console.log({ episodeId, animeId })
+        console.time("new anime");
         let allEpisodes = await window.api.getEpisodes(animeId);
         let src = await window.api.getEpisode(animeId, episodeId);
+        console.timeEnd("new anime");
         result = {
             currentEp: src,
             allEpisodes
@@ -42,6 +43,9 @@
         currentSrc = result.currentEp.source ?? "";
         console.dir(result);
         pageState = State.Finished;
+        player.on("play", () => {
+            console.timeEnd("Episode");
+        })
     }
 
     function goToEp(epNo:number) {
@@ -107,6 +111,7 @@
     }
 
     .w-240 {
-        width: 60rem;
+        max-width: 60rem;
+        max-height: 34rem;
     }
 </style>

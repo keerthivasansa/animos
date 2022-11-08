@@ -13,7 +13,7 @@
         return parts.pop();
     }
 
-    async function isExpired(url:string) {
+    async function getType(url:string): Promise<string> {
         // add 1080 before extension
         let parts = url.split(".")
         let ext = parts.pop()
@@ -25,10 +25,10 @@
         xhr.open('HEAD', newUrl);
         return new Promise((res, rej) => {
             xhr.onload = () => {
-                res(false);
+                res(xhr.getResponseHeader("Content-type") ?? "");
             }
             xhr.onerror = (ev) => {
-                res(true)
+                res('')
             }
             xhr.send();
         })
@@ -44,22 +44,24 @@
     }
     
     async function initVideoPlayer(): Promise<Plyr> {
-        let linkExpired = await isExpired(src);
+        // let mediaType = await getType(src);
+        // type = mediaType;
+        // console.log("src:", src);
+        // if (type == '') { // link expired get new source 
+        //       let sourceObj = await window.api.renewSource(animeMalId, episodeId);
+        //       src = sourceObj.source;      
+        // }
         console.log("src:", src);
-        if (linkExpired) { // get new source 
-              let sourceObj = await window.api.renewSource(animeMalId, episodeId);
-              src = sourceObj.source;      
-        }
-        console.log("src:", src);
-        console.log("type: ", linkExpired);
+        console.log("type: ", type);
         return new Promise((res, _) => {
             const video = document.getElementById("player") as HTMLVideoElement;
             video.onerror = (event, src, line, col, err) => {
                 console.log("video error:")
                 console.log(err);
             }
+            const player = new Plyr(video);
         const defaultOptions: { quality?: { default:number, options:number[], forced:boolean, onChange: (num:number) => void} } = {};
-        if (Hls.isSupported() && getExtension() == "m3u8") {
+        if (Hls.isSupported()) {
             const hls = new Hls();
             hls.loadSource(src);
             // From the m3u8 playlist, hls parses the manifest and returns
@@ -80,10 +82,7 @@
                 }
                 // Initialize new Plyr player with quality options
                 hls.attachMedia(video);
-                const player = new Plyr(video, {
-                    quality, 
-                    
-                });
+                
                 res(player)
             });
             window.hls = hls;
@@ -122,7 +121,7 @@
             setInterval(()  => {
             let watchTime = parseInt(player.currentTime.toString());
             window.api.setWatchTime(animeMalId, episodeId, watchTime)
-            }, 3500)
+            }, 20000)
         })
     })
 
@@ -130,7 +129,8 @@
 
 </script>
 
-<video id="player" controls style="border-radius: 12px;">
-    <source src={src} type={type} label="480p">
-        <source src={src} type={type} label="720p">
-</video>
+<div>
+    <video id="player" controls style="border-radius: 12px;">
+        <source src={src} label="480p">
+    </video>
+</div>
