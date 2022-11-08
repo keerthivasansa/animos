@@ -13,10 +13,16 @@ const endpoints = {
     ipcRenderer.send('fullscreen', makeFullscreen),
   setWatchTime: (animeMalId: number, episodeId: number, time: number) =>
     ipcRenderer.send('set-watchtime', animeMalId, episodeId, time),
-  getWatchTime: (animeId:number, episodeId:number) => ipcRenderer.invoke("get-playtime", animeId, episodeId) as Promise<number>,
-  getLastPlayed: () => ipcRenderer.invoke("get-last-played") 
+  getWatchTime: (animeId: number, episodeId: number) =>
+    ipcRenderer.invoke('get-playtime', animeId, episodeId) as Promise<number>,
+  getLastPlayed: () => ipcRenderer.invoke('get-last-played'),
+  renewSource: (animeId: number, episodeId: number) =>
+    ipcRenderer.invoke('renew-episode-source', animeId, episodeId) as Promise<{
+      source: string
+      sourceBackup: string
+    }>,
 }
 
-export type EndpointType = typeof endpoints;
+export type EndpointType = typeof endpoints
 
-contextBridge.exposeInMainWorld('api', endpoints);
+contextBridge.exposeInMainWorld('api', endpoints)

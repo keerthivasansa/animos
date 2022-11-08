@@ -137,6 +137,30 @@ export async function standardGetEpisodeInfo(
 
 // TODO the source process is very slow, optimise it.
 
+export async function renewEpisodeSource(animeMalId:number, episodeId:number): Promise<{ source:string, sourceBackup:string }> {
+  let { animeId } = await prisma.anime.findUnique({
+    where: {
+      malId: animeMalId,
+    },
+  })
+  let result = await fetchGogoanimeEpisodeSource({ episodeId: `${animeId}-episode-${episodeId}`})
+  let source = {
+    source: result.sources[0].file,
+    sourceBackup: result.sources_bk[0].file,
+    linkFetchedOn: new Date(),
+  }
+  await prisma.episode.update({
+    where: {
+      animeId_episodeId: {
+        animeId: animeMalId,
+        episodeId,
+      },
+    },
+    data: source, // add source fields to existing data
+  })
+  return source;
+}
+
 export async function standardEpisodeSrc(
   animeMalId: number,
   episodeId: number,
@@ -147,9 +171,9 @@ export async function standardEpisodeSrc(
   if (doc && doc.source && doc.linkFetchedOn > prevDay) {
     console.log('cache hit for', animeMalId, episodeId)
     return doc
+  } else {
+    console.log("Searching for links . . . ")
   }
-  if (doc.linkFetchedOn < prevDay)
-    console.log('Source links expired, fetching new ones . . .')
   let { animeId } = await prisma.anime.findUnique({
     where: {
       malId: animeMalId,

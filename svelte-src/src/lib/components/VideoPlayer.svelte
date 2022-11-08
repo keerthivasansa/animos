@@ -13,6 +13,27 @@
         return parts.pop();
     }
 
+    async function isExpired(url:string) {
+        // add 1080 before extension
+        let parts = url.split(".")
+        let ext = parts.pop()
+        parts.push("1080");
+        parts.push(ext??"");
+        let newUrl = parts.join(".");
+        console.log("newUrl: ", newUrl);
+        let xhr = new XMLHttpRequest();
+        xhr.open('HEAD', newUrl);
+        return new Promise((res, rej) => {
+            xhr.onload = () => {
+                res(false);
+            }
+            xhr.onerror = (ev) => {
+                res(true)
+            }
+            xhr.send();
+        })
+    }
+
     function updateQuality(newQuality:number) {
         window.hls.levels.forEach((level:any, levelIndex:number) => {
             if (level.height === newQuality) {
@@ -22,10 +43,21 @@
         });
     }
     
-    function initVideoPlayer(): Promise<Plyr> {
+    async function initVideoPlayer(): Promise<Plyr> {
+        let linkExpired = await isExpired(src);
         console.log("src:", src);
+        if (linkExpired) { // get new source 
+              let sourceObj = await window.api.renewSource(animeMalId, episodeId);
+              src = sourceObj.source;      
+        }
+        console.log("src:", src);
+        console.log("type: ", linkExpired);
         return new Promise((res, _) => {
             const video = document.getElementById("player") as HTMLVideoElement;
+            video.onerror = (event, src, line, col, err) => {
+                console.log("video error:")
+                console.log(err);
+            }
         const defaultOptions: { quality?: { default:number, options:number[], forced:boolean, onChange: (num:number) => void} } = {};
         if (Hls.isSupported() && getExtension() == "m3u8") {
             const hls = new Hls();
@@ -67,10 +99,12 @@
         // default options with no quality update in case Hls is not supported
         
         let player = await initVideoPlayer();
+
         player.on("error", (err) => {
+            console.log("Plyr error:")
             console.log(err)
         });
-        window.player = player;
+
         let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
         
         await player.play();
@@ -96,7 +130,7 @@
 
 </script>
 
-<video id="player" crossorigin="anonymous" controls style="border-radius: 12px;">
+<video id="player" controls style="border-radius: 12px;">
     <source src={src} type={type} label="480p">
         <source src={src} type={type} label="720p">
 </video>

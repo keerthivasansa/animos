@@ -20,7 +20,7 @@
     "prepackage": "tsc && npm run svelte:build",
     "dev": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run svelte:dev\" \"npm run electron:dev\"",
     "electron:start": "tsc &&electron dist/index.js",
-    "electron:dev": "nodemon --watch index.ts electron-src --exec \"npm run electron:start\"",
+    "electron:dev": "nodemon --watch \"index.ts electron-src\" --exec \"npm run electron:start\"",
     "package": "electron-builder --dir",
     "make": "npm run package && electron-builder", 
     "publish": "npm run prepackage && electron-builder --publish always"

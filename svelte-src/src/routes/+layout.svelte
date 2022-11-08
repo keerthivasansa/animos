@@ -7,7 +7,9 @@
 
 	let keyw = ". . .";
 
-	onMount(() => keyw = $page.url.searchParams.get("keyw") ?? '')
+	onMount(() => {
+		keyw =  $page.url.searchParams.get("keyw") ?? '';
+	})
 </script>
 
 <main class="dark:bg-slate-900 dark:text-white">

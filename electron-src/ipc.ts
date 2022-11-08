@@ -5,6 +5,7 @@ import {
   standardEpisodeSrc,
   standardGetEpisodes,
   standardGetPopular,
+  renewEpisodeSource,
 } from './standard'
 import { PrismaClient } from '@prisma/client'
 
@@ -48,7 +49,6 @@ ipcMain.handle('get-last-played', async (event) => {
       },
     },
   })
-  console.log(docs)
   return docs
 })
 
@@ -60,7 +60,6 @@ ipcMain.handle('search-anime', async (event, keyw: string) => {
 ipcMain.on(
   'set-watchtime',
   async (event, animeId: number, episodeId: number, time: number) => {
-    console.log({ time })
     await prisma.episode.update({
       where: {
         animeId_episodeId: {
@@ -76,20 +75,17 @@ ipcMain.on(
 ipcMain.handle('get-anime-info', async (event, animeId: number) => {
   console.log(`Searching for anime: ${animeId}`)
   let animeInfo = await standardGetInfo(animeId)
-  console.log(animeInfo)
   return animeInfo
 })
 
 ipcMain.handle('get-episodes', async (event, animeId: number) => {
   console.log(`Fetching episodes for ${animeId}`)
   let episodes = await standardGetEpisodes(animeId)
-  console.dir(episodes)
   return episodes
 })
 
 ipcMain.handle('get-popular-anime', async (event) => {
   let popularAnime = await standardGetPopular({})
-  console.dir(popularAnime)
   return popularAnime
 })
 
@@ -97,8 +93,16 @@ ipcMain.handle(
   'get-episode',
   async (event, animeId: number, episodeId: number) => {
     let docs = await standardEpisodeSrc(animeId, episodeId)
-    console.log(docs)
     return docs
+  },
+)
+
+ipcMain.handle(
+  'renew-episode-source',
+  async (event, animeId: number, episodeId: number) => {
+    console.log("Episode source for ", animeId, episodeId, " has been reported to be expired. Renewing sources . . .")
+    let source = await renewEpisodeSource(animeId, episodeId)
+    return source
   },
 )
 
