@@ -1,7 +1,10 @@
 <script lang="ts">
+  import Carousel from '../lib/components/Carousel.svelte';
+
 	import { Rating } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import { CardPlaceholder, Popover } from 'flowbite-svelte';
+	import CoverAnime from '$lib/components/CoverAnime.svelte';
 
 	let popularAnime: AnimePopular[] = [];
 
@@ -14,16 +17,17 @@
 	});
 </script>
 
-<div>
-	<a href="/episode?episodeId=5&animeId=20">Episode</a>
-	<a href="/test">Video</a>
-</div>
-<section>
+
+<!-- The cards are not live, here as a template -->
+<Carousel></Carousel>
+
+<section class="px-0">
 	<h1 class="text-3xl mx-10 font-black">Trending Anime:</h1>
 	<div class="my-10 flex gap-4 flex-wrap items-center justify-center" data-sveltekit-prefetch="off">
 		{#await getPopular()}
 			<CardPlaceholder />
 		{:then popularAnime}
+		<!-- //	TODO each card on hover with a delay should scale with ease, then info should slide from side -->
 			{#each popularAnime as anime}
 				<div class="flex flex-col gap-5 ">
 					<a href="/" id="anime-{anime.mal_id}">
