@@ -8,6 +8,10 @@
     "email": "sakeerthi23@gmail.com",
     "url": "https://github.com/Nectres/"
   },
+  "repository": {
+     "type": "git", 
+     "url": "https://github.com/Nectres/animos.git"
+  },
   "description": "Animos is an application to discover and stream Animes with ease",
   "scripts": {
     "svelte:dev": "cd svelte-src & yarn dev",
@@ -18,11 +22,15 @@
     "electron:start": "tsc &&electron dist/index.js",
     "electron:dev": "nodemon --watch index.ts electron-src --exec \"npm run electron:start\"",
     "package": "electron-builder --dir",
-    "make": "npm run package && electron-builder"
+    "make": "npm run package && electron-builder", 
+    "publish": "npm run prepackage && electron-builder --publish always"
   },
   "build": {
     "appId": "com.keerthivasan.animos",
     "productName": "Animos",
+    "win": {
+      "publish": ["github"]
+    },
     "asar": true,
     "directories": {
       "output": "out"
@@ -39,7 +47,7 @@
   },
   "devDependencies": {
     "concurrently": "^7.5.0",
-    "electron": "^21.2.1",
+    "electron": "^21.2.2",
     "electron-builder": "^23.6.0",
     "nodemon": "^2.0.20",
     "prisma": "^4.5.0",

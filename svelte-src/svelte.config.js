@@ -10,7 +10,6 @@ const config = {
 			postcss: true
 		})
 	],
-
 	kit: {
 		adapter: adapter({
 			pages: '../output',
@@ -18,7 +17,7 @@ const config = {
 		}),
 		prerender: {
 			entries: []
-		}
+		},
 	}
 };
 

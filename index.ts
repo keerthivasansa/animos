@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, session } from 'electron'
 import serve from 'electron-serve'
 import { join } from 'path'
 
@@ -13,23 +13,11 @@ const loadPath = serve({ directory: 'output' })
 
 console.log({ loadPath })
 
-app.commandLine.appendSwitch('disable-pinch')
+app.enableSandbox()
 
 const isDev = !app.isPackaged
 
-function UpsertKeyValue(obj, keyToChange, value) {
-  const keyToChangeLower = keyToChange.toLowerCase()
-  for (const key of Object.keys(obj)) {
-    if (key.toLowerCase() === keyToChangeLower) {
-      // Reassign old key
-      obj[key] = value
-      // Done
-      return
-    }
-  }
-  // Insert at end instead
-  obj[keyToChange] = value
-}
+let currentWindow: BrowserWindow
 
 const createWindow = () => {
   let preloadPath = join(__dirname, '/electron-src/preload.js')
@@ -49,21 +37,6 @@ const createWindow = () => {
     webContents.setZoomFactor(1)
   })
 
-  webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
-    const { requestHeaders } = details
-    UpsertKeyValue(requestHeaders, 'Access-Control-Allow-Origin', ['*'])
-    callback({ requestHeaders })
-  })
-
-  webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    const { responseHeaders } = details
-    UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Origin', ['*'])
-    UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*'])
-    callback({
-      responseHeaders,
-    })
-  })
-
   win.maximize()
 
   if (isDev) {
@@ -77,10 +50,16 @@ const createWindow = () => {
   })
   win.show()
   win.focus()
+  return win
 }
 
 app.whenReady().then(() => {
-  createWindow()
+  if (currentWindow) {
+    currentWindow.show()
+    currentWindow.focus()
+  } else {
+    currentWindow = createWindow()
+  }
 })
 
 app.on('window-all-closed', () => {
