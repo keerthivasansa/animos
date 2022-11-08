@@ -1,117 +1,127 @@
 <script lang="ts">
-	import { page } from "$app/stores";
-	import VideoPlayer from "$lib/components/VideoPlayer.svelte";
-	import type { Episode } from "prisma/prisma-client";
-    import FaPlay from "svelte-icons/fa/FaPlay.svelte"
-	import { onMount } from "svelte";
+	import { page } from '$app/stores';
+	import VideoPlayer from '$lib/components/VideoPlayer.svelte';
+	import type { Episode } from 'prisma/prisma-client';
+	import FaPlay from 'svelte-icons/fa/FaPlay.svelte';
+	import { onMount } from 'svelte';
 
-    let animeId:number;
-    let episodeId:number;
-    let result: {
-        currentEp:Episode, 
-        allEpisodes:Episode[]
-    };
-    let currentSrc = "";
+	let animeId: number;
+	let episodeId: number;
+	let result: {
+		currentEp: Episode;
+		allEpisodes: Episode[];
+	};
+	let currentSrc = '';
 
-    enum State {
-        Loading,
-        Finished 
-    }
+	enum State {
+		Loading,
+		Finished
+	}
 
-    let pageState:State = State.Loading;
+	let pageState: State = State.Loading;
 
-    async function fetchEpisodeSrc() {
-        let params = $page.url.searchParams;
-        let episodeTempId = params.get("episodeId");
-        let animeTempId = params.get("animeId");
-        if (!animeTempId || !episodeTempId) {
-            location.href = "/"
-            animeTempId = episodeTempId = "";
-        }
-        animeId = parseInt(animeTempId);
-        episodeId = parseInt(episodeTempId)
+	async function fetchEpisodeSrc() {
+		let params = $page.url.searchParams;
+		let episodeTempId = params.get('episodeId');
+		let animeTempId = params.get('animeId');
+		if (!animeTempId || !episodeTempId) {
+			location.href = '/';
+			animeTempId = episodeTempId = '';
+		}
+		animeId = parseInt(animeTempId);
+		episodeId = parseInt(episodeTempId);
 
-        console.log({ episodeId, animeId })
-        console.time("new anime");
-        let allEpisodes = await window.api.getEpisodes(animeId);
-        let src = await window.api.getEpisode(animeId, episodeId);
-        console.timeEnd("new anime");
-        result = {
-            currentEp: src,
-            allEpisodes
-        };
-        currentSrc = result.currentEp.source ?? "";
-        console.dir(result);
-        pageState = State.Finished;
-        player.on("play", () => {
-            console.timeEnd("Episode");
-        })
-    }
+		console.log({ episodeId, animeId });
+		console.time('new anime');
+		let allEpisodes = await window.api.getEpisodes(animeId);
+		let src = await window.api.getEpisode(animeId, episodeId);
+		console.timeEnd('new anime');
+		result = {
+			currentEp: src,
+			allEpisodes
+		};
+		currentSrc = result.currentEp.source ?? '';
+		console.dir(result);
+		pageState = State.Finished;
+	}
 
-    function goToEp(epNo:number) {
-        location.replace(`/episode?animeId=${animeId}&episodeId=${epNo}`)
-    }
+	function goToEp(epNo: number) {
+		location.replace(`/episode?animeId=${animeId}&episodeId=${epNo}`);
+	}
 
-    onMount(fetchEpisodeSrc);
+	onMount(fetchEpisodeSrc);
 </script>
 
 <section class="flex justify-between px-4">
-        <div class="aspect-video rounded-lg fixed w-240">
-            {#if pageState == State.Loading}
-                <div style="width: 60rem;" class="animate-pulse aspect-video flex center bg-slate-700 rounded-lg">
-                    <div class="w-10 text-slate-400">
-                        <FaPlay></FaPlay>
-                    </div>
-                </div>
-                <div class="mx-5 my-4">
-                    <div class="animate-pulse bg-slate-700 w-52 h-10 rounded-lg"></div>
-                </div>
-            {:else} 
-                {#if currentSrc == result.currentEp.source}
-                    <VideoPlayer src={currentSrc} animeMalId={animeId} episodeId={episodeId} />        
-                {:else}
-                    <VideoPlayer src={currentSrc} animeMalId={animeId} episodeId={episodeId} />        
-                {/if}
-                <div class="mx-5 my-4">
-                    <h3 class="text-xl font-bold">{result.currentEp.title}</h3><br>
-                    <div class="text-xs font-semibold">
-                        <button on:click={_ => currentSrc = result.currentEp.source ?? ""} class="px-3 py-2 rounded-md {currentSrc == result.currentEp.source? "bg-green-800 text-white" : "bg-slate-400 text-black"}">GOGO</button>
-                        <button on:click={_ => currentSrc = result.currentEp.sourceBackup ?? ""} class="px-3 mx-2 py-2 rounded-md {currentSrc == result.currentEp.sourceBackup? "bg-green-800 text-white" : "bg-slate-400 text-black"}text-black">GOGO-BK</button>
-                    </div>
-                </div>
-            {/if}  
-        </div>
-        <div class="episodes-container" style="margin-left: 65rem;">
-                <div class="my-14" style="width: 24rem;">
-                    <h3 class="text-2xl font-bold">Episodes</h3>
-                    <div class="flex gap-4 my-5 flex-col episode-wrapper">
-                        {#if pageState != State.Loading}            
-                            {#each result.allEpisodes as ep (ep.episodeId)}
-                                <button class="cursor-pointer text-left border-slate-400 border-2 rounded-md my-2 px-3 py-2" 
-                                on:click={_ => goToEp(ep.episodeId)} >{ep.episodeId}. {ep.title}
-                                </button>
-                            {/each}
-                        {:else}
-                            {#each Array.from({ length: 10}) as _}
-                                <div class="bg-slate-700 h-8 rounded-md animate-pulse my-2 px-3 py-2"></div>
-                            {/each}
-                        {/if}
-
-                    </div>
-                    
-
-                </div>
-        </div>
+	<div class="aspect-video rounded-lg fixed w-240">
+		{#if pageState == State.Loading}
+			<div
+				style="width: 60rem;"
+				class="animate-pulse aspect-video flex center bg-slate-700 rounded-lg"
+			>
+				<div class="w-10 text-slate-400">
+					<FaPlay />
+				</div>
+			</div>
+			<div class="mx-5 my-4">
+				<div class="animate-pulse bg-slate-700 w-52 h-10 rounded-lg" />
+			</div>
+		{:else}
+			{#if currentSrc == result.currentEp.source}
+				<VideoPlayer src={currentSrc} animeMalId={animeId} {episodeId} />
+			{:else}
+				<VideoPlayer src={currentSrc} animeMalId={animeId} {episodeId} />
+			{/if}
+			<div class="mx-5 my-4">
+				<h3 class="text-xl font-bold">{result.currentEp.title}</h3>
+				<br />
+				<div class="text-xs font-semibold">
+					<button
+						on:click={(_) => (currentSrc = result.currentEp.source ?? '')}
+						class="px-3 py-2 rounded-md {currentSrc == result.currentEp.source
+							? 'bg-green-800 text-white'
+							: 'bg-slate-400 text-black'}">GOGO</button
+					>
+					<button
+						on:click={(_) => (currentSrc = result.currentEp.sourceBackup ?? '')}
+						class="px-3 mx-2 py-2 rounded-md {currentSrc == result.currentEp.sourceBackup
+							? 'bg-green-800 text-white'
+							: 'bg-slate-400 text-black'}text-black">GOGO-BK</button
+					>
+				</div>
+			</div>
+		{/if}
+	</div>
+	<div class="episodes-container" style="margin-left: 65rem;">
+		<div class="my-14" style="width: 24rem;">
+			<h3 class="text-2xl font-bold">Episodes</h3>
+			<div class="flex gap-4 my-5 flex-col episode-wrapper">
+				{#if pageState != State.Loading}
+					{#each result.allEpisodes as ep (ep.episodeId)}
+						<button
+							class="cursor-pointer text-left border-slate-400 border-2 rounded-md my-2 px-3 py-2"
+							on:click={(_) => goToEp(ep.episodeId)}
+							>{ep.episodeId}. {ep.title}
+						</button>
+					{/each}
+				{:else}
+					{#each Array.from({ length: 10 }) as _}
+						<div class="bg-slate-700 h-8 rounded-md animate-pulse my-2 px-3 py-2" />
+					{/each}
+				{/if}
+			</div>
+		</div>
+	</div>
 </section>
 
 <style>
-    .episodes-container {
-        height: 100%;
-        overflow-y: auto;
-    }
+	.episodes-container {
+		height: 100%;
+		overflow-y: auto;
+	}
 
-    .w-240 {
-        max-width: 60rem;
-        max-height: 34rem;
-    }
+	.w-240 {
+		max-width: 60rem;
+		max-height: 34rem;
+	}
 </style>
