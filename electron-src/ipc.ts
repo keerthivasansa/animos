@@ -57,18 +57,24 @@ ipcMain.handle('search-anime', async (event, keyw: string) => {
   return newDocs
 })
 
-ipcMain.on(
+
+async function savePlayback(animeId: number, episodeId: number, time: number) {
+  await prisma.episode.update({
+    where: {
+      animeId_episodeId: {
+        animeId,
+        episodeId,
+      },
+    },
+    data: { lastWatched: new Date(), watchTime: time },
+  })
+}
+
+ipcMain.handle(
   'set-watchtime',
   async (event, animeId: number, episodeId: number, time: number) => {
-    await prisma.episode.update({
-      where: {
-        animeId_episodeId: {
-          animeId,
-          episodeId,
-        },
-      },
-      data: { lastWatched: new Date(), watchTime: time },
-    })
+      await savePlayback(animeId, episodeId, time);
+      return
   },
 )
 

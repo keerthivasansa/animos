@@ -59,7 +59,7 @@
                 console.log("video error:")
                 console.log(err);
             }
-            const player = new Plyr(video);
+        const player = new Plyr(video);
         const defaultOptions: { quality?: { default:number, options:number[], forced:boolean, onChange: (num:number) => void} } = {};
         if (Hls.isSupported()) {
             const hls = new Hls();
@@ -82,12 +82,10 @@
                 }
                 // Initialize new Plyr player with quality options
                 hls.attachMedia(video);
-                
                 res(player)
             });
             window.hls = hls;
         } else {
-            const player = new Plyr(video, defaultOptions);
             res(player);
         }
         })
@@ -106,7 +104,6 @@
 
         let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
         
-        await player.play();
         player.currentTime = PrevwatchTime
 
         player.on("enterfullscreen", () => {
@@ -118,10 +115,10 @@
         })
 
         player.on("play", () => {
-            setInterval(()  => {
-            let watchTime = parseInt(player.currentTime.toString());
-            window.api.setWatchTime(animeMalId, episodeId, watchTime)
-            }, 20000)
+            setInterval(async ()  => {
+                let watchTime = parseInt(player.currentTime.toString());
+                await window.api.setWatchTime(animeMalId, episodeId, watchTime)
+            }, 7500)
         })
     })
 

@@ -114,7 +114,7 @@ export async function standardGetEpisodeInfo(
     `https://api.jikan.moe/v4/anime/${animeMalId}/episodes/${episodeNum}`,
   )
   let { data } = res.data
-  await prisma.episode.upsert({
+  doc = await prisma.episode.upsert({
     where: {
       animeId_episodeId: {
         animeId: animeMalId,
