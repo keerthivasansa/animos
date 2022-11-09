@@ -27,6 +27,19 @@ ipcMain.handle(
   },
 )
 
+ipcMain.on("episode:set-length", async (event, animeId, episodeId, length) => {
+  await prisma.episode.update({
+    where: {
+      animeId_episodeId: {
+        animeId, episodeId
+      }
+    }, 
+    data: {
+      length
+    }
+  })
+})
+
 ipcMain.handle('get-last-played', async (event) => {
   let docs = await prisma.episode.findMany({
     distinct: 'animeId',

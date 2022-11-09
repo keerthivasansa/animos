@@ -27,6 +27,7 @@ model Episode {
   animeId       Int
   synopsis      String?
   source        String?
+  length        Int?
   sourceBackup  String?
   linkFetchedOn DateTime?
 

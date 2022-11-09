@@ -72,15 +72,24 @@
 		// default options with no quality update in case Hls is not supported
 
 		let player = await initVideoPlayer();
+		let updateVideoLength = false;
 
 		player.on('error', (err) => {
 			console.log('Plyr error:');
 			console.log(err);
 		});
 
-		let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
+		window.player = player;
 
+		let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
+		console.log({PrevwatchTime})
+		if (PrevwatchTime == 0){
+			updateVideoLength = true;
+		}
+
+		await player.play();
 		player.currentTime = PrevwatchTime;
+		await player.pause();
 
 		player.on('enterfullscreen', () => {
 			window.api.fullscreen(true);
@@ -90,7 +99,12 @@
 			window.api.fullscreen(false);
 		});
 
-		player.on('play', () => {
+		player.on('canplay', () => {
+			console.log("Player ready");
+			if (updateVideoLength) {
+				console.log("Starting episode for first time, episode length:",  player.duration);
+				window.api.setEpisodeLength(animeMalId, episodeId, player.duration);
+			}
 			setInterval(async () => {
 				let watchTime = parseInt(player.currentTime.toString());
 				await window.api.setWatchTime(animeMalId, episodeId, watchTime);
