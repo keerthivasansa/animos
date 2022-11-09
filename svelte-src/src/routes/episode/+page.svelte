@@ -99,13 +99,15 @@
 				{#if pageState != State.Loading}
 					{#each result.allEpisodes as ep (ep.episodeId)}
 						<button
-							class="cursor-pointer text-left border-slate-400 border-2 rounded-md my-2 px-3 py-2"
+							style="{ep.episodeId == result.currentEp.episodeId ? "border: 1px solid var(--accent-color);"  : ""}"
+							class="cursor-pointer text-left border-slate-400 border-2 rounded-md my-2 px-3 py-2 { (ep.episodeId != result.currentEp.episodeId && ep.watchTime / (ep.length ?? -1)) > 0.91 ? "opacity-40" : ""}"
 							on:click={(_) => goToEp(ep.episodeId)}
 							>
 							<span class="my-4">{ep.episodeId}. {ep.title}</span>
 							{#if ep.length}
+							
 							<div class="w-full rounded-lg bg-slate-600 my-4 h-2 relative">
-								<div class="h-full rounded-lg bg-white" style="width:{parseInt(((ep.watchTime / ep.length) * 100).toString())}%"></div>
+								<div class="h-full rounded-lg" style="width:{parseInt(((ep.watchTime / ep.length) * 100).toString())}%; background: var(--accent-color)"></div>
 							</div>
 						{/if}
 						</button>

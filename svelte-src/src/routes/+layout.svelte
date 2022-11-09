@@ -30,7 +30,7 @@
 				/>
 			</div>
 			<button type="submit">
-				<div class="p-3 rounded-md dark:bg-blue-400 bg-blue-800 text-white dark:text-black">
+				<div class="p-3 rounded-md btn-accent text-white dark:text-black">
 					<div class="icon">
 						<FaSearch />
 					</div>
