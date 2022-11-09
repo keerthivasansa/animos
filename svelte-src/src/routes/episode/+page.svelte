@@ -101,8 +101,15 @@
 						<button
 							class="cursor-pointer text-left border-slate-400 border-2 rounded-md my-2 px-3 py-2"
 							on:click={(_) => goToEp(ep.episodeId)}
-							>{ep.episodeId}. {ep.title}
+							>
+							<span class="my-4">{ep.episodeId}. {ep.title}</span>
+							{#if ep.length}
+							<div class="w-full rounded-lg bg-slate-600 my-4 h-2 relative">
+								<div class="h-full rounded-lg bg-white" style="width:{parseInt(((ep.watchTime / ep.length) * 100).toString())}%"></div>
+							</div>
+						{/if}
 						</button>
+						
 					{/each}
 				{:else}
 					{#each Array.from({ length: 10 }) as _}

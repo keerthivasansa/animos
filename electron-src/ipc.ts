@@ -35,7 +35,7 @@ ipcMain.on("episode:set-length", async (event, animeId, episodeId, length) => {
       }
     }, 
     data: {
-      length
+      length: parseInt(length)
     }
   })
 })
@@ -51,6 +51,7 @@ ipcMain.handle('get-last-played', async (event) => {
         },
       },
       episodeId: true,
+      length: true, 
       animeId: true,
       watchTime: true,
     },
