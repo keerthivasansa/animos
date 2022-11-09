@@ -4,22 +4,56 @@
 	import { Rating } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import { CardPlaceholder, Popover } from 'flowbite-svelte';
-	import CoverAnime from '$lib/components/CoverAnime.svelte';
 
 	let popularAnime: AnimePopular[] = [];
 
 	async function getPopular() {
 		return window.api.popularAnime();
 	}
+	
+	async function getLastPlayed() {
+		return window.api.getLastPlayed()
+	}
 
 	onMount(async () => {
 		console.log(popularAnime);
+		console.log("Last played:");
+		console.log(await getLastPlayed())
 	});
 </script>
 
 
 <!-- The cards are not live, here as a template -->
-<Carousel></Carousel>
+<Carousel anime={[
+	{img:"https://images7.alphacoders.com/418/418724.png", title:"Attack on Titan"},
+{img:"https://images3.alphacoders.com/111/thumb-1920-1116286.jpg", title:"Jujutsu Kaisen"},
+	{img:"https://wallpaperaccess.com/full/17350.jpg", title:"One piece"},
+	{img:"https://i.pinimg.com/originals/25/0f/b6/250fb6cc8daf145c13901b0f107260ee.jpg", title:"My Hero Academia"}
+]}></Carousel>
+
+
+{#await getLastPlayed()}
+	<p></p>
+{:then result} 
+	<section>
+		<h1 class="text-3xl font-black mx-10">Continue Watching</h1>
+		<div class="flex gap-16 mx-10 my-10">
+			{#each result as episode}
+				<a href="/episode?animeId={episode.animeId}&episodeId={episode.episodeId}">
+					<div class="whitespace-nowrap flex flex-col gap-3">
+						<img src={episode.anime.img} class="h-60 object-cover rounded-md" alt={episode.anime.title}>
+						<span class="text-xl text-ellipsis overflow-hidden font-bold w-40" style=" display: inline-block;overflow: hidden;white-space: nowrap;">{episode.anime.title}</span>
+						<span class="text-sm text-slate-400">Episode {episode.episodeId}</span>
+						<div title="{(episode.watchTime / 60).toString()}" class="w-full rounded-lg bg-slate-600 h-2 relative">
+							<div class="h-full rounded-lg bg-white" style="width:{parseInt((((episode.watchTime / 60) / 21) * 100).toString())}%"></div>
+						</div>
+					</div>
+				</a>
+			{/each}
+		</div>
+	</section>
+{/await}
+
 
 <section class="px-0">
 	<h1 class="text-3xl mx-10 font-black">Trending Anime:</h1>

@@ -38,6 +38,7 @@ ipcMain.handle('get-last-played', async (event) => {
         },
       },
       episodeId: true,
+      animeId: true,
       watchTime: true,
     },
     orderBy: {

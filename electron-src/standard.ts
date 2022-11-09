@@ -39,6 +39,7 @@ export async function standardSearch(keyword: string, nocache = false) {
     console.log('cache hit')
     return docs
   }
+  // TODO switch to animix search
   let res = await axios.get(`https://api.jikan.moe/v4/anime?q=${keyword}&sfw`)
   let { data } = res.data
   let result = data.map((d) => {

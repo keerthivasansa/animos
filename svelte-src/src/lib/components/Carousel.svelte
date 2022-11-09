@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { Rating } from 'flowbite-svelte';
-	import { onMount } from 'svelte';
 	import CoverAnime from '$lib/components/CoverAnime.svelte';
 	import FaNext from "svelte-icons/fa/FaAngleRight.svelte"	
 	import FaPrev from "svelte-icons/fa/FaAngleLeft.svelte"	
 
-	let popularAnime: AnimePopular[] = [];
+	interface CoverAnime {
+		title:string, 
+		img:string,
+	}
+
+	export let anime:CoverAnime[];
 
 	let sliderLeft = "-18rem";
-	let maxSlideLeft = -(4 * 21);
-
-	async function getPopular() {
-		return window.api.popularAnime();
-	}
+	let maxSlideLeft = -(anime.length * 21);
 
 	function nextSlide() {
 		let currentMargin = parseInt(sliderLeft);
@@ -35,9 +34,6 @@
 		console.log(sliderLeft);
 	}
 
-	onMount(async () => {
-		console.log(popularAnime);
-	});
 </script>
 
 <!-- TODO implement infinite scrolling -->
@@ -49,10 +45,9 @@
 	</button>
 
 	<div style="transform: translateX({sliderLeft});" class="flex gap-5 transition-all ease-in-out duration-500 flex-nowrap">
-		<CoverAnime src="https://images7.alphacoders.com/418/418724.png" title="Attack on Titan"/>
-		<CoverAnime src="https://images3.alphacoders.com/111/thumb-1920-1116286.jpg" title="Jujutsu Kaisen"/>
-		<CoverAnime src="https://wallpaperaccess.com/full/17350.jpg" title="One piece"/>
-		<CoverAnime src="https://i.pinimg.com/originals/25/0f/b6/250fb6cc8daf145c13901b0f107260ee.jpg" title="My Hero Academia"/>
+		{#each anime as an}
+			<CoverAnime src={an.img} title={an.title}/>			
+		{/each}
 	</div>
 	<button on:click={nextSlide} class="nav-btn -right-5">
 		<div class="w-8">

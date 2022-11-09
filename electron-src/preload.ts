@@ -15,7 +15,15 @@ const endpoints = {
     ipcRenderer.invoke('set-watchtime', animeMalId, episodeId, time),
   getWatchTime: (animeId: number, episodeId: number) =>
     ipcRenderer.invoke('get-playtime', animeId, episodeId) as Promise<number>,
-  getLastPlayed: () => ipcRenderer.invoke('get-last-played'),
+  getLastPlayed: () =>
+    ipcRenderer.invoke('get-last-played') as Promise<
+      {
+        anime: { title: string; img: string }
+        watchTime: number
+        animeId: number
+        episodeId: number
+      }[]
+    >,
   renewSource: (animeId: number, episodeId: number) =>
     ipcRenderer.invoke('renew-episode-source', animeId, episodeId) as Promise<{
       source: string
