@@ -1,6 +1,5 @@
 <script lang="ts">
-  import Carousel from '../lib/components/Carousel.svelte';
-
+	import Carousel from '../lib/components/Carousel.svelte';
 	import { Rating } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import { CardPlaceholder, Popover } from 'flowbite-svelte';
@@ -40,14 +39,14 @@
 		<h1 class="text-3xl font-black mx-10">Continue Watching</h1>
 		<div class="flex gap-16 mx-10 my-10">
 			{#each result as episode}
-				<a href="/episode?animeId={episode.animeId}&episodeId={episode.episodeId}">
-					<div class="whitespace-nowrap flex flex-col gap-3">
-						<img src={episode.anime.img} class="h-60 object-cover rounded-md" alt={episode.anime.title}>
-						<span class="text-xl text-ellipsis overflow-hidden font-bold w-40" style=" display: inline-block;overflow: hidden;white-space: nowrap;">{episode.anime.title}</span>
-						<span class="text-sm text-slate-400">Episode {episode.episodeId}</span>
-						<ProgressBar value={episode.watchTime} max={episode.length} />
-					</div>
-				</a>
+			<a href="/episode?animeId={episode.animeId}&episodeId={episode.episodeId}">
+				<div class="whitespace-nowrap flex flex-col gap-3">
+					<img src={episode.anime.img} class="h-60 object-cover rounded-md" alt={episode.anime.title}>
+					<span class="text-xl text-ellipsis overflow-hidden font-bold w-40" style=" display: inline-block;overflow: hidden;white-space: nowrap;">{episode.anime.title}</span>
+					<span class="text-sm text-slate-400">Episode {episode.episodeId}</span>
+					<ProgressBar value={episode.watchTime} max={episode.length} />
+				</div>
+			</a>
 			{/each}
 		</div>
 	</section>

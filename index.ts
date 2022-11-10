@@ -15,9 +15,6 @@ console.log({ loadPath })
 
 app.enableSandbox()
 
-// disable cors checking 
-app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
-
 const isDev = !app.isPackaged
 
 let currentWindow: BrowserWindow
@@ -27,6 +24,10 @@ const createWindow = () => {
   console.log({ preloadPath })
   const win = new BrowserWindow({
     webPreferences: {
+      sandbox: true,
+      contextIsolation: true,
+      nodeIntegration: false,
+      webSecurity: true,
       preload: join(__dirname, '/electron-src/preload.js'),
     },
     show: false,
@@ -38,6 +39,13 @@ const createWindow = () => {
   webContents.on('did-finish-load', () => {
     webContents.setZoomFactor(1)
   })
+
+  webContents.session.setPermissionCheckHandler(
+    (webContent, permission, origin, details) => {
+      // deny all permissions.
+      return false
+    },
+  )
 
   win.maximize()
 
@@ -54,6 +62,22 @@ const createWindow = () => {
   win.focus()
   return win
 }
+
+const allowedOrigin = ['http://localhost:5173', 'app-//']
+app.on('web-contents-created', (event, webContent) => {
+  webContent.on('will-navigate', (event, url) => {
+    const parsedUrl = new URL(url)
+
+    // if the url is not within allowedOrigin, prevent navigating to it.
+    if (!allowedOrigin.includes(parsedUrl.origin)) {
+      console.log(
+        'Unknown origin navigation detected. Origin: ',
+        parsedUrl.origin,
+      )
+      event.preventDefault()
+    }
+  })
+})
 
 app.whenReady().then(() => {
   if (currentWindow) {
