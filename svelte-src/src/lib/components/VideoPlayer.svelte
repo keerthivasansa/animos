@@ -18,9 +18,27 @@
 		});
 	}
 
+	async function isSourceExpired(url:string): Promise<boolean> {
+		return new Promise((res, rej) => {
+			const xhr = new XMLHttpRequest();
+			
+			xhr.open("HEAD", url);
+
+			xhr.onload = () => res(false);
+			xhr.onerror = () => res(true);
+
+			xhr.send();
+		})
+	}
+
 	async function initVideoPlayer(): Promise<Plyr> {
 		console.log('src:', src);
 		console.log('type: ', type);
+		let linkExpired = await isSourceExpired(src);
+		if (linkExpired) {
+			console.log("Link expired, fetching new link . . .")
+			src = (await window.api.renewSource(animeMalId, episodeId)).source
+		}
 		return new Promise((res, _) => {
 			const video = document.getElementById('player') as HTMLVideoElement;
 			video.onerror = (event, src, line, col, err) => {

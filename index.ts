@@ -65,9 +65,18 @@ const createWindow = () => {
 
 const allowedOrigin = ['http://localhost:5173', 'app-//']
 app.on('web-contents-created', (event, webContent) => {
+  webContent.session.webRequest.onHeadersReceived((details, cb) => {
+    cb({
+      responseHeaders: Object.assign(
+        {
+          'Access-Control-Allow-Origin': 'http://localhost:5173, app-//',
+        },
+        details.responseHeaders,
+      ),
+    })
+  })
   webContent.on('will-navigate', (event, url) => {
     const parsedUrl = new URL(url)
-
     // if the url is not within allowedOrigin, prevent navigating to it.
     if (!allowedOrigin.includes(parsedUrl.origin)) {
       console.log(
