@@ -7,6 +7,7 @@
 	export let type = '';
 	export let episodeId: number;
 	export let animeMalId: number;
+	export let updateVideoLength = false;
 
 	function updateQuality(newQuality: number) {
 		window.hls.levels.forEach((level: any, levelIndex: number) => {
@@ -68,11 +69,32 @@
 		});
 	}
 
+	function sleep(ms:number) {
+		return new Promise((res, rej) => setTimeout(res, ms));
+	}
+
+	async function savePlayback() {
+			console.log("Player ready");
+			if (updateVideoLength) {
+				console.log("Starting episode for first time, episode length:",  window.player.duration);
+				window.api.setEpisodeLength(animeMalId, episodeId, window.player.duration);
+			}
+			let watchTime = 0;
+			// using while loop to make the loop wait for previous update to process.
+			console.log("Should save:", watchTime <= window.player.duration)
+			while (watchTime <= window.player.duration) {
+				console.log("Saving playback")
+				// remove decimals
+				watchTime = parseInt(window.player.currentTime.toFixed(0));
+				await window.api.setWatchTime(animeMalId, episodeId, watchTime);
+				await sleep(5000);
+			}
+	}
+
 	onMount(async () => {
 		// default options with no quality update in case Hls is not supported
 
 		let player = await initVideoPlayer();
-		let updateVideoLength = false;
 
 		player.on('error', (err) => {
 			console.log('Plyr error:');
@@ -82,10 +104,6 @@
 		window.player = player;
 
 		let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
-		console.log({PrevwatchTime})
-		if (PrevwatchTime == 0){
-			updateVideoLength = true;
-		}
 
 		await player.play();
 		player.currentTime = PrevwatchTime;
@@ -99,17 +117,7 @@
 			window.api.fullscreen(false);
 		});
 
-		player.on('canplay', () => {
-			console.log("Player ready");
-			if (updateVideoLength) {
-				console.log("Starting episode for first time, episode length:",  player.duration);
-				window.api.setEpisodeLength(animeMalId, episodeId, player.duration);
-			}
-			setInterval(async () => {
-				let watchTime = parseInt(player.currentTime.toString());
-				await window.api.setWatchTime(animeMalId, episodeId, watchTime);
-			}, 7500);
-		});
+		player.on('playing', _ => savePlayback());
 	});
 </script>
 

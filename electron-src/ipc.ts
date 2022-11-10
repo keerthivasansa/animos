@@ -83,6 +83,7 @@ async function savePlayback(animeId: number, episodeId: number, time: number) {
     },
     data: { lastWatched: new Date(), watchTime: time },
   })
+  return "okay"
 }
 
 ipcMain.handle(

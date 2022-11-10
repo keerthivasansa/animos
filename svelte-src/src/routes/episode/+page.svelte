@@ -107,7 +107,7 @@
 							<span class="my-4">{ep.episodeId}. {ep.title}</span>
 							{#if ep.length}
 								<div class="my-2">
-									<ProgressBar value={ep.watchTime} max={ep.length} />
+									<ProgressBar value={ep.watchTime} max={ep.length}/>
 								</div>
 								<!-- <ProgressBar value={ep.watchTime} max={ep.length} /> -->
 							{/if}
