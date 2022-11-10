@@ -37,8 +37,8 @@
 </script>
 
 <!-- TODO implement infinite scrolling -->
-<section class="w-full mt-10 py-3 slider relative">
-	<button on:click={prevSlide} class="nav-btn -left-5">
+<div class="w-full mt-10 py-3 slider relative">
+	<button on:click={prevSlide} class="nav-btn left-0 top-0">
 		<div class="w-8">
 			<FaPrev/>
 		</div>
@@ -49,12 +49,12 @@
 			<CoverAnime src={an.img} title={an.title}/>			
 		{/each}
 	</div>
-	<button on:click={nextSlide} class="nav-btn -right-5">
+	<button on:click={nextSlide} class="nav-btn right-0 top-0">
 		<div class="w-8">
 			<FaNext></FaNext>
 		</div>
 	</button>
-</section>
+</div>
 
 <style>
 	.nav-btn {

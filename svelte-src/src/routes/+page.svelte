@@ -4,6 +4,7 @@
 	import { Rating } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import { CardPlaceholder, Popover } from 'flowbite-svelte';
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
 
 	let popularAnime: AnimePopular[] = [];
 
@@ -44,9 +45,7 @@
 						<img src={episode.anime.img} class="h-60 object-cover rounded-md" alt={episode.anime.title}>
 						<span class="text-xl text-ellipsis overflow-hidden font-bold w-40" style=" display: inline-block;overflow: hidden;white-space: nowrap;">{episode.anime.title}</span>
 						<span class="text-sm text-slate-400">Episode {episode.episodeId}</span>
-						<div class="w-full rounded-lg bg-slate-600 h-2 relative">
-							<div class="h-full rounded-lg bg-white" style="width:{parseInt(((episode.watchTime / episode.length) * 100).toString())}%"></div>
-						</div>
+						<ProgressBar value={episode.watchTime} max={episode.length} />
 					</div>
 				</a>
 			{/each}

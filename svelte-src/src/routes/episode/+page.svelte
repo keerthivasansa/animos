@@ -4,8 +4,11 @@
 	import type { Episode } from 'prisma/prisma-client';
 	import FaPlay from 'svelte-icons/fa/FaPlay.svelte';
 	import { onMount } from 'svelte';
+	import { Progressbar } from 'flowbite-svelte';
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
 
 	let animeId: number;
+	let updateVideoLength = false;
 	let episodeId: number;
 	let result: {
 		currentEp: Episode;
@@ -36,6 +39,8 @@
 		let allEpisodes = await window.api.getEpisodes(animeId);
 		let src = await window.api.getEpisode(animeId, episodeId);
 		console.timeEnd('new anime');
+		if (!src.length)
+			updateVideoLength = true;
 		result = {
 			currentEp: src,
 			allEpisodes
@@ -67,11 +72,7 @@
 				<div class="animate-pulse bg-slate-700 w-52 h-10 rounded-lg" />
 			</div>
 		{:else}
-			{#if currentSrc == result.currentEp.source}
-				<VideoPlayer src={currentSrc} animeMalId={animeId} {episodeId} />
-			{:else}
-				<VideoPlayer src={currentSrc} animeMalId={animeId} {episodeId} />
-			{/if}
+			<VideoPlayer src={currentSrc} updateVideoLength={updateVideoLength} animeMalId={animeId} {episodeId} />
 			<div class="mx-5 my-4">
 				<h3 class="text-xl font-bold">{result.currentEp.title}</h3>
 				<br />
@@ -105,11 +106,12 @@
 							>
 							<span class="my-4">{ep.episodeId}. {ep.title}</span>
 							{#if ep.length}
-							
-							<div class="w-full rounded-lg bg-slate-600 my-4 h-2 relative">
-								<div class="h-full rounded-lg" style="width:{parseInt(((ep.watchTime / ep.length) * 100).toString())}%; background: var(--accent-color)"></div>
-							</div>
-						{/if}
+								<div class="my-2">
+									<ProgressBar value={ep.watchTime} max={ep.length} />
+								</div>
+								<!-- <ProgressBar value={ep.watchTime} max={ep.length} /> -->
+							{/if}
+
 						</button>
 						
 					{/each}

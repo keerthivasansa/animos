@@ -3,22 +3,23 @@
 @tailwind components;
 @tailwind utilities;
 
-.duration-250 {
-    transition-duration: 275ms;
-}
-
 :root {
     --primary-blue: rgb(241, 171, 42);
     --accent-color: var(--primary-blue);
     --plyr-color-main: var(--accent-color);
 }
 
+.duration-250 {
+    transition-duration: 275ms;
+}
+
+
 .btn-accent {
     background: var(--accent-color);
 }
 
 section {
-    @apply px-4 py-10;
+    @apply px-4 py-10 mx-10;
     max-width: 97.5vw;
 }
 
