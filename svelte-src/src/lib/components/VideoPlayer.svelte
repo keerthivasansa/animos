@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Hls from 'hls.js';
 	import Plyr from 'plyr';
+	import type  { Options as PlyrOptions } from "plyr";
 	import { onDestroy, onMount } from 'svelte';
 
 	export let src = '';
@@ -45,14 +46,12 @@
 				console.log('video error:');
 				console.log(err);
 			};
-			const defaultOptions: {
-				quality?: {
-					default: number;
-					options: number[];
-					forced: boolean;
-					onChange: (num: number) => void;
-				};
-			} = {};
+			const defaultOptions: PlyrOptions = {
+				keyboard: {
+					focused: true, 
+					global: true
+				}
+			};
 			if (Hls.isSupported()) {
 				const hls = new Hls();
 				hls.loadSource(src);
@@ -131,6 +130,7 @@
 
 <div>
 	<video id="player" controls style="border-radius: 12px;">
-		<source {src} label="480p" />
+		<source {src} />
+		<track src="" kind="captions">
 	</video>
 </div>
