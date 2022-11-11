@@ -4,8 +4,8 @@
 	import type { Episode } from 'prisma/prisma-client';
 	import FaPlay from 'svelte-icons/fa/FaPlay.svelte';
 	import { onMount } from 'svelte';
-	import { Progressbar } from 'flowbite-svelte';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import { State } from '$lib/types';
 
 	let animeId: number;
 	let updateVideoLength = false;
@@ -15,12 +15,6 @@
 		allEpisodes: Episode[];
 	};
 	let currentSrc = '';
-
-	enum State {
-		Loading,
-		Finished
-	}
-
 	let pageState: State = State.Loading;
 
 	async function fetchEpisodeSrc() {

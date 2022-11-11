@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, session } from 'electron'
 import serve from 'electron-serve'
 import { join } from 'path'
 
@@ -20,12 +20,17 @@ const isDev = !app.isPackaged
 let currentWindow: BrowserWindow
 
 const createWindow = () => {
+  let iconPath = join(__dirname, '../build/icons/icon.ico')
   let preloadPath = join(__dirname, '/electron-src/preload.js')
-  console.log({ preloadPath })
+  console.log({ preloadPath, iconPath })
   const win = new BrowserWindow({
+    title: 'animos',
+    icon: iconPath,
+    titleBarStyle: 'customButtonsOnHover',
     webPreferences: {
       sandbox: true,
       contextIsolation: true,
+      disableBlinkFeatures: 'Auxclick',
       nodeIntegration: false,
       webSecurity: true,
       preload: join(__dirname, '/electron-src/preload.js'),
@@ -40,12 +45,7 @@ const createWindow = () => {
     webContents.setZoomFactor(1)
   })
 
-  webContents.session.setPermissionCheckHandler(
-    (webContent, permission, origin, details) => {
-      // deny all permissions.
-      return false
-    },
-  )
+  win.webContents
 
   win.maximize()
 
@@ -63,22 +63,49 @@ const createWindow = () => {
   return win
 }
 
-const allowedOrigin = ['http://localhost:5173', 'app-//']
+const appOrigin = ['http://localhost:5173', 'app-//']
+const currentOrigin = isDev ? 'http://localhost:5173' : 'app-//'
+const appOriginString = appOrigin.join(',')
+
+
+// Checks for allow-origin header, if it is present with wildcard, returns it otherwise sets the origin of the application as the header value.
+function setAllowOrigin(
+  headers: Record<string, string[]>,
+  origin: string,
+): Record<string, string[]> {
+  let originHeaders = [
+    'access-control-allow-origin',
+    'Access-Control-Allow-Origin',
+  ]
+  for (let header of originHeaders) {
+    if (Object.keys(headers).includes(header)) {
+      if (headers[header].length == 1 && headers[header][0] == '*')
+        return headers
+      else {
+        headers[header] = [origin]
+        return headers
+      }
+    }
+  }
+}
+
 app.on('web-contents-created', (event, webContent) => {
   webContent.session.webRequest.onHeadersReceived((details, cb) => {
+    let responseHeaders = setAllowOrigin(details.responseHeaders, currentOrigin)
     cb({
-      responseHeaders: Object.assign(
-        {
-          'Access-Control-Allow-Origin': 'http://localhost:5173, app-//',
-        },
-        details.responseHeaders,
-      ),
+      responseHeaders,
     })
   })
+  session.defaultSession.setPermissionRequestHandler(
+    (webContent, permission, cb) => {
+      // deny all permissions.
+      cb(false)
+    },
+  )
   webContent.on('will-navigate', (event, url) => {
     const parsedUrl = new URL(url)
     // if the url is not within allowedOrigin, prevent navigating to it.
-    if (!allowedOrigin.includes(parsedUrl.origin)) {
+    if (!appOrigin.includes(parsedUrl.origin)) {
       console.log(
         'Unknown origin navigation detected. Origin: ',
         parsedUrl.origin,

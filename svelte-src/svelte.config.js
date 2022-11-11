@@ -18,6 +18,15 @@ const config = {
 		prerender: {
 			entries: []
 		},
+		csp: {
+			mode: 'auto',
+			directives: {
+				'script-src': ['self', 'unsafe-inline', 'blob:'],
+				'style-src': ['self', 'cdn.plyr.io', 'fonts.googleapis.com'],
+				'media-src': ['blob:', 'cdn.gogocdn.stream', '*.vrv.co'],
+				'object-src': ['none'],
+			}
+		}
 	}
 };
 
