@@ -37,7 +37,7 @@ const createWindow = () => {
       preload: join(__dirname, '/electron-src/preload.js'),
     },
     show: false,
-    frame: false,
+    frame: true,
     autoHideMenuBar: true,
   })
 
