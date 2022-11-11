@@ -87,10 +87,6 @@
 		});
 	}
 
-	function sleep(ms:number) {
-		return new Promise((res, rej) => setTimeout(res, ms));
-	}
-
 	onMount(async () => {
 		// default options with no quality update in case Hls is not supported
 
@@ -116,6 +112,14 @@
 		player.on('exitfullscreen', () => {
 			window.api.fullscreen(false);
 		});
+
+		player.on("canplay", () => {
+			if (updateVideoLength)	{
+				console.log("Setting episode length");
+				let length = parseInt(player.duration.toFixed(0));
+				window.api.setEpisodeLength(animeMalId, episodeId, length);
+			}
+		})
 
 	});
 
