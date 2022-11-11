@@ -99,7 +99,12 @@ app.on('web-contents-created', (event, webContent) => {
   session.defaultSession.setPermissionRequestHandler(
     (webContent, permission, cb) => {
       // deny all permissions.
-      cb(false)
+      const url = webContent.getURL();
+      console.log(url, "is requesting", permission)
+      if (permission == "fullscreen")
+        cb(true);
+      else
+        cb(false);
     },
   )
   webContent.on('will-navigate', (event, url) => {

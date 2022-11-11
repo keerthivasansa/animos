@@ -16,6 +16,7 @@ const endpoints = {
   getWatchTime: (animeId: number, episodeId: number) =>
     ipcRenderer.invoke('get-playtime', animeId, episodeId) as Promise<number>,
     setEpisodeLength: (animeId:number, episodeId:number, length:number) => ipcRenderer.send("episode:set-length", animeId, episodeId, length),
+    sendMessage: (msg:string) => ipcRenderer.send("message", msg),
   getLastPlayed: () =>
     ipcRenderer.invoke('get-last-played') as Promise<
       {

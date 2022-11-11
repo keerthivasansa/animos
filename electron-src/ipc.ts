@@ -119,6 +119,10 @@ ipcMain.handle(
   },
 )
 
+ipcMain.on("message", (event, msg) => {
+  console.log(msg);
+})
+
 ipcMain.handle(
   'renew-episode-source',
   async (event, animeId: number, episodeId: number) => {
