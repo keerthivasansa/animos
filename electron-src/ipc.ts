@@ -1,4 +1,4 @@
-import { ipcMain, dialog } from 'electron'
+import { ipcMain, dialog, app } from 'electron'
 import {
   standardGetInfo,
   standardSearch,
@@ -27,16 +27,17 @@ ipcMain.handle(
   },
 )
 
-ipcMain.on("episode:set-length", async (event, animeId, episodeId, length) => {
+ipcMain.on('episode:set-length', async (event, animeId, episodeId, length) => {
   await prisma.episode.update({
     where: {
       animeId_episodeId: {
-        animeId, episodeId
-      }
-    }, 
+        animeId,
+        episodeId,
+      },
+    },
     data: {
-      length: parseInt(length)
-    }
+      length: parseInt(length),
+    },
   })
 })
 
@@ -51,7 +52,7 @@ ipcMain.handle('get-last-played', async (event) => {
         },
       },
       episodeId: true,
-      length: true, 
+      length: true,
       animeId: true,
       watchTime: true,
     },
@@ -72,7 +73,6 @@ ipcMain.handle('search-anime', async (event, keyw: string) => {
   return newDocs
 })
 
-
 async function savePlayback(animeId: number, episodeId: number, time: number) {
   await prisma.episode.update({
     where: {
@@ -83,14 +83,14 @@ async function savePlayback(animeId: number, episodeId: number, time: number) {
     },
     data: { lastWatched: new Date(), watchTime: time },
   })
-  return "okay"
+  return 'okay'
 }
 
 ipcMain.handle(
   'set-watchtime',
   async (event, animeId: number, episodeId: number, time: number) => {
-      await savePlayback(animeId, episodeId, time);
-      return
+    await savePlayback(animeId, episodeId, time)
+    return
   },
 )
 
@@ -119,14 +119,19 @@ ipcMain.handle(
   },
 )
 
-ipcMain.on("message", (event, msg) => {
-  console.log(msg);
+ipcMain.on('message', (event, msg) => {
+  console.log(msg)
 })
 
 ipcMain.handle(
   'renew-episode-source',
   async (event, animeId: number, episodeId: number) => {
-    console.log("Episode source for ", animeId, episodeId, " has been reported to be expired. Renewing sources . . .")
+    console.log(
+      'Episode source for ',
+      animeId,
+      episodeId,
+      ' has been reported to be expired. Renewing sources . . .',
+    )
     let source = await renewEpisodeSource(animeId, episodeId)
     return source
   },

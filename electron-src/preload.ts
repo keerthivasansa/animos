@@ -1,3 +1,5 @@
+import { WindowState } from './types'
+
 const { contextBridge, ipcRenderer } = require('electron')
 
 const endpoints = {
@@ -15,15 +17,18 @@ const endpoints = {
     ipcRenderer.invoke('set-watchtime', animeMalId, episodeId, time),
   getWatchTime: (animeId: number, episodeId: number) =>
     ipcRenderer.invoke('get-playtime', animeId, episodeId) as Promise<number>,
-    setEpisodeLength: (animeId:number, episodeId:number, length:number) => ipcRenderer.send("episode:set-length", animeId, episodeId, length),
-    sendMessage: (msg:string) => ipcRenderer.send("message", msg),
+  setEpisodeLength: (animeId: number, episodeId: number, length: number) =>
+    ipcRenderer.send('episode:set-length', animeId, episodeId, length),
+  sendMessage: (msg: string) => ipcRenderer.send('message', msg),
+  changeWindowState: (state: WindowState) =>
+    ipcRenderer.send('window:state', state),
   getLastPlayed: () =>
     ipcRenderer.invoke('get-last-played') as Promise<
       {
         anime: { title: string; img: string }
         watchTime: number
-        animeId: number, 
-        length: number,
+        animeId: number
+        length: number
         episodeId: number
       }[]
     >,

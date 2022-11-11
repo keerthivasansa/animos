@@ -7,6 +7,7 @@ process.env.DATABASE_URL = 'file:./cache.db'
 
 // register all the ipc functions
 import './electron-src/ipc'
+import { WindowState } from './electron-src/types'
 
 // TODO add strong type support for electron files
 const loadPath = serve({ directory: 'output' })
@@ -20,7 +21,7 @@ const isDev = !app.isPackaged
 let currentWindow: BrowserWindow
 
 const createWindow = () => {
-  let iconPath = join(__dirname, '../build/icons/icon.ico')
+  let iconPath = join(__dirname, '../build/icons/favicon.ico')
   let preloadPath = join(__dirname, '/electron-src/preload.js')
   console.log({ preloadPath, iconPath })
   const win = new BrowserWindow({
@@ -36,6 +37,7 @@ const createWindow = () => {
       preload: join(__dirname, '/electron-src/preload.js'),
     },
     show: false,
+    frame: false,
     autoHideMenuBar: true,
   })
 
@@ -58,6 +60,21 @@ const createWindow = () => {
   ipcMain.on('fullscreen', (event, makeFullscreen: boolean) => {
     win.setFullScreen(makeFullscreen)
   })
+
+  ipcMain.on('window:state', (event, state: WindowState) => {
+    switch (state) {
+      case 'close':
+        win.close()
+        break
+      case 'maximise':
+        win.maximize()
+        break
+      case 'minimize':
+        win.minimize()
+        break
+    }
+  })
+
   win.show()
   win.focus()
   return win
@@ -66,7 +83,6 @@ const createWindow = () => {
 const appOrigin = ['http://localhost:5173', 'app-//']
 const currentOrigin = isDev ? 'http://localhost:5173' : 'app-//'
 const appOriginString = appOrigin.join(',')
-
 
 // Checks for allow-origin header, if it is present with wildcard, returns it otherwise sets the origin of the application as the header value.
 function setAllowOrigin(
@@ -99,12 +115,10 @@ app.on('web-contents-created', (event, webContent) => {
   session.defaultSession.setPermissionRequestHandler(
     (webContent, permission, cb) => {
       // deny all permissions.
-      const url = webContent.getURL();
-      console.log(url, "is requesting", permission)
-      if (permission == "fullscreen")
-        cb(true);
-      else
-        cb(false);
+      const url = webContent.getURL()
+      console.log(url, 'is requesting', permission)
+      if (permission == 'fullscreen') cb(true)
+      else cb(false)
     },
   )
   webContent.on('will-navigate', (event, url) => {

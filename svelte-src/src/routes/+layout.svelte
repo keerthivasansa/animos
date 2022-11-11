@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import '../app.postcss';
 
 	import FaSearch from 'svelte-icons/fa/FaSearch.svelte';
@@ -12,10 +12,10 @@
 	});
 </script>
 
-<main class="dark:bg-slate-900 dark:text-white">
+<main class="dark:bg-slate-900 overflow-hidden dark:text-white">
 	<nav
 		style="z-index: 50;"
-		class="flex backdrop-blur-md dark:bg-slate-800 bg-opacity-50 p-4 py-6 pr-10 sticky top-0 items-center justify-between border-b-2 border-slate-200 dark:border-slate-800"
+		class="flex backdrop-blur-md dark:bg-slate-800 bg-opacity-50 p-4 py-6 pr-10 sticky items-center justify-between border-b-2 border-slate-200 dark:border-slate-800"
 	>
 		<a href="/">
 			<h1 class="mx-2 text-center text-3xl font-black">animos</h1>
@@ -38,13 +38,17 @@
 			</button>
 		</form>
 	</nav>
-	<slot />
+	<div class="relative">
+		<div class="absolute overflow-auto top-0 left-0 right-0 max-h-screen pb-32">
+			<slot />
+		</div>
+	</div>
 </main>
 
 <style>
-	main {
-		min-width: 100vw;
-		max-width: 100vw;
-		min-height: 100vh;
+	:global(body), main {
+		overflow: hidden;
+		width: 100vw;
+		height: 100vh;
 	}
 </style>

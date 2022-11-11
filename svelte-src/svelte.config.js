@@ -18,6 +18,9 @@ const config = {
 		prerender: {
 			entries: []
 		},
+		alias: {
+			"$electron/*": "../electron-src/*"
+		},
 		csp: {
 			mode: 'auto',
 			directives: {
