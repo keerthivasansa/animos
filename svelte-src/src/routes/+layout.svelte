@@ -39,7 +39,7 @@
 		</form>
 	</nav>
 	<div class="relative">
-		<div class="absolute overflow-auto top-0 left-0 right-0 max-h-screen pb-32">
+		<div class="absolute overflow-y-auto overflow-x-hidden top-0 left-0 right-0 max-h-screen pb-32">
 			<slot />
 		</div>
 	</div>

@@ -10,8 +10,9 @@
 
 	export let anime:CoverAnime[];
 
-	let sliderLeft = "-18rem";
 	let maxSlideLeft = -(anime.length * 21);
+	let maxSlideRight = 2;
+	let sliderLeft = `${maxSlideRight}rem`;
 
 	function nextSlide() {
 		let currentMargin = parseInt(sliderLeft);
@@ -25,11 +26,11 @@
 
 	function prevSlide() {
 		let currentMargin = parseInt(sliderLeft);
-		if (currentMargin == 0)
+		if (currentMargin == maxSlideRight)
 			return;
 		let newVal = currentMargin + 24
 		console.log(newVal);
-		newVal = newVal < 0 ? newVal : 0;
+		newVal = newVal < maxSlideRight ? newVal : maxSlideRight;
 		sliderLeft = `${newVal}rem`;
 		console.log(sliderLeft);
 	}
@@ -56,8 +57,11 @@
 	</button>
 </div>
 
-<style>
+<style lang="postcss">
 	.nav-btn {
-		@apply absolute transition-all ease-linear duration-150 opacity-0 hover:opacity-100 w-40 h-full bg-opacity-80 justify-center items-center flex top-0 bg-black z-30 px-3 py-2 rounded-lg font-black text-white;
+		@apply absolute transition-all ease-linear duration-150 opacity-0 w-40 h-full bg-opacity-80 justify-center items-center flex top-0 bg-black z-30 px-3 py-2 rounded-lg font-black text-white;
+	}
+	.nav-btn:hover {
+		opacity: 1;
 	}
 </style>
