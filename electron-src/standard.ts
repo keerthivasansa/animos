@@ -1,12 +1,11 @@
 import { Episode } from '@prisma/client'
-import { fetchGogoanimeEpisodeSource, fetchGogoAnimeInfo } from './scraper'
+import { fetchGogoAnimeInfo } from './scraper'
 import { fetchAnimixEpisodeSource, fetchAnimixAnimeInfo } from './animix'
 import express from 'express'
 import axios from 'axios'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from './db'
 
 const app = express()
-const prisma = new PrismaClient()
 
 function selectFields(obj, fields) {
   let newobj = {}
@@ -74,22 +73,42 @@ export async function standardGetInfo(malId: number) {
     where: { malId },
   })
   if (!doc) {
-    return {}
+    // from search, create the entire document
+    let animixInfo = (await fetchAnimixAnimeInfo({ malId })) as any;
+    doc = await prisma.anime.create({
+      data: {
+        animeId: animixInfo.animeId, 
+        malId: parseInt(animixInfo.mal_id),
+        img: animixInfo.animeImg,
+        totalEpisodes: animixInfo.episodes, 
+        currentEp: 0, 
+        englishTitle: '',
+        score: animixInfo.score, 
+        status: animixInfo.status, 
+        synopsis: animixInfo.synopsis, 
+        title: animixInfo.animeTitle, 
+        type: ''
+      }
+    })
   }
   if (!doc.animeId || !doc.totalEpisodes) {
     console.log('Missing one of the required fields')
-    let doc2 = (await fetchAnimixAnimeInfo({ malId })) as any
-    let { animeId, episodes } = doc2
-    if (!episodes) {
-      let info = await fetchGogoAnimeInfo({ animeId })
-      episodes = info.eptotal
-      console.log('got episode count from gogoanime: ', episodes)
+    let animeid = doc.animeId;
+    if (!animeid) {
+      let animixInfo = (await fetchAnimixAnimeInfo({ malId })) as any;
+      doc.animeId = animixInfo.animeId
+      doc.totalEpisodes = animixInfo.episodes
+    } 
+    if (!doc.totalEpisodes) {
+      let info = await fetchGogoAnimeInfo({ animeId: doc.animeId })
+      doc.totalEpisodes = parseInt(info.eptotal)
+      console.log('got episode count from gogoanime: ', doc.totalEpisodes)
     }
     doc = await prisma.anime.update({
       where: { malId },
-      data: { animeId, totalEpisodes: parseInt(episodes) },
+      data: { animeId: doc.animeId, totalEpisodes: doc.totalEpisodes },
     })
-    console.log(`Mapped animeId: ${animeId} to anime with malId: ${malId}`)
+    console.log(`Mapped animeId: ${doc.animeId} to anime with malId: ${doc.malId}`)
   }
   return doc
 }

@@ -13,6 +13,7 @@
 
 	async function getAnime() {
 		let id = $page.url.searchParams.get('animeId');
+		console.log("Feching details for animeId:", id)
 		if (!id) {
 			location.href = '/';
 			id = '';

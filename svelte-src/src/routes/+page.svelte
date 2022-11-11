@@ -3,14 +3,15 @@
 	import { Rating } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import { CardPlaceholder, Popover } from 'flowbite-svelte';
-	import ProgressBar from '$lib/components/ProgressBar.svelte';
-	import Slider from '$lib/components/ContinueSlider.svelte';
 	import ContinueSlider from '$lib/components/ContinueSlider.svelte';
 
 	let popularAnime: AnimePopular[] = [];
 
-	async function getPopular() {
-		return window.api.popularAnime();
+	async function getPopular(): Promise<AnimePopular[]> {
+		let popular = await window.api.popularAnime();
+		console.log("Popular");
+		console.log(popular);
+		return popular;
 	}
 	
 	async function getLastPlayed() {
@@ -53,7 +54,7 @@
 		<!-- //	TODO each card on hover with a delay should scale with ease, then info should slide from side -->
 			{#each popularAnime as anime}
 				<div class="flex flex-col gap-5 ">
-					<a href="/" id="anime-{anime.mal_id}">
+					<a href="/info?animeId={anime.mal_id}" id="anime-{anime.mal_id}">
 						<div>
 							<img
 								src={anime.animeImg}
