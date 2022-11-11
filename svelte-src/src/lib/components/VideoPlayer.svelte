@@ -86,6 +86,11 @@
 		});
 	}
 
+	function savePlayback() {
+		let watchTime = parseInt(window.player.currentTime.toFixed(0));
+		window.api.setWatchTime(animeMalId, episodeId, watchTime);
+	}
+
 	onMount(async () => {
 		// default options with no quality update in case Hls is not supported
 
@@ -118,14 +123,12 @@
 				let length = parseInt(player.duration.toFixed(0));
 				window.api.setEpisodeLength(animeMalId, episodeId, length);
 			}
+			setInterval(savePlayback, 3000);
 		})
 
 	});
 
-	onDestroy(() => {
-		let watchTime = parseInt(window.player.currentTime.toFixed(0));
-		window.api.setWatchTime(animeMalId, episodeId, watchTime);
-	})
+	onDestroy(savePlayback);
 </script>
 
 <div>

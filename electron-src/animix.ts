@@ -60,8 +60,18 @@ export const fetchSearchAnimix = async ({
   }
 }
 
-export const fetchAnimixRecentEpisodes = async ({ list = [] }:{
-    list: { episodeTitle: any; animeId: any; releaseTimeUnix: number; mal_id: any; episodeNum: any; episodes: any; animeImg: string | undefined; }[]
+export const fetchAnimixRecentEpisodes = async ({
+  list = [],
+}: {
+  list: {
+    episodeTitle: any
+    animeId: any
+    releaseTimeUnix: number
+    mal_id: any
+    episodeNum: any
+    episodes: any
+    animeImg: string | undefined
+  }[]
 }) => {
   try {
     const res = await axios.get(animixBase + 'rsssub.xml')
@@ -91,8 +101,10 @@ export const fetchAnimixRecentEpisodes = async ({ list = [] }:{
   }
 }
 
-export const fetchAnimixAllAnime = async ({ list = [] }:{
-    list:{ animeTitle: any; animeId: any; }[]
+export const fetchAnimixAllAnime = async ({
+  list = [],
+}: {
+  list: { animeTitle: any; animeId: any }[]
 }) => {
   try {
     const fetchAnimixAll = await axios.get(animixAll, headerOption)
@@ -128,8 +140,7 @@ export const fetchAnimixAnimeInfo = async ({ malId, list = {} }) => {
       .get(animixBase + `assets/rec/${malId}.json`, headerOption)
       .catch((err) => {})
 
-    if (!fetchInfoLinks)
-        return;
+    if (!fetchInfoLinks) return
     list = {
       animeTitle: fetchInfo.data.title,
       animeId: fetchInfoLinks?.data['Gogoanime']
@@ -186,9 +197,9 @@ export const fetchAnimixEpisodeInfo = async ({ animeId, list = {} }) => {
 
     list = {
       animeTitle: $('span.animetitle').text(),
-      mal_id:( $('body > script')
-        .get()[0]
-        .children[0] as any).data.match(/var malid = '(.*)';/)[1],
+      mal_id: ($('body > script').get()[0].children[0] as any).data.match(
+        /var malid = '(.*)';/,
+      )[1],
       genres: $('span#genredata').text(),
       status: $('span#status').text(),
       total_episodes: epList.eptotal,
@@ -223,7 +234,6 @@ export const fetchAnimixEpisodeSource = async ({ episodeId }) => {
     const res = await axios.get(animixBase + `v1/${animeId}`, headerOption)
     const $ = load(res.data)
     const epList = JSON.parse($('#epslistplace').text())
-
     if (epList.extra) {
       if (episodeNum in epList.extra) {
         episodeGogoLink = new URL('https:' + epList.extra[episodeNum])

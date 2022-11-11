@@ -5,6 +5,7 @@ Special thanks to IGRohan
 import axios from 'axios'
 import { load } from 'cheerio'
 import { getAjaxParams, decryptAjaxResponse } from './helper'
+import { TrendingPoster } from './types'
 
 const gogoBase = 'https://gogoanime.lu/'
 const gogoBase2 = 'https://gogoanime.gg/'
@@ -197,6 +198,32 @@ interface PopularAnime {
   views?: string
   score: number
 }
+
+
+async function getMalId(kitsuId:string) {
+  console.log("getting mal id for ", kitsuId)
+  let res = await axios.get("https://kitsu.io/api/edge/mappings/" + kitsuId);
+  let data = res.data;
+  return parseInt(data.data.attributes.externalId)
+}
+
+export async function getTrendingPoster(): Promise<TrendingPoster[]> {
+  let result = await axios.get("https://kitsu.io/api/edge/trending/anime");
+  let data = result.data;
+  let arr = await Promise.all(data.data.map(async (anime, index) => {
+    let d = anime.attributes;
+    if (index == 0)
+      console.dir(anime.relationships.mappings);
+    return {
+      img: d.coverImage.original, 
+      title: d.titles.en ?? d.canonicalTitle, 
+      score: parseInt(d.averageRating) / 10, 
+      malId: await getMalId(anime.id)
+    };
+  }))
+  return arr;
+}
+
 
 export const fetchPopular = async ({
   list = [],

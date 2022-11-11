@@ -1,4 +1,4 @@
-import { WindowState } from './types'
+import { TrendingPoster, WindowState } from './types'
 
 const { contextBridge, ipcRenderer } = require('electron')
 
@@ -37,6 +37,9 @@ const endpoints = {
       source: string
       sourceBackup: string
     }>,
+
+  getPoster: () =>
+    ipcRenderer.invoke('home:get-poster') as Promise<TrendingPoster[]>,
 }
 
 export type EndpointType = typeof endpoints

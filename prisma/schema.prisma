@@ -10,6 +10,14 @@ datasource db {
   url      = "file:./cache.db?connection_limit=5"
 }
 
+model Poster {
+  created DateTime @updatedAt
+  malId   Int      @id
+  title   String
+  img     String
+  score   Float
+}
+
 model Settings {
   id             Int     @id
   currentAnime   String?

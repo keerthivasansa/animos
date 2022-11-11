@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { CardPlaceholder, Popover } from 'flowbite-svelte';
 	import ContinueSlider from '$lib/components/ContinueSlider.svelte';
+	import { applyAction } from '$app/forms';
 
 	let popularAnime: AnimePopular[] = [];
 
@@ -18,6 +19,13 @@
 		return window.api.getLastPlayed()
 	}
 
+	async function getPosters() {
+		let posters = await window.api.getPoster(); 
+		console.log("posters:")
+		console.log(posters);
+		return posters;
+	}
+
 	onMount(async () => {
 		console.log(popularAnime);
 		console.log("Last played:");
@@ -27,12 +35,12 @@
 
 
 <!-- The cards are not live, here as a template -->
-<Carousel anime={[
-	{img:"https://images7.alphacoders.com/418/418724.png", title:"Attack on Titan"},
-{img:"https://images3.alphacoders.com/111/thumb-1920-1116286.jpg", title:"Jujutsu Kaisen"},
-	{img:"https://wallpaperaccess.com/full/17350.jpg", title:"One piece"},
-	{img:"https://i.pinimg.com/originals/25/0f/b6/250fb6cc8daf145c13901b0f107260ee.jpg", title:"My Hero Academia"}
-]}></Carousel>
+{#await getPosters()}
+	Loading trending.
+{:then result} 
+<Carousel anime={result}></Carousel>
+{/await}
+
 
 
 {#await getLastPlayed()}
