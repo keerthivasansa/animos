@@ -44,6 +44,7 @@
         "github"
       ]
     },
+    "artifactName": "${productName}.${ext}",
     "asar": true,
     "directories": {
       "output": "out"

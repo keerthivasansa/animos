@@ -26,6 +26,10 @@
 
 <br/><br/>
 
+# Download
+The download links for various platforms can be found here:
+- [Windows](htt)
+
 # Features
 
 - Clean and minimal user interface 🌟
