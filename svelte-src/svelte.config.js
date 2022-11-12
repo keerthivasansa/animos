@@ -26,7 +26,7 @@ const config = {
 			directives: {
 				'script-src': ['self', 'unsafe-inline', 'blob:'],
 				'style-src': ['self', 'cdn.plyr.io', 'fonts.googleapis.com'],
-				'media-src': ['blob:', 'cdn.gogocdn.stream', '*.vrv.co'],
+				'media-src': ['*', 'blob:'],
 				'object-src': ['none'],
 			}
 		}

@@ -81,7 +81,7 @@ export async function standardGetInfo(malId: number) {
         animeId: animixInfo.animeId,
         malId: parseInt(animixInfo.mal_id),
         img: animixInfo.animeImg,
-        totalEpisodes: animixInfo.episodes,
+        totalEpisodes: animixInfo.episodes ?? 0,
         currentEp: 0,
         englishTitle: '',
         score: animixInfo.score,
