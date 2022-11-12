@@ -88,7 +88,7 @@
 		{/if}
 	</div>
 	<div class="episodes-container" style="margin-left: 65rem;">
-		<div class="my-14" style="width: 24rem;">
+		<div class="my-14" style="width: 23rem;">
 			<h3 class="text-2xl font-bold">Episodes</h3>
 			<div class="flex gap-4 my-5 flex-col episode-wrapper">
 				{#if pageState != State.Loading}

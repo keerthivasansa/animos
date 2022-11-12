@@ -42,7 +42,7 @@
       "output/**/*"
     ],
     "extraResources": [
-      "prisma/**/*",
+      "prisma/schema.prisma",
       "node_modules/.prisma/**/*",
       "node_modules/@prisma/client/**/*"
     ]
