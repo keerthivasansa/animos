@@ -131,7 +131,6 @@ export const fetchAnimixAnimeInfo = async ({ malId, list = {} }) => {
       return {
         error: 'No ID provided',
       }
-
     const fetchInfo = await axios.get(
       animixBase + `assets/mal/${malId}.json`,
       headerOption,

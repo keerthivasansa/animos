@@ -74,31 +74,32 @@ export async function standardGetInfo(malId: number) {
   })
   if (!doc) {
     // from search, create the entire document
-    let animixInfo = (await fetchAnimixAnimeInfo({ malId })) as any;
+    let animixInfo = (await fetchAnimixAnimeInfo({ malId })) as any
+    console.log({ malId, animixInfo })
     doc = await prisma.anime.create({
       data: {
-        animeId: animixInfo.animeId, 
+        animeId: animixInfo.animeId,
         malId: parseInt(animixInfo.mal_id),
         img: animixInfo.animeImg,
-        totalEpisodes: animixInfo.episodes, 
-        currentEp: 0, 
+        totalEpisodes: animixInfo.episodes,
+        currentEp: 0,
         englishTitle: '',
-        score: animixInfo.score, 
-        status: animixInfo.status, 
-        synopsis: animixInfo.synopsis, 
-        title: animixInfo.animeTitle, 
-        type: ''
-      }
+        score: animixInfo.score,
+        status: animixInfo.status,
+        synopsis: animixInfo.synopsis,
+        title: animixInfo.animeTitle,
+        type: '',
+      },
     })
   }
   if (!doc.animeId || !doc.totalEpisodes) {
     console.log('Missing one of the required fields')
-    let animeid = doc.animeId;
+    let animeid = doc.animeId
     if (!animeid) {
-      let animixInfo = (await fetchAnimixAnimeInfo({ malId })) as any;
+      let animixInfo = (await fetchAnimixAnimeInfo({ malId })) as any
       doc.animeId = animixInfo.animeId
       doc.totalEpisodes = animixInfo.episodes
-    } 
+    }
     if (!doc.totalEpisodes) {
       let info = await fetchGogoAnimeInfo({ animeId: doc.animeId })
       doc.totalEpisodes = parseInt(info.eptotal)
@@ -108,7 +109,9 @@ export async function standardGetInfo(malId: number) {
       where: { malId },
       data: { animeId: doc.animeId, totalEpisodes: doc.totalEpisodes },
     })
-    console.log(`Mapped animeId: ${doc.animeId} to anime with malId: ${doc.malId}`)
+    console.log(
+      `Mapped animeId: ${doc.animeId} to anime with malId: ${doc.malId}`,
+    )
   }
   return doc
 }
@@ -208,7 +211,7 @@ export async function standardEpisodeSrc(
   let gogoDoc = await fetchAnimixEpisodeSource({
     episodeId: `${animeId}-episode-${episodeId}`,
   })
-  console.log(gogoDoc);
+  console.log(gogoDoc)
   if (!gogoDoc) {
     throw new Error('Failed to get source for the given episode')
   }

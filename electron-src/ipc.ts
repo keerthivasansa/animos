@@ -8,26 +8,26 @@ import {
   renewEpisodeSource,
 } from './standard'
 import { prisma } from './db'
-import { getTrendingPoster } from './scraper'
+import { fetchTrendingPoster } from './scraper'
 
 ipcMain.handle('home:get-poster', async () => {
   let posters = await prisma.poster.findMany({
     where: {
       created: {
         // accept if it is not a week old yet.
-        gt: new Date(Date.now() - 24 * 86400 * 7),
+        gt: new Date(Date.now() - 24 * 86400 * 7 * 1000),
       },
     },
     orderBy: {
-      score: "desc", 
-      created: "asc"
+      index: "asc"
     }
   })
   if (posters.length > 0) return posters
-  let data = await getTrendingPoster()
+  let data = await fetchTrendingPoster()
   posters = data.map((dp) => {
     return { ...dp, created: new Date() }
   })
+  await prisma.poster.deleteMany({});
   await prisma.$transaction(posters.map((data) => prisma.poster.create({ data })))
   return posters;
 })

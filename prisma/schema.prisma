@@ -15,6 +15,7 @@ model Poster {
   malId   Int      @id
   title   String
   img     String
+  index   Int
   score   Float
 }
 

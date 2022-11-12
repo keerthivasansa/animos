@@ -1,19 +1,22 @@
 <script>
     export let src = "";
     export let title = "";
+    export let id = 0;
 </script>
 
 <div class="h-96 aspect-video rounded-lg outer relative" style="background-image: url('{src}');">
     <div class="inner">
         <span class="text-5xl text-white font-black">{title}</span>
-        <button>Watch Now</button>
+        <a href="/info?animeId={id}">
+            <button>Watch Now</button>
+        </a>
     </div>
 </div>
 
 <style>
     .outer {
         position:relative;
-        background-clip: content-box;
+        object-fit: contain;
         background-size: cover;
     }
     .inner {

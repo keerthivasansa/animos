@@ -34,9 +34,8 @@
 </script>
 
 
-<!-- The cards are not live, here as a template -->
 {#await getPosters()}
-	Loading trending.
+<span></span>
 {:then result} 
 <Carousel anime={result}></Carousel>
 {/await}

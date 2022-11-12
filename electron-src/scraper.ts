@@ -31,10 +31,9 @@ export async function fetchAnimixAnimeInfo({ malId, list = {} }): Promise<any> {
     const fetchInfoLinks = await axios
       .get(animixBase + `assets/rec/${malId}.json`, headerOption)
       .catch((err) => {})
-    
 
     if (!fetchInfoLinks || !fetchInfo)
-      throw new Error("Failed to fetch data from axios")
+      throw new Error('Failed to fetch data from axios')
 
     list = {
       animeTitle: fetchInfo.data.title,
@@ -199,31 +198,56 @@ interface PopularAnime {
   score: number
 }
 
-
-async function getMalId(kitsuId:string) {
-  console.log("getting mal id for ", kitsuId)
-  let res = await axios.get("https://kitsu.io/api/edge/mappings/" + kitsuId);
-  let data = res.data;
+async function getMalId(kitsuId: string) {
+  console.log('getting mal id for ', kitsuId)
+  let res = await axios.get('https://kitsu.io/api/edge/mappings/' + kitsuId)
+  let data = res.data
   return parseInt(data.data.attributes.externalId)
 }
 
-export async function getTrendingPoster(): Promise<TrendingPoster[]> {
-  let result = await axios.get("https://kitsu.io/api/edge/trending/anime");
-  let data = result.data;
-  let arr = await Promise.all(data.data.map(async (anime, index) => {
-    let d = anime.attributes;
-    if (index == 0)
-      console.dir(anime.relationships.mappings);
-    return {
-      img: d.coverImage.original, 
-      title: d.titles.en ?? d.canonicalTitle, 
-      score: parseInt(d.averageRating) / 10, 
-      malId: await getMalId(anime.id)
-    };
-  }))
-  return arr;
+async function getPoster(title: string): Promise<string> {
+  title = title.replace(/(!-.:)/g, '')
+  let slug = title.toLowerCase().split(' ').join('-')
+  let res = await axios.get(
+    'https://kitsu.io/api/edge/anime?filter[slug]=' + slug,
+  )
+  let data = res.data.data[0]
+  let posterImg = ''
+  if (!data) {
+    let resp = await axios.get(
+      'https://kitsu.io/api/edge/anime?filter[text]=' + title,
+    )
+    if (!resp.data) {
+      console.log('Failed to search for', title)
+      return ''
+    }
+    let anime = resp.data.data[0].attributes
+    posterImg = anime.attributes?.coverImage?.original
+    return posterImg
+  }
+  posterImg = data?.attributes?.coverImage?.original
+  return posterImg ?? ''
 }
 
+export async function fetchTrendingPoster() {
+  let req = await axios.get('https://api.jikan.moe/v4/seasons/now')
+  let data = req.data.data
+  if (data.length < 1) return []
+  let arr = await Promise.all(
+    data.map(async (anime, index) => {
+      let name = anime.title_english ?? anime.title
+      let poster = await getPoster(name)
+      return {
+        malId: anime.mal_id,
+        title: name,
+        img:poster,
+        index, 
+        score: anime.score
+      }
+    }),
+  )
+  return arr.filter(d => d.img);
+}
 
 export const fetchPopular = async ({
   list = [],

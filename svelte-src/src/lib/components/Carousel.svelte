@@ -2,13 +2,9 @@
 	import CoverAnime from '$lib/components/CoverAnime.svelte';
 	import FaNext from "svelte-icons/fa/FaAngleRight.svelte"	
 	import FaPrev from "svelte-icons/fa/FaAngleLeft.svelte"	
+	import type { TrendingPoster } from '$electron/types';
 
-	interface CoverAnime {
-		title:string, 
-		img:string,
-	}
-
-	export let anime:CoverAnime[];
+	export let anime:TrendingPoster[];
 
 	let maxSlideLeft = -(anime.length * 21);
 	let maxSlideRight = 2;
@@ -47,7 +43,7 @@
 
 	<div style="transform: translateX({sliderLeft});" class="flex gap-5 transition-all ease-in-out duration-500 flex-nowrap">
 		{#each anime as an}
-			<CoverAnime src={an.img} title={an.title}/>			
+			<CoverAnime src={an.img} title={an.title} id={an.malId}/>			
 		{/each}
 	</div>
 	<button on:click={nextSlide} class="nav-btn right-0 top-0">
