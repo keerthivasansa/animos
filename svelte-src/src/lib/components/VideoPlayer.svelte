@@ -50,7 +50,7 @@
 				keyboard: {
 					focused: true, 
 					global: true
-				}
+				}, 
 			};
 			if (Hls.isSupported()) {
 				const hls = new Hls();
