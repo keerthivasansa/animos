@@ -58,7 +58,6 @@
       "output/**/*"
     ],
     "extraResources": [
-      "prisma/schema.prisma",
       "prisma/cache.db",
       "node_modules/.prisma/**/*",
       "node_modules/@prisma/client/**/*"
