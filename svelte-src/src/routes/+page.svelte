@@ -44,10 +44,12 @@
 {#await getLastPlayed()}
 	<p />
 {:then result}
-	<section>
-		<h1 class="text-3xl font-black mx-10">Continue Watching</h1>
-		<ContinueSlider anime={result} />
-	</section>
+	{#if result.length > 0}
+		<section>
+			<h1 class="text-3xl font-black mx-10">Continue Watching</h1>
+			<ContinueSlider anime={result} />
+		</section>
+	{/if}
 {/await}
 
 <section class="px-0">
