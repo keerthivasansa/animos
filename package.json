@@ -1,5 +1,5 @@
 {
-  "version": "0.2.2",
+  "version": "0.2.1",
   "name": "animos",
   "main": "dist/index.js",
   "license": "CC-BY-NC-ND-4.0",

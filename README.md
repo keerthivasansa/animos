@@ -6,7 +6,7 @@
     <p align="center"> Premium anime streaming app </p>
      <div align="center">
     <img src="https://img.shields.io/github/workflow/status/Nectres/animos/build"/>
-    <img src="https://img.shields.io/github/v/tag/Nectres/animos"/>
+    <img src="https://img.shields.io/github/v/tag/Nectres/animos?sort=semver"/>
     <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Nectres/animos?style=social">
     <a href="https://discord.gg/TdfwMSXjeP">
         <img src="https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white" />
@@ -28,7 +28,14 @@
 
 # Download
 The download links for various platforms can be found here:
-- [Windows](htt)
+- Windows
+    - [Exe](https://github.com/Nectres/animos/releases/download/v0.2.2/Animos-Setup-0.2.2.exe)
+- Mac
+    - [Zip](https://github.com/Nectres/animos/releases/download/v0.2.2/Animos-0.2.2-mac.zip)
+    - [DMG](https://github.com/Nectres/animos/releases/download/v0.2.2/Animos-0.2.2.dmg)
+- Linux
+    - [AppImage](https://github.com/Nectres/animos/releases/download/v0.2.2/Animos-0.2.2.AppImage)
+    - [Snap](https://github.com/Nectres/animos/releases/download/v0.2.2/animos_0.2.2_amd64.snap)
 
 # Features
 
