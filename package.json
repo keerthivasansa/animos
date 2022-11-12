@@ -16,14 +16,14 @@
   "scripts": {
     "svelte:dev": "cd svelte-src & yarn dev",
     "svelte:build": "cd svelte-src && yarn build",
-    "prepackage": "tsc && npm run svelte:build",
+    "prepackage": "tsc && npm run svelte:build && npm run db:deploy",
     "db:deploy": "node move.js",
     "db:dev": "node move.js back",
     "dev": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run svelte:dev\" \"npm run electron:dev\"",
     "electron:start": "tsc && electron dist/index.js",
     "electron:dev": "nodemon",
-    "package": "electron-builder --dir",
-    "make": "electron-builder make"
+    "package": "electron-builder --dir && npm run db:dev",
+    "make": "npm run prepackage && electron-builder && npm run db:dev"
   },
   "build": {
     "appId": "com.keerthivasan.animos",
@@ -36,6 +36,11 @@
     "asar": true,
     "directories": {
       "output": "out"
+    },
+    "nsis": {
+      "oneClick": false, 
+      "license": "LICENSE",
+      "installerIcon": "build/icons/favicon.ico"
     },
     "files": [
       "dist/**/*",
