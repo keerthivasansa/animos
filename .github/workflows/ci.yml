@@ -31,12 +31,13 @@ jobs:
           npm install
 
       - name: create env file
-        env:
-          NODE_ENV: production
-          GH_TOKEN: ${{secrets.GH_TOKEN}}
         run: |
           touch .env
+          echo NODE_ENV=production >> .env
           echo GH_TOKEN=${{ secrets.GH_TOKEN }} >> .env
 
       - name: Build/release Electron app
+        env:
+          NODE_ENV: production
+          GH_TOKEN: ${{secrets.GH_TOKEN}}
         run: npm run publish
