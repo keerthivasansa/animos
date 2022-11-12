@@ -17,7 +17,7 @@
     "svelte:dev": "cd svelte-src & yarn dev",
     "svelte:build": "cd svelte-src && yarn build",
     "prepackage": "tsc && npm run svelte:build && npm run db:deploy",
-    "db:deploy": "node move.js",
+    "db:deploy": "npx prisma generate && node move.js",
     "db:dev": "node move.js back",
     "dev": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run svelte:dev\" \"npm run electron:dev\"",
     "electron:start": "tsc && electron dist/index.js",
