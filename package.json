@@ -16,14 +16,14 @@
   "scripts": {
     "svelte:dev": "cd svelte-src & yarn dev",
     "svelte:build": "cd svelte-src && yarn build",
-    "start": "electron-forge start",
     "prepackage": "tsc && npm run svelte:build",
+    "db:deploy": "node move.js",
+    "db:dev": "node move.js back",
     "dev": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run svelte:dev\" \"npm run electron:dev\"",
-    "electron:start": "tsc &&electron dist/index.js",
+    "electron:start": "tsc && electron dist/index.js",
     "electron:dev": "nodemon",
     "package": "electron-builder --dir",
-    "make": "npm run package && electron-builder",
-    "publish": "npm run prepackage && electron-builder --publish always"
+    "make": "electron-builder make"
   },
   "build": {
     "appId": "com.keerthivasan.animos",
@@ -50,7 +50,7 @@
   "devDependencies": {
     "concurrently": "^7.5.0",
     "electron": "^21.2.2",
-    "electron-builder": "^23.6.0",
+    "electron-builder": "22.10.3",
     "nodemon": "^2.0.20",
     "prisma": "^4.6.1",
     "typescript": "^4.8.4"
@@ -61,6 +61,7 @@
     "cheerio": "^1.0.0-rc.12",
     "crypto-js": "^4.1.1",
     "electron-serve": "^1.1.0",
+    "electron-squirrel-startup": "^1.0.0",
     "express": "^4.18.2",
     "fast-xml-parser": "^4.0.11"
   }
