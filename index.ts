@@ -5,7 +5,6 @@ import { config } from "dotenv"
 
 config();
 
-console.log(process.env.GH_TOKEN);
 // register url for prisma
 process.env.DATABASE_URL = 'file:./cache.db'
 

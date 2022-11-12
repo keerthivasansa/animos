@@ -23,7 +23,7 @@
     "electron:start": "tsc && electron dist/index.js",
     "electron:dev": "nodemon",
     "package": "electron-builder --dir && npm run db:dev",
-    "publish": "npm run prepackage && electron-builder --publish always && npm run db:dev",
+    "publish": "npm run prepackage && electron-builder --publish always",
     "make": "npm run prepackage && electron-builder && npm run db:dev"
   },
   "build": {
