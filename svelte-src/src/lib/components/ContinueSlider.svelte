@@ -1,34 +1,33 @@
 <script lang="ts">
-	import FaNext from "svelte-icons/fa/FaAngleRight.svelte"	
-	import FaPrev from "svelte-icons/fa/FaAngleLeft.svelte"	
-	import { onMount } from "svelte";
-	import ProgressBar from "./ProgressBar.svelte";
+	import FaNext from 'svelte-icons/fa/FaAngleRight.svelte';
+	import FaPrev from 'svelte-icons/fa/FaAngleLeft.svelte';
+	import { onMount } from 'svelte';
+	import ProgressBar from './ProgressBar.svelte';
 
 	interface ContinueAnime {
 		anime: {
-			title:string,
-			img:string, 
-		}, 
-		episodeId:number, 
-		animeId:number, 
-		watchTime:number, 
-		length?:number
+			title: string;
+			img: string;
+		};
+		episodeId: number;
+		animeId: number;
+		watchTime: number;
+		length?: number;
 	}
 
 	export let anime: ContinueAnime[];
 
 	let num = anime.length;
 	let itemWidth = 20;
-	let maxSlideLeft = -(185 - (num * itemWidth));
+	let maxSlideLeft = -(185 - num * itemWidth);
 	let maxSlideRight = 0;
 	let sliderLeft = `${maxSlideRight}rem`;
 
-    console.log(maxSlideLeft)
+	console.log(maxSlideLeft);
 	function nextSlide() {
 		let currentMargin = parseInt(sliderLeft);
-		if (currentMargin == maxSlideLeft)
-			return;
-		let newVal = currentMargin - itemWidth
+		if (currentMargin == maxSlideLeft) return;
+		let newVal = currentMargin - itemWidth;
 		newVal = newVal > maxSlideLeft ? newVal : maxSlideLeft;
 		sliderLeft = `${newVal}rem`;
 		console.log(sliderLeft);
@@ -36,46 +35,62 @@
 
 	function prevSlide() {
 		let currentMargin = parseInt(sliderLeft);
-		if (currentMargin == maxSlideRight)
-			return;
-		let newVal = currentMargin + itemWidth
+		if (currentMargin == maxSlideRight) return;
+		let newVal = currentMargin + itemWidth;
 		console.log(newVal);
 		newVal = newVal < maxSlideRight ? newVal : maxSlideRight;
 		sliderLeft = `${newVal}rem`;
 		console.log(sliderLeft);
 	}
 
-    onMount(() => {
-		console.log("Continue Slider:");
-		console.log({maxSlideLeft, maxSlideRight,itemWidth, sliderLeft})
-    })
-
+	onMount(() => {
+		console.log('Continue Slider:');
+		console.log({ maxSlideLeft, maxSlideRight, itemWidth, sliderLeft });
+	});
 </script>
 
 <div class="py-3 slider relative w-screen">
 	<div class="gap-5">
-        <div class="px-10 mt-8 relative h-auto w-full">
-			<button class:hidden={parseInt(sliderLeft) == maxSlideRight}  on:click={prevSlide} class="nav-btn -left-16 top-0">
+		<div class="px-10 mt-8 relative h-auto w-full">
+			<button
+				class:hidden={parseInt(sliderLeft) == maxSlideRight}
+				on:click={prevSlide}
+				class="nav-btn -left-16 top-0"
+			>
 				<div class="w-8">
-					<FaPrev/>
+					<FaPrev />
 				</div>
 			</button>
-			<div class="flex gap-16 flex-nowrap transition-all ease-in-out duration-500"  style="transform: translateX({sliderLeft});">
-
+			<div
+				class="flex gap-16 flex-nowrap transition-all ease-in-out duration-500"
+				style="transform: translateX({sliderLeft});"
+			>
 				{#each anime as episode}
-				<a href="/episode?animeId={episode.animeId}&episodeId={episode.episodeId}">
-					<div class="whitespace-nowrap flex flex-col gap-3">
-						<img src={episode.anime.img} class="h-60 object-cover rounded-md" alt={episode.anime.title}>
-						<span class="text-xl text-ellipsis overflow-hidden font-bold w-40" style=" display: inline-block;overflow: hidden;white-space: nowrap;">{episode.anime.title}</span>
-						<span class="text-sm text-slate-400">Episode {episode.episodeId}</span>
-						<ProgressBar value={episode.watchTime} max={episode.length} />
-					</div>
+					<a href="/episode?animeId={episode.animeId}&episodeId={episode.episodeId}">
+						<div class="whitespace-nowrap flex flex-col gap-3">
+							<img
+								src={episode.anime.img}
+								class="h-60 object-cover rounded-md"
+								alt={episode.anime.title}
+							/>
+							<span
+								class="text-xl text-ellipsis overflow-hidden font-bold w-40"
+								style=" display: inline-block;overflow: hidden;white-space: nowrap;"
+								>{episode.anime.title}</span
+							>
+							<span class="text-sm text-slate-400">Episode {episode.episodeId}</span>
+							<ProgressBar value={episode.watchTime} max={episode.length} />
+						</div>
 					</a>
 				{/each}
 			</div>
-			<button class:hidden={parseInt(sliderLeft) == maxSlideLeft} on:click={nextSlide} class="nav-btn right-16 top-0">
+			<button
+				class:hidden={parseInt(sliderLeft) == maxSlideLeft}
+				on:click={nextSlide}
+				class="nav-btn right-16 top-0"
+			>
 				<div class="w-7">
-					<FaNext></FaNext>
+					<FaNext />
 				</div>
 			</button>
 		</div>
@@ -89,7 +104,7 @@
 	.nav-btn:hover {
 		opacity: 1;
 	}
-    .hidden {
-        display: none;
-    }
+	.hidden {
+		display: none;
+	}
 </style>

@@ -10,49 +10,45 @@
 
 	async function getPopular(): Promise<AnimePopular[]> {
 		let popular = await window.api.popularAnime();
-		console.log("Popular");
+		console.log('Popular');
 		console.log(popular);
 		return popular;
 	}
-	
+
 	async function getLastPlayed() {
-		return window.api.getLastPlayed()
+		return window.api.getLastPlayed();
 	}
 
 	async function getPosters() {
-		let posters = await window.api.getPoster(); 
-		console.log("posters:")
+		let posters = await window.api.getPoster();
+		console.log('posters:');
 		console.log(posters);
 		return posters;
 	}
 
 	onMount(async () => {
 		console.log(popularAnime);
-		console.log("Last played:");
-		console.log(await getLastPlayed())
+		console.log('Last played:');
+		console.log(await getLastPlayed());
 	});
 </script>
 
-
 {#await getPosters()}
-<span></span>
-{:then result} 
-{#if result.length > 0}
-	<Carousel anime={result}></Carousel>	
-{/if}
+	<span />
+{:then result}
+	{#if result.length > 0}
+		<Carousel anime={result} />
+	{/if}
 {/await}
-
-
 
 {#await getLastPlayed()}
-	<p></p>
-{:then result} 
+	<p />
+{:then result}
 	<section>
 		<h1 class="text-3xl font-black mx-10">Continue Watching</h1>
-		<ContinueSlider anime={result}></ContinueSlider>
+		<ContinueSlider anime={result} />
 	</section>
 {/await}
-
 
 <section class="px-0">
 	<h1 class="text-3xl mx-10 font-black">Trending Anime:</h1>
@@ -60,7 +56,7 @@
 		{#await getPopular()}
 			<CardPlaceholder />
 		{:then popularAnime}
-		<!-- //	TODO each card on hover with a delay should scale with ease, then info should slide from side -->
+			<!-- //	TODO each card on hover with a delay should scale with ease, then info should slide from side -->
 			{#each popularAnime as anime}
 				<div class="flex flex-col gap-5 ">
 					<a href="/info?animeId={anime.mal_id}" id="anime-{anime.mal_id}">
