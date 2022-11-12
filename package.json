@@ -12,7 +12,7 @@
     "type": "git",
     "url": "https://github.com/Nectres/animos.git"
   },
-  "description": "Animos is an application to discover and stream Animes with ease",
+  "description": "Animos is an application to discover and stream Anime with ease",
   "scripts": {
     "svelte:dev": "cd svelte-src & yarn dev",
     "svelte:build": "cd svelte-src && yarn build",
