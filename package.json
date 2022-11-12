@@ -23,22 +23,27 @@
     "electron:start": "tsc && electron dist/index.js",
     "electron:dev": "nodemon",
     "package": "electron-builder --dir && npm run db:dev",
+    "publish": "npm run prepackage && electron-builder --publish always && npm run db:dev",
     "make": "npm run prepackage && electron-builder && npm run db:dev"
   },
   "build": {
     "appId": "com.keerthivasan.animos",
     "productName": "Animos",
     "win": {
-      "publish": [
-        "github"
-      ]
+      "publish": ["github"]
+    },
+    "mac": {
+      "publish": ["github"]
+    },
+    "linux": {
+      "publish": ["github"]
     },
     "asar": true,
     "directories": {
       "output": "out"
     },
     "nsis": {
-      "oneClick": false, 
+      "oneClick": false,
       "license": "LICENSE",
       "installerIcon": "build/icons/favicon.ico"
     },
@@ -48,6 +53,7 @@
     ],
     "extraResources": [
       "prisma/schema.prisma",
+      "prisma/cache.db",
       "node_modules/.prisma/**/*",
       "node_modules/@prisma/client/**/*"
     ]

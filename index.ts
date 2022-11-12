@@ -80,8 +80,8 @@ const createWindow = () => {
   return win
 }
 
-const appOrigin = ['http://localhost:5173', 'app-//']
-const currentOrigin = isDev ? 'http://localhost:5173' : 'app-//'
+const appOrigin = ['http://localhost:5173', 'null'];
+const currentOrigin = isDev ? 'http://localhost:5173' : 'null'
 const appOriginString = appOrigin.join(',')
 
 // Checks for allow-origin header, if it is present with wildcard, returns it otherwise sets the origin of the application as the header value.
@@ -124,11 +124,12 @@ app.on('web-contents-created', (event, webContent) => {
   webContent.on('will-navigate', (event, url) => {
     const parsedUrl = new URL(url)
     // if the url is not within allowedOrigin, prevent navigating to it.
-    if (!appOrigin.includes(parsedUrl.origin)) {
+    if (!appOrigin.includes(parsedUrl.origin) && parsedUrl.protocol != "app:") {
       console.log(
         'Unknown origin navigation detected. Origin: ',
         parsedUrl.origin,
       )
+      console.log(parsedUrl);
       event.preventDefault()
     }
   })
