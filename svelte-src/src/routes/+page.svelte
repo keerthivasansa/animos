@@ -37,7 +37,9 @@
 {#await getPosters()}
 <span></span>
 {:then result} 
-<Carousel anime={result}></Carousel>
+{#if result.length > 0}
+	<Carousel anime={result}></Carousel>	
+{/if}
 {/await}
 
 
