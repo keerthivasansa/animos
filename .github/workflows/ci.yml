@@ -17,7 +17,6 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-  
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
@@ -32,9 +31,11 @@ jobs:
           npm install
 
       - name: create env file
+        env:
+          NODE_ENV: production
+          GH_TOKEN: ${{secrets.GH_TOKEN}}
         run: |
           touch .env
-          echo NODE_ENV=production >> .env
           echo GH_TOKEN=${{ secrets.GH_TOKEN }} >> .env
 
       - name: Build/release Electron app
