@@ -1,8 +1,8 @@
-<div style="text-align: center; margin-top: 100px">
-    <img src="https://github.com/Nectres/animos/blob/master/build/icons/512x512.png?raw=true" alt="Logo" width="125px"  /> <br/>
-    <span style="text-align:center; font-size: xx-large; font-weight: 900"> animos </span> <br/>
+<p align="center">
+    <img src="https://github.com/Nectres/animos/blob/master/build/icons/512x512.png?raw=true" alt="Logo" width="125px"  />
+    <h3> animos </h3>
     <small> Premium anime streaming app </small>
-</div>
+</p>
 
 ## Screenshots
 <div style="text-align:center">
