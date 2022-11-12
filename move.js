@@ -13,12 +13,12 @@ if (args[0] == "back") {
 } else {
   if (process.env.NODE_ENV != "production") {
     console.log("Renaming db file. . .");
-      renameSync("prisma/cache.db", "prisma/cache.db.bk");
+    renameSync("prisma/cache.db", "prisma/cache.db.bk");
   } else {
     console.log("Production detected, skipping rename");
   }
   console.log("Executing prisma deploy. . .");
   execSync("npx prisma migrate deploy", {
-    stdio: "pipe"
+    stdio: "pipe",
   });
 }
