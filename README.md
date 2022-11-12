@@ -16,6 +16,15 @@
 
 - To support development, request features, report features and more, join the official animos discord server: [Join](https://discord.gg/TdfwMSXjeP)
 
+
+# Table of contents
+
+ - [Screenshots](#screenshots)
+ - [Download links](#download)
+ - [Features](#features)
+ - [About](#about)
+ - [Roadmap](#roadmap)
+
 ## Screenshots
 
 <div align="center">
