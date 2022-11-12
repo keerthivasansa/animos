@@ -1,7 +1,11 @@
 import { app, BrowserWindow, ipcMain, session } from 'electron'
 import serve from 'electron-serve'
 import { join } from 'path'
+import { config } from "dotenv"
 
+config();
+
+console.log(process.env.GH_TOKEN);
 // register url for prisma
 process.env.DATABASE_URL = 'file:./cache.db'
 

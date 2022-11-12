@@ -30,13 +30,19 @@
     "appId": "com.keerthivasan.animos",
     "productName": "Animos",
     "win": {
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "mac": {
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "linux": {
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "asar": true,
     "directories": {
@@ -71,6 +77,7 @@
     "axios": "^1.1.3",
     "cheerio": "^1.0.0-rc.12",
     "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.3",
     "electron-serve": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
     "express": "^4.18.2",
