@@ -8,9 +8,13 @@
     <img src="https://img.shields.io/github/workflow/status/Nectres/animos/build"/>
     <img src="https://img.shields.io/github/v/tag/Nectres/animos"/>
     <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Nectres/animos?style=social">
-    <img alt="Snyk Vulnerabilities for GitHub Repo" src="https://img.shields.io/snyk/vulnerabilities/github/Nectres/animos">
+    <a href="https://discord.gg/TdfwMSXjeP">
+        <img src="https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white" />
+    </a>
     </div>
 </p>
+
+- To support development, request features, report features and more, join the official animos discord server: [Join](https://discord.gg/TdfwMSXjeP)
 
 ## Screenshots
 
