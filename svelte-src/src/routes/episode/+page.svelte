@@ -33,8 +33,7 @@
 		let allEpisodes = await window.api.getEpisodes(animeId);
 		let src = await window.api.getEpisode(animeId, episodeId);
 		console.timeEnd('new anime');
-		if (!src.length)
-			updateVideoLength = true;
+		if (!src.length) updateVideoLength = true;
 		result = {
 			currentEp: src,
 			allEpisodes
@@ -66,7 +65,7 @@
 				<div class="animate-pulse bg-slate-700 w-52 h-10 rounded-lg" />
 			</div>
 		{:else}
-			<VideoPlayer src={currentSrc} updateVideoLength={updateVideoLength} animeMalId={animeId} {episodeId} />
+			<VideoPlayer src={currentSrc} {updateVideoLength} animeMalId={animeId} {episodeId} />
 			<div class="mx-5 my-4">
 				<h3 class="text-xl font-bold">{result.currentEp.title}</h3>
 				<br />
@@ -94,20 +93,23 @@
 				{#if pageState != State.Loading}
 					{#each result.allEpisodes as ep (ep.episodeId)}
 						<button
-							style="{ep.episodeId == result.currentEp.episodeId ? "border: 1px solid var(--accent-color);"  : ""}"
-							class="cursor-pointer text-left border-slate-400 border-2 rounded-md my-2 px-3 py-2 { (ep.episodeId != result.currentEp.episodeId && ep.watchTime / (ep.length ?? -1)) > 0.91 ? "opacity-40" : ""}"
+							style={ep.episodeId == result.currentEp.episodeId
+								? 'border: 1px solid var(--accent-color);'
+								: ''}
+							class="cursor-pointer text-left border-slate-400 border-2 rounded-md my-2 px-3 py-2 {(ep.episodeId !=
+								result.currentEp.episodeId && ep.watchTime / (ep.length ?? -1)) > 0.91
+								? 'opacity-40'
+								: ''}"
 							on:click={(_) => goToEp(ep.episodeId)}
-							>
+						>
 							<span class="my-4">{ep.episodeId}. {ep.title}</span>
 							{#if ep.length}
 								<div class="my-2">
-									<ProgressBar value={ep.watchTime} max={ep.length}/>
+									<ProgressBar value={ep.watchTime} max={ep.length} />
 								</div>
 								<!-- <ProgressBar value={ep.watchTime} max={ep.length} /> -->
 							{/if}
-
 						</button>
-						
 					{/each}
 				{:else}
 					{#each Array.from({ length: 10 }) as _}

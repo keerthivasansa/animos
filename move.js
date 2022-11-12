@@ -18,5 +18,7 @@ if (args[0] == "back") {
     console.log("Production detected, skipping rename");
   }
   console.log("Executing prisma deploy. . .");
-  execSync("npx prisma migrate deploy");
+  execSync("npx prisma migrate deploy", {
+    stdio: "pipe",
+  });
 }

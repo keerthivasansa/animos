@@ -17,8 +17,7 @@
 		style="z-index: 50;"
 		class="flex backdrop-blur-md dark:bg-slate-800 bg-opacity-50 p-4 py-6 pr-10 sticky items-center justify-between border-b-2 border-slate-200 dark:border-slate-800"
 	>
-		<a href="/">
-			<h1 class="mx-2 text-center text-3xl font-black">animos</h1>
+		<a href="/">	<h1 class="mx-2 text-center text-3xl font-black">animos</h1>
 		</a>
 		<form action="search" method="get" class="flex justify-end">
 			<div class="mx-8 w-40 focus-within:w-96 ease-linear duration-250 transition-all ">
@@ -46,7 +45,8 @@
 </main>
 
 <style>
-	:global(body), main {
+	:global(body),
+	main {
 		overflow: hidden;
 		width: 100vw;
 		height: 100vh;
