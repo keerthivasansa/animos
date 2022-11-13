@@ -6,7 +6,9 @@
     <a href="https://www.github.com/Nectres/animos#details-user-list-562216545">
     <img src="https://img.shields.io/github/stars/Nectres/animos"/>
     </a>
+    <a href="https://discord.gg/TdfwMSXjeP">
     <img src="https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white" />
+    </a>
     </div>
 </p>
 
