@@ -1,10 +1,12 @@
 <p align="center" style="text-align:center">
     <img src="https://ik.imagekit.io/u8heu9jhq/Header_Banner.png" width="100%" alt="Animos"/>
     <img src="https://img.shields.io/github/workflow/status/Nectres/animos/build"/>
-    <img src="https://img.shields.io/github/v/tag/Nectres/animos?sort=semver"/>
-    <iframe src="https://ghbtns.com/github-btn.html?user=twbs&repo=bootstrap&type=star&count=true&size=large" frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe>
-        <img src="https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white" />
+    <img src="https://img.shields.io/github/v/tag/Nectres/animos?color=red&sort=semver"/>
+    <img src="https://img.shields.io/github/downloads/Nectres/animos/total" alt=Downloads />
+    <a href="https://www.github.com/Nectres/animos#details-user-list-562216545">
+    <img src="https://img.shields.io/github/stars/Nectres/animos"/>
     </a>
+    <img src="https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white" />
     </div>
 </p>
 
@@ -14,9 +16,9 @@ It does not clutter the interface with annoying ads, and allows the user to watc
 
 # Table of contents
 
+ - [Support](#support)
  - [Screenshots](#screenshots)
- - [Social](#support)
- - [Installation](#install)
+ - [Installation](#installation)
  - [Download links](#download)
  - [Features](#features)
  - [Roadmap](#roadmap)
@@ -31,6 +33,19 @@ To support development, request features, report features and more, join the off
 <img src="https://ik.imagekit.io/u8heu9jhq/anime_info?ik-sdk-version=javascript-1.4.3&updatedAt=1668226605539" width="700px"/>
 <img src="https://ik.imagekit.io/u8heu9jhq/episode?ik-sdk-version=javascript-1.4.3&updatedAt=1668226605539" width="700px"/>
 </div>
+
+<br/><br/>
+
+# Features
+
+- Clean and minimal user interface 🌟
+- Cross-platform support 💻
+- No ads, no clutter. Enjoy a premium experience. 🛑
+- Discover trending and popular anime 🌍
+- Secure streaming 🔒
+- Local caching with SQLite for fast refetches ⚡
+- Multiple streaming sources for reliable performance 🐳
+- Uses platform native APIs to give users an integrated experience 🤝
 
 <br/><br/>
 
@@ -82,24 +97,12 @@ The download links for various platforms can be found here:
     - [AppImage](https://github.com/Nectres/animos/releases/download/v0.2.2/Animos-0.2.2.AppImage)
     - [Snap](https://github.com/Nectres/animos/releases/download/v0.2.2/animos_0.2.2_amd64.snap)
 
-# Features
-
-- Clean and minimal user interface 🌟
-- Cross-platform support 💻
-- No ads, no clutter. Enjoy a premium experience. 🛑
-- Discover trending and popular anime 🌍
-- Secure streaming 🔒
-- Local caching with SQLite for fast refetches ⚡
-- Multiple streaming sources for reliable performance 🐳
-- Uses platform native APIs to give users an integrated experience 🤝
-
-<br/><br/>
 
 # Roadmap
 - [ ] Ability to download single or a batch of episodes
-- [ ]Provide recommendations based on watch history
-- [ ]Alert and taskbar icon to perform various functions
-- [ ]Streamline the API used for fetching information and sources.
+- [ ] Provide recommendations based on watch history
+- [ ] Alert and taskbar icon to perform various functions
+- [ ] Streamline the API used for fetching information and sources.
 - [ ] Ability to import MAL
 - [ ] Sync across devices with user accounts
 - [ ] Mobile apps that sync with desktop apps.
