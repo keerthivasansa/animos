@@ -1,4 +1,4 @@
-<span class="font-black text-4xl flex justify-center items-center gap-0"
+<span class="font-bold text-4xl flex justify-center items-center gap-0"
 	>anim
 	<span class="relative accent-font">
 		<span >o</span>

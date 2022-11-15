@@ -9,6 +9,22 @@
 	--secondary-dark: #2d2f33;
 	--input-dark: #2e2e2e;
 	--plyr-color-main: var(--accent-color);
+	--dark-1: #1d1d1d;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+}
+
+.bg-dark-1 {
+	background-color: var(--dark-1);
 }
 
 .accent-font {
@@ -19,7 +35,7 @@ input, select {
 	color: black;
 }
 
-.accent-bg {
+.bg-accent {
 	background-color: var(--accent-color);
 }
 
