@@ -19,7 +19,7 @@ const config = {
 			entries: []
 		},
 		alias: {
-			"$electron/*": "../electron-src/*"
+			'$electron/*': '../electron-src/*'
 		},
 		csp: {
 			mode: 'auto',
@@ -27,7 +27,7 @@ const config = {
 				'script-src': ['self', 'unsafe-inline', 'blob:'],
 				'style-src': ['self', 'cdn.plyr.io', 'fonts.googleapis.com'],
 				'media-src': ['*', 'blob:'],
-				'object-src': ['none'],
+				'object-src': ['none']
 			}
 		}
 	}

@@ -1,53 +1,33 @@
-/* Write your global styles here, in PostCSS syntax */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-    --primary-blue: rgb(241, 42, 62);
-    --accent-color: var(--primary-blue);
-    --plyr-color-main: var(--accent-color);
+	--primary-blue: rgb(241, 42, 62);
+	--accent-color: #caf2ff;
+	--primary-dark: #202020;
+	--secondary-dark: #2d2f33;
+	--input-dark: #2e2e2e;
+	--plyr-color-main: var(--accent-color);
 }
 
-.duration-250 {
-    transition-duration: 275ms;
+.accent-font {
+	color: var(--accent-color);
 }
 
-
-.btn-accent {
-    background: var(--accent-color);
+input, select {
+	color: black;
 }
 
-section {
-    @apply px-4 py-10 mx-10;
-    max-width: 97.5vw;
+.accent-bg {
+	background-color: var(--accent-color);
 }
 
-.icon {
-    width: 16px;
-    cursor: pointer;
-    height: 16px;
-}
-
-.center {
-    @apply justify-center items-center;
+nav {
+	background-color: var(--primary-dark);
 }
 
 body {
-    font-family: 'Inter' sans-serif;
-    overflow-x: hidden;
-}
-
-::-webkit-scrollbar {
-    width: 10px;
-}
-  
-  /* Track */
-::-webkit-scrollbar-track {
-    @apply bg-slate-600;
-}
-   
-::-webkit-scrollbar-thumb {
-    background: var(--accent-color); 
-    border-radius: 12px;
+	background-color: var(--secondary-dark);
+	font-family: 'Poppins';
 }
