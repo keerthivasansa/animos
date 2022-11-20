@@ -1,5 +1,5 @@
 {
-  "include": ["index.ts", "electron-src/preload.ts"],
+  "include": ["electron-src/index.ts", "electron-src/preload.ts"],
   "exclude": ["svelte-src/src/*/**"],
   "compilerOptions": {
     "outDir": "dist",

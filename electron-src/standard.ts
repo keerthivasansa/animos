@@ -1,11 +1,8 @@
 import { Episode } from '@prisma/client'
-import { fetchGogoAnimeInfo } from './scraper'
+import { fetchGogoAnimeInfo } from './scraper.js'
 import { fetchAnimixEpisodeSource, fetchAnimixAnimeInfo } from './animix'
-import express from 'express'
 import axios from 'axios'
 import { prisma } from './db'
-
-const app = express()
 
 function selectFields(obj, fields) {
   let newobj = {}
@@ -278,34 +275,3 @@ export async function standardGetEpisodes(animeMalId: number) {
   )
   return episodes
 }
-
-app.get('/', (req, res) => {
-  res.send('Working!')
-})
-
-app.get('/episode/:anime/:episode/watch', async (req, res) => {
-  let { anime, episode } = req.params
-  let { animeId } = await prisma.anime.findUnique({
-    where: { malId: parseInt(anime) },
-    select: { animeId: true },
-  })
-  res.json(await standardEpisodeSrc(parseInt(animeId), episode))
-})
-
-app.get('/episode/:anime/:episode/info', async (req, res) => {
-  let { anime, episode } = req.params
-  res.json(await standardGetEpisodeInfo(anime, episode))
-})
-
-app.get('/info/:malId', async (req, res) => {
-  let { malId } = req.params
-  res.json(await standardGetInfo(malId))
-})
-
-app.get('/search/:q', async (req, res) => {
-  let { q } = req.params
-  let { nocache } = req.query
-  res.json(await standardSearch(q, nocache))
-})
-
-app.listen(4000, (_) => console.log('api started listening'))

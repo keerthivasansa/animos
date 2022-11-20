@@ -19,7 +19,7 @@ const config = {
 			entries: []
 		},
 		alias: {
-			'$electron/*': '../electron-src/*'
+			'$bg/*': '../backend/*'
 		},
 		csp: {
 			mode: 'auto',

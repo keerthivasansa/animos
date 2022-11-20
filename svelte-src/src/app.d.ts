@@ -9,26 +9,11 @@ declare namespace App {
 	// interface Platform {}
 }
 
-interface AnimePopular {
-	score: number, 
-	animeImg: string, 
-	animeTitle:string, 
-	mal_id: number, 
-	views:string
-}
-
-interface Anime {
-	animeId:string, 
-	animeTitle:string,
-	animeImg:string
-}
-
 declare module 'svelte-plyr' {
 	export class Plyr extends SvelteComponentTyped {}
 }
 
 declare interface Window {
-	api: import("../../electron-src/preload").EndpointType,
-	hls: import("hls.js").default
-	player: import("plyr")
+	player: import("plyr"),
+	api: import("../../electron-src/preload").EndpointType
 }

@@ -10,50 +10,29 @@ datasource db {
   url      = "file:./cache.db?connection_limit=5"
 }
 
-model Poster {
-  created DateTime @updatedAt
-  malId   Int      @id
-  title   String
-  img     String
-  index   Int
-  score   Float
+model Response {
+  url      String @id
+  response String
 }
 
-model Settings {
-  id             Int     @id
-  currentAnime   String?
-  currentEpisode Int?
-  googleId       String
-  userId         String
-}
-
-model Episode {
-  watchTime     Int       @default(0)
-  lastWatched   DateTime?
-  title         String
-  episodeId     Int
-  anime         Anime     @relation(fields: [animeId], references: [malId])
-  animeId       Int
-  synopsis      String?
-  source        String?
-  length        Int?
-  sourceBackup  String?
-  linkFetchedOn DateTime?
-
-  @@id([animeId, episodeId])
+model Genre {
+  malId Int    @id
+  name  String @unique
 }
 
 model Anime {
-  animeId       String?
-  malId         Int       @id
-  title         String
-  englishTitle  String
-  img           String
-  totalEpisodes Int
-  synopsis      String
-  type          String
-  currentEp     Int
-  status        String
-  score         Float
-  Episode       Episode[]
+  kitsuId     String   @id
+  malId       Int?     @unique
+  synopsis    String
+  title_en    String?
+  title_jp    String?
+  title       String
+  posterImg   String
+  coverImg    String?
+  score       Float
+  episodes    Int?
+  slug        String?
+  dubSlug     String?
+  poster      Int?
+  lastUpdated DateTime @default(now()) @updatedAt
 }

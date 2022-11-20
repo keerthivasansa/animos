@@ -12,7 +12,7 @@ const USER_AGENT =
 const headerOption = { headers: { 'User-Agent': USER_AGENT } }
 
 // Importing helper functions
-import { encodeString, decodeStreamingLinkAnimix } from './helper'
+import { encodeString, decodeStreamingLinkAnimix } from './helper.js'
 
 export const fetchSearchAnimix = async ({
   list = [],

@@ -1,166 +1,94 @@
-import { ipcMain, dialog, app } from 'electron'
+import { Anime } from "@prisma/client";
+import { ipcMain } from "electron";
+import { api } from "./api-v2";
 import {
-  standardGetInfo,
-  standardSearch,
-  standardEpisodeSrc,
-  standardGetEpisodes,
-  standardGetPopular,
-  renewEpisodeSource,
-} from './standard'
-import { prisma } from './db'
-import { fetchTrendingPoster } from './scraper'
+  getGenre,
+  getPartialInfo,
+  getPosters,
+  getRecommendations,
+} from "./api/anime";
+import { episodes, getEpisode } from "./api/episode";
+import { db } from "./db";
 
-ipcMain.handle('home:get-poster', async () => {
-  let posters = await prisma.poster.findMany({
+ipcMain.handle("anime:info", async (event, malId: number) => {
+  let info = await db.anime.findUnique({
     where: {
-      created: {
-        // accept if it is not a week old yet.
-        gt: new Date(Date.now() - 24 * 86400 * 7 * 1000),
+      malId,
+    },
+  });
+  if (info) return await getPartialInfo(info);
+  console.log("Cache fail, fetching info for", malId);
+  try {
+    info = await api.anime.info(malId);
+  } catch (err) {
+    console.log(err);
+  }
+  await db.anime.create({
+    data: info,
+  });
+  return info;
+});
+
+ipcMain.handle("anime:posters", async (event) => {
+  let result = await db.anime.findMany({
+    where: {
+      poster: {
+        gt: -1,
+      },
+      lastUpdated: {
+        gt: new Date(Date.now() - 86400 * 1000 * 7),
       },
     },
-    orderBy: {
-      index: "asc"
-    }
-  })
-  if (posters.length > 0) return posters
-  let data = await fetchTrendingPoster()
-  posters = data.map((dp) => {
-    return { ...dp, created: new Date() }
-  })
-  await prisma.poster.deleteMany({});
-  await prisma.$transaction(posters.map((data) => prisma.poster.create({ data })))
-  return posters;
-})
-
-ipcMain.handle(
-  'get-playtime',
-  async (event, animeId: number, episodeId: number) => {
-    let doc = await prisma.episode.findUnique({
-      where: {
-        animeId_episodeId: {
-          animeId,
-          episodeId,
+  });
+  if (result.length > 1) {
+    console.log("cache hit");
+    return result;
+  }
+  let res = (await getPosters()) as Anime[];
+  await db.$transaction(
+    res.map((anime, index) => {
+      anime.poster = index;
+      return db.anime.upsert({
+        create: anime,
+        update: {},
+        where: {
+          kitsuId: anime.kitsuId,
         },
-      },
+      });
     })
-    if (doc) return doc.watchTime
-    else return 0
-  },
-)
+  );
+  return res;
+});
 
-ipcMain.on('episode:set-length', async (event, animeId, episodeId, length) => {
-  await prisma.episode.update({
-    where: {
-      animeId_episodeId: {
-        animeId,
-        episodeId,
-      },
-    },
-    data: {
-      length: parseInt(length),
-    },
-  })
-})
+ipcMain.handle("anime:search", async (event, query: string) => {
+  let results = await api.anime.search(query);
+  return results;
+});
 
-ipcMain.handle('get-last-played', async (event) => {
-  let docs = await prisma.episode.findMany({
-    distinct: 'animeId',
-    select: {
-      anime: {
-        select: {
-          img: true,
-          title: true,
-        },
-      },
-      episodeId: true,
-      length: true,
-      animeId: true,
-      watchTime: true,
-    },
-    orderBy: {
-      lastWatched: 'desc',
-    },
-    where: {
-      lastWatched: {
-        not: null,
-      },
-    },
-  })
-  return docs
-})
+ipcMain.handle("anime:genre", async (event, genre: string) => {
+  let result = await getGenre(genre);
+  return result;
+});
 
-ipcMain.handle('search-anime', async (event, keyw: string) => {
-  let newDocs = await standardSearch(keyw)
-  return newDocs
-})
+ipcMain.handle("anime:recommendations", async (event, malId: number) => {
+  let result = await getRecommendations(malId);
+  return result;
+});
 
-async function savePlayback(animeId: number, episodeId: number, time: number) {
-  await prisma.episode.update({
-    where: {
-      animeId_episodeId: {
-        animeId,
-        episodeId,
-      },
-    },
-    data: { lastWatched: new Date(), watchTime: time },
-  })
-  return 'okay'
-}
+ipcMain.handle("episode:info", async (event, kitsuId: number) => {
+  let result = await episodes(kitsuId);
+  return result;
+});
 
 ipcMain.handle(
-  'set-watchtime',
-  async (event, animeId: number, episodeId: number, time: number) => {
-    await savePlayback(animeId, episodeId, time)
-    return
-  },
-)
+  "episode:get",
+  async (event, malId: number, slug: string, episodeNum: number) => {
+    let result = await getEpisode(malId, slug, episodeNum);
+    return result;
+  }
+);
 
-ipcMain.handle('get-anime-info', async (event, animeId: number) => {
-  console.log(`Searching for anime: ${animeId}`)
-  let animeInfo = await standardGetInfo(animeId)
-  return animeInfo
-})
-
-ipcMain.handle('get-episodes', async (event, animeId: number) => {
-  console.log(`Fetching episodes for ${animeId}`)
-  let episodes = await standardGetEpisodes(animeId)
-  return episodes
-})
-
-ipcMain.handle('get-popular-anime', async (event) => {
-  let popularAnime = await standardGetPopular({})
-  return popularAnime
-})
-
-ipcMain.handle(
-  'get-episode',
-  async (event, animeId: number, episodeId: number) => {
-    let docs = await standardEpisodeSrc(animeId, episodeId)
-    return docs
-  },
-)
-
-ipcMain.on('message', (event, msg) => {
-  console.log(msg)
-})
-
-ipcMain.handle(
-  'renew-episode-source',
-  async (event, animeId: number, episodeId: number) => {
-    console.log(
-      'Episode source for ',
-      animeId,
-      episodeId,
-      ' has been reported to be expired. Renewing sources . . .',
-    )
-    let source = await renewEpisodeSource(animeId, episodeId)
-    return source
-  },
-)
-
-ipcMain.on('hello', (event, name: string, age: number) => {
-  console.log(event)
-  dialog.showMessageBox({
-    message: `Hello ${name}! you are ${age} years old.`,
-  })
-})
+ipcMain.handle("cache:http-delete", async (event) => {
+  await db.response.deleteMany({});
+  return "ok";
+});

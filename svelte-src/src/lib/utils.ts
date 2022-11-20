@@ -1,5 +1,3 @@
-import { accentClr } from "./stores";
-
 export function getColorType(color:string) {
     let c = color.substring(1);
     let rgb = parseInt(c, 16);
@@ -37,7 +35,7 @@ export function lightOrDark(colorHex: string) {
     let hsp = red*0.299 + green*0.587 + blue*0.114;
     // Using the HSP value, determine whether the color is light or dark
     console.log({red, green, blue})
-    if (hsp > 186) {
+    if (hsp > 150) {
       return "light";
     } else {
       return "dark";

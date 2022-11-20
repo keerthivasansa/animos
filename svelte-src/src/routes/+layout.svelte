@@ -11,6 +11,7 @@
 	let search: string = '';
 	let marginLeft = -4.25;
 
+
 	function autoCapWords() {
 		search = search
 			.split(' ')
@@ -18,7 +19,7 @@
 			.join(' ');
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		let accent = getComputedStyle(document.body).getPropertyValue('--accent-color').trim();
 		accentClr.set(accent);
 		accentClr.subscribe((val) => {
