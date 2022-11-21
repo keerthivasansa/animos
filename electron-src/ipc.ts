@@ -10,16 +10,16 @@ import {
 import { episodes, getEpisode } from "./api/episode";
 import { db } from "./db";
 
-ipcMain.handle("anime:info", async (event, malId: number) => {
+ipcMain.handle("anime:info", async (event, kitsuId: number) => {
   let info = await db.anime.findUnique({
     where: {
-      malId,
+      kitsuId,
     },
   });
   if (info) return await getPartialInfo(info);
-  console.log("Cache fail, fetching info for", malId);
+  console.log("Cache fail, fetching info for", kitsuId);
   try {
-    info = await api.anime.info(malId);
+    info = await api.anime.info(kitsuId);
   } catch (err) {
     console.log(err);
   }

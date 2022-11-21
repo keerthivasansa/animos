@@ -23,6 +23,10 @@ input[type="color"]::-webkit-color-swatch {
     border: none;
 }
 
+button {
+	@apply px-5 py-2 rounded-md w-fit font-semibold text-sm;
+}
+
 .bg-dark-1 {
 	background-color: var(--dark-1);
 }
@@ -37,6 +41,7 @@ input, select {
 
 .bg-accent {
 	background-color: var(--accent-color);
+	color: var(--accent-font);
 }
 
 nav {
@@ -46,4 +51,5 @@ nav {
 body {
 	background-color: var(--secondary-dark);
 	font-family: 'Poppins';
+	overflow-x: hidden;
 }

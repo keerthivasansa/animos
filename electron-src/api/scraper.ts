@@ -4,7 +4,7 @@ Special thanks to IGRohan
 */
 import axios from 'axios'
 import { load } from 'cheerio'
-import { getAjaxParams, decryptAjaxResponse } from '../helper.js'
+import { getAjaxParams, decryptAjaxResponse } from '../helper'
 
 const gogoBase = 'https://gogoanime.lu/'
 const gogoBase2 = 'https://gogoanime.gg/'

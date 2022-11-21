@@ -1,7 +1,7 @@
-import { batchHttpGet, httpGet } from "./utils.js";
+import { batchHttpGet, httpGet } from "./utils";
 import type { Anime } from "@prisma/client";
 import { load } from "cheerio";
-import { db } from "../db.js";
+import { db } from "../db";
 
 // MalId -> Kitsu -> KitsuID
 // KitsuId -> Kitsu -> Info
@@ -13,7 +13,7 @@ function transformKitsuToAnime(kitsuData): Anime {
   let anime: any = {};
   let { attributes: data } = kitsuData;
   anime.synopsis = data.synopsis;
-  anime.kitsuId = kitsuData.id;
+  anime.kitsuId = parseInt(kitsuData.id);
   anime.title_en = data.titles.en_us ?? data.titles.en;
   anime.title_jp = data.titles.en_jp;
   anime.title = data.canonicalTitle;
@@ -63,11 +63,42 @@ export async function getGenre(genre: string) {
 
 export async function getPosters() {
   let res = await httpGet("https://kitsu.io/api/edge/trending/anime");
-  return res.data.map((anime) => transformKitsuToAnime(anime));
+  return await Promise.all(
+    res.data.map(async (anime) => {
+      let data = transformKitsuToAnime(anime);
+      data.genres = await getGenres(data.kitsuId);
+      return data;
+    })
+  );
 }
 
-export async function getPartialInfo(anime: Anime): Promise<Anime> {
+async function getGenres(kitsuId: number) {
+  let genres = await httpGet(
+    `https://kitsu.io/api/edge/anime/${kitsuId}/genres`
+  );
+  return genres.data.map((data) => data.name).join(",");
+}
+
+export interface AnimeWithGenre extends Anime {
+  genre: string[];
+}
+
+export async function getPartialInfo(
+  animeData: Anime
+): Promise<AnimeWithGenre> {
+  let anime: AnimeWithGenre = { ...animeData, genre: [] };
   if (!anime.malId) anime.malId = await getMalId(anime.kitsuId);
+  if (!anime.genres) {
+    let genres = await httpGet(
+      `https://kitsu.io/api/edge/anime/${anime.kitsuId}/genres`
+    );
+    anime.genres = genres.data.map((data) => data.name).join(",");
+  }
+
+  if (anime.genres) {
+    anime.genre = anime.genres.split(",") as any;
+  }
+  console.log("Genre:", anime.genre);
   if (!anime.slug) {
     let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
     let result = await httpGet(animix);
@@ -86,7 +117,7 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
 }
 
 async function infoWithKitsu(
-  kitsuId: string,
+  kitsuId: number,
   malId?: number,
   mapping: boolean = false
 ): Promise<Anime> {
@@ -95,11 +126,16 @@ async function infoWithKitsu(
     : `https://kitsu.io/api/edge/anime/${kitsuId}`;
   console.log({ info });
   let result2 = await httpGet(info);
-  console.log(result2);
+
   let anime = transformKitsuToAnime(result2.data);
+  let genreUrl = `https://kitsu.io/api/edge/anime/${anime.kitsuId}/genres`;
+  let genre = await httpGet(genreUrl);
+  console.log(genre.data);
+  anime.genres = genre.data.map((genre) => genre.attributes.name).join(",");
   anime.malId = malId;
   if (!malId) anime.malId = await getMalId(kitsuId);
-  let animix = `https://animixplay.to/assets/rec/${malId}.json`;
+  console.log("Anime MAL ID: ", anime.malId);
+  let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
   let result = await httpGet(animix);
   let slugs = result["Gogoanime"].map((obj) => obj.url.split("/").pop());
   anime.slug = slugs[0];
@@ -114,26 +150,20 @@ async function infoWithKitsu(
   return anime;
 }
 
-async function getMalId(kitsuId: string) {
+async function getMalId(kitsuId: number) {
   let res = await httpGet(
     `https://kitsu.io/api/edge/anime/${kitsuId}/mappings`
   );
   let data = res.data.filter(
     (obj) => obj.attributes.externalSite == "myanimelist/anime"
-  );
-  return data.externalId;
+  )[0];
+  console.log(data);
+  console.log(data.attributes.externalId);
+  return parseInt(data.attributes.externalId);
 }
 
-export async function info(malId: number): Promise<Anime> {
-  let resp = await httpGet(
-    `https://kitsu.io/api/edge/mappings?filter[externalId]=${malId}&externalSite=myanimelist/anime`
-  );
-  let data = resp.data.filter(
-    (obj) => obj.attributes.externalSite == "myanimelist/anime"
-  )[0];
-  let kitsuMappingId = data.id;
-  console.log(kitsuMappingId);
-  return infoWithKitsu(kitsuMappingId, malId, true);
+export async function info(kitsuId: number): Promise<Anime> {
+  return infoWithKitsu(kitsuId);
 }
 
 export async function search(query: string) {
