@@ -25,7 +25,7 @@
 {/await}
 
 <section class="p-10">
-  <div class="flex gap-5">
+  <div class="flex gap-12">
     {#await get(11110)}
       Loading anime
     {:then anime}

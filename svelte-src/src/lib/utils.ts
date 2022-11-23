@@ -1,3 +1,5 @@
+import type { Anime } from "@prisma/client";
+
 export function getColorType(color: string) {
   let c = color.substring(1);
   let rgb = parseInt(c, 16);
@@ -50,4 +52,8 @@ const genreColors = ["#742802", "#c14a09", "#b0306a", "#985538", "#35654d"];
 export function getGenreColor(name: string) {
   let index = (name.length + name.charCodeAt(1)) % genreColors.length;
   return genreColors[index];
+}
+
+export function getTitle(anime: Anime): string {
+  return anime.title_en ?? anime.title
 }
