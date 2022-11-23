@@ -7,7 +7,7 @@
   import Settings from "$lib/components/Settings.svelte";
   import { accentClr, showSettings } from "$lib/stores";
   import { onMount } from "svelte";
-  import { lightOrDark } from "$lib/utils";
+  import { capitalize, lightOrDark } from "$lib/utils";
 
   let search: string = "";
   let marginLeft = -4.25;
@@ -15,7 +15,7 @@
   function autoCapWords() {
     search = search
       .split(" ")
-      .map((word) => word[0].toUpperCase() + word.slice(1).toLowerCase())
+      .map((word) => capitalize(word))
       .join(" ");
   }
 

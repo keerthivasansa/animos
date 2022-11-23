@@ -211,3 +211,45 @@ export async function search(query: string) {
   });
   return result;
 }
+
+export async function getAllRelatedAnime(kitsuId: number, roles: string[]) {
+  let related = {
+    character: [],
+    sequel: [],
+    other: [],
+    spinoff: [],
+    prequel: [],
+    alternative_version: [],
+  };
+  console.log(kitsuId, roles);
+  let resp = await httpGet(
+    `https://kitsu.io/api/edge/anime/${kitsuId}?include=mediaRelationships.destination`
+  );
+  let data = resp.included;
+  let relatedAnime = data.filter((obj) => obj.type == "anime");
+  let mediaRelationships = data.filter(
+    (obj) =>
+      obj.type == "mediaRelationships" &&
+      obj.relationships.destination.data.type == "anime"
+  );
+  await Promise.all(
+    mediaRelationships.map(async (obj) => {
+      let role = obj.attributes.role;
+      let animeId = obj.relationships.destination.data.id;
+
+      if (roles.includes(role)) {
+        let animeData = relatedAnime.filter((anime) => anime.id == animeId)[0];
+        console.log(role);
+        let anime = transformKitsuToAnime(animeData);
+        related[role].push(anime);
+        let res = await getAllRelatedAnime(animeId, [role]);
+        console.log("Result from inner node:");
+        Object.keys(res).forEach((key) => {
+          console.log(key, related[key]);
+          related[key] = related[key].concat(res[key]);
+        });
+      }
+    })
+  );
+  return related;
+}

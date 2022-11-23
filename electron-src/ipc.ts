@@ -1,7 +1,12 @@
 import { Anime } from "@prisma/client";
 import { ipcMain } from "electron";
 import { api } from "./api-v2";
-import { getGenre, getPosters, getRecommendations } from "./api/anime";
+import {
+  getAllRelatedAnime,
+  getGenre,
+  getPosters,
+  getRecommendations,
+} from "./api/anime";
 import { episodes, getEpisode } from "./api/episode";
 import { db } from "./db";
 
@@ -32,6 +37,11 @@ ipcMain.handle("anime:genre", async (event, genre: string) => {
 
 ipcMain.handle("anime:recommendations", async (event, malId: number) => {
   let result = await getRecommendations(malId);
+  return result;
+});
+
+ipcMain.handle("anime:related", async (event, kitsuId: number) => {
+  let result = await getAllRelatedAnime(kitsuId, ["prequel", "sequel"]);
   return result;
 });
 

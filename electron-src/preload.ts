@@ -4,15 +4,16 @@ import { AnimeWithGenre } from "./api/anime";
 
 const endpoints = {
   anime: {
-    info: (malId: number) =>
-      ipcRenderer.invoke("anime:info", malId) as Promise<AnimeWithGenre>,
+    info: (kitsuId: number) =>
+      ipcRenderer.invoke("anime:info", kitsuId) as Promise<AnimeWithGenre>,
     search: (query: string) =>
       ipcRenderer.invoke("anime:search", query) as Promise<Anime[]>,
     posters: () => ipcRenderer.invoke("anime:posters") as Promise<Anime[]>,
     genre: (name: string) =>
       ipcRenderer.invoke("anime:genre", name) as Promise<Anime[]>,
-    recommendations: (malId: number) =>
-      ipcRenderer.invoke("anime:recommendations", malId) as Promise<Anime[]>,
+    recommendations: (kitsuId: number) =>
+      ipcRenderer.invoke("anime:recommendations", kitsuId) as Promise<Anime[]>,
+    related: (kitsuId: number) => ipcRenderer.invoke("anime:related", kitsuId),
   },
   episode: {
     info: (kitsuId: number) => ipcRenderer.invoke("episode:info", kitsuId),

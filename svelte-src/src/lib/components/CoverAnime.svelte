@@ -1,26 +1,37 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
   import type { AnimeWithGenre } from "$electron-src/api/anime";
   import { coverAnimeFocus } from "$lib/stores";
   import { getGenreColor, getTitle } from "$lib/utils";
+  import { onMount } from "svelte";
   import FaStar from "svelte-icons/fa/FaStar.svelte";
   import Genres from "./Genres.svelte";
 
   export let anime: AnimeWithGenre;
+  export let infoOnHover = true;
 
   let currentCoverAnime: number;
 
   coverAnimeFocus.subscribe((val) => (currentCoverAnime = val));
-  $: focused = currentCoverAnime == anime.kitsuId;
-  $: {
-    console.log({ focused, anime: anime.kitsuId });
-  }
+  $: focused = infoOnHover && currentCoverAnime == anime.kitsuId;
+
+  let contentSize = "18.2rem";
 
   let animeTitle = getTitle(anime);
+  onMount(() => {
+    let contentDiv = document.getElementById(`content-${anime.kitsuId}`);
+    console.log(contentDiv);
+    contentSize = `${
+      document.getElementById(`content-${anime.kitsuId}`)?.clientHeight
+    }px`;
+    console.log({ contentSize });
+  });
 </script>
 
-<a href="/info/?kitsuId={anime.kitsuId}&title={animeTitle}">
+<a href="/info/{anime.kitsuId}?title={animeTitle}" data-sveltekit-reload>
   <div
-    style="height: 18.2rem;"
+    style="height: {contentSize};"
     class="relative w-48 "
     on:mouseenter={(_) => {
       coverAnimeFocus.set(anime.kitsuId);
@@ -50,6 +61,7 @@
       <span class="text-sm">Episodes: {anime.episodes}</span>
     </div>
     <div
+      id="content-{anime.kitsuId}"
       class="opacity-1 absolute top-0 left-0"
       style={focused ? "z-index:10" : " z-index: 2;"}
     >
