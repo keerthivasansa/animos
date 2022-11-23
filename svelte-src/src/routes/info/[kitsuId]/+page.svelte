@@ -3,14 +3,22 @@
   import Genres from "$lib/components/Genres.svelte";
   import IconBtn from "$lib/components/IconBtn.svelte";
   import FaDown from "svelte-icons/fa/FaArrowDown.svelte";
-  import { capitalize, getTitle } from "$lib/utils";
+  import {
+    capitalize,
+    convertRemToPixels,
+    getNumberOfLines,
+    getTitle,
+  } from "$lib/utils";
   import CoverAnime from "$lib/components/CoverAnime.svelte";
   import FaUp from "svelte-icons/fa/FaArrowUp.svelte";
   import IconTxtBtn from "$lib/components/IconTxtBtn.svelte";
-  
+  import { onMount } from "svelte";
+  import { afterNavigate } from "$app/navigation";
+
   let descriptionExpand = false;
   let relatedExpand = false;
   let kitsuId = parseInt($page.params.kitsuId ?? "");
+  let synopsisLines = 0;
 
   async function getAnime() {
     return await window.api.anime.info(kitsuId);
@@ -19,6 +27,11 @@
   async function getRelated() {
     return await window.api.anime.related(kitsuId);
   }
+
+  let maxDescription = convertRemToPixels(15);
+  $: synopsisElem = document.getElementById("synopsis");
+
+  $: showExpand = synopsisElem?.clientHeight ?? 0 > maxDescription;
 </script>
 
 {#await getAnime()}
@@ -37,13 +50,14 @@
       <!-- TODO add type -->
       <div class="relative px-2">
         <p
-          class="mt-5 transition-all ease-in-out duration-500"
+          id="synopsis"
+          class="mt-5 synopsis transition-all ease-in-out duration-500"
           class:limit-lines={!descriptionExpand}
-          style={descriptionExpand ? "height: max-content;" : "height: 15rem;"}
+          style={descriptionExpand || !showExpand ? "height: max-content;" : "height: 15rem;"}
         >
           {anime.synopsis}
         </p>
-        {#if !descriptionExpand}
+        {#if showExpand && !descriptionExpand}
           <div
             class="absolute bottom-0 left-0 w-full h-full bg-black rounded-b-lg black-gradient"
           />
@@ -117,7 +131,8 @@
   .limit-lines {
     overflow: hidden;
     line-height: 1.5rem;
-    height: 15rem;
+    height: max-content;
+    max-height: 15rem;
     text-overflow: ellipsis;
   }
 </style>

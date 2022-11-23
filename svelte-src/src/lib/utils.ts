@@ -61,3 +61,16 @@ export function getTitle(anime: Anime): string {
 export function capitalize(word: string) {
   return word[0].toUpperCase() + word.slice(1).toLowerCase();
 }
+
+export function getNumberOfLines(elementId: string) {
+  let element = document.getElementById(elementId);
+  console.log(element, elementId);
+  if (!element) return 0;
+  let lineHeight = getComputedStyle(element).getPropertyValue("line-height");
+  let elementHeight = element.clientHeight;
+  return Math.floor(elementHeight / parseInt(lineHeight));
+}
+
+export function convertRemToPixels(rem: number) {
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
