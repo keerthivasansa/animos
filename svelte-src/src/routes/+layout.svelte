@@ -57,7 +57,9 @@
         <FaGear />
       </IconBtn>
     </div>
-    <Logo />
+    <a href="/">
+      <Logo />
+    </a>
   </div>
   <div class="flex gap-2">
     <input
