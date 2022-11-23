@@ -11,17 +11,18 @@
   }
 
   async function getPosters(): Promise<AnimeWithGenre[]> {
-    return window.api.anime.posters() as any;
+    let posters = await window.api.anime.posters();
+    console.log(posters);
+    return posters as any;
   }
 </script>
 
-<section>
-  {#await getPosters()}
-    <span />
-  {:then trendingAnime}
-    <Carousel anime={trendingAnime} />
-  {/await}
-</section>
+{#await getPosters()}
+  <!-- Add loading animation -->
+  <span />
+{:then trendingAnime}
+  <Carousel anime={trendingAnime} />
+{/await}
 
 <section class="p-10">
   <div class="flex gap-5">

@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { db } from "../db";
 
 export async function batchHttpGet<T extends Record<string, string>>(
@@ -33,34 +33,16 @@ export async function batchHttpGet<T extends Record<string, string>>(
 }
 
 export async function httpGet(url: string): Promise<any> {
-  let res = await db.response.findUnique({
+  console.debug(`Fetching URL ${url}`);
+  let responseObj = await db.response.findUnique({
     where: {
       url,
     },
   });
-  if (res) {
-    console.log("Cache hit for endpoint: ", url);
-    return JSON.parse(res.response);
-  }
-  return new Promise(async (res, rej) => {
-    try {
-      let response = await axios.get(url);
-      if (response.status == 200)
-        await db.response.create({
-          data: { url, response: JSON.stringify(response.data) },
-        });
-      res(response.data);
-    } catch (err: any) {
-      if (err instanceof AxiosError) {
-        rej({
-          url,
-          status: err.status,
-          message: err.message,
-          response: err.response,
-        });
-      } else {
-        console.log(err);
-      }
-    }
+  if (responseObj) return JSON.parse(responseObj.response);
+  let response = await axios.get(url);
+  await db.response.create({
+    data: { url, response: JSON.stringify(response.data) },
   });
+  return response.data;
 }

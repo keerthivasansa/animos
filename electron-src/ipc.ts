@@ -1,62 +1,22 @@
 import { Anime } from "@prisma/client";
 import { ipcMain } from "electron";
 import { api } from "./api-v2";
-import {
-  getGenre,
-  getPartialInfo,
-  getPosters,
-  getRecommendations,
-} from "./api/anime";
+import { getGenre, getPosters, getRecommendations } from "./api/anime";
 import { episodes, getEpisode } from "./api/episode";
 import { db } from "./db";
 
 ipcMain.handle("anime:info", async (event, kitsuId: number) => {
-  let info = await db.anime.findUnique({
-    where: {
-      kitsuId,
-    },
-  });
-  if (info) return await getPartialInfo(info);
-  console.log("Cache fail, fetching info for", kitsuId);
+  console.info("Cache fail, fetching info for", kitsuId);
   try {
-    info = await api.anime.info(kitsuId);
+    let info = await api.anime.getInfo(kitsuId);
+    return info;
   } catch (err) {
     console.log(err);
   }
-  await db.anime.create({
-    data: info,
-  });
-  return info;
 });
 
 ipcMain.handle("anime:posters", async (event) => {
-  let result = await db.anime.findMany({
-    where: {
-      poster: {
-        gt: -1,
-      },
-      lastUpdated: {
-        gt: new Date(Date.now() - 86400 * 1000 * 7),
-      },
-    },
-  });
-  if (result.length > 1) {
-    console.log("cache hit");
-    return result;
-  }
   let res = (await getPosters()) as Anime[];
-  await db.$transaction(
-    res.map((anime, index) => {
-      anime.poster = index;
-      return db.anime.upsert({
-        create: anime,
-        update: {},
-        where: {
-          kitsuId: anime.kitsuId,
-        },
-      });
-    })
-  );
   return res;
 });
 

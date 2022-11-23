@@ -1,25 +1,27 @@
 <script lang="ts">
-  import CoverAnime from "$lib/components/CoverAnime.svelte";
   import FaNext from "svelte-icons/fa/FaAngleRight.svelte";
+  import FaStar from "svelte-icons/fa/FaStar.svelte";
   import FaPrev from "svelte-icons/fa/FaAngleLeft.svelte";
   import type { AnimeWithGenre } from "$electron-src/api/anime";
+  import { getGenreColor } from "$lib/utils";
 
   export let anime: AnimeWithGenre[];
 
-  let maxSlideRight = 2;
-
   let index = 0;
+  let focus = false;
 
   function nextSlide() {
     index += 1;
-    if (index == anime.length)
-      index = 0;
+    if (index == anime.length) index = 0;
+  }
+
+  function getTitle(anime: AnimeWithGenre) {
+    return anime.title_en ?? anime.title ?? anime.title_jp;
   }
 
   function prevSlide() {
     index -= 1;
-    if (index < 0)
-      index = anime.length - 1;
+    if (index < 0) index = anime.length - 1;
   }
 </script>
 
@@ -30,27 +32,36 @@
       <FaPrev />
     </div>
   </button>
-  <div class="flex gap-5 transition-all ease-in-out duration-500 flex-nowrap">
-    <!-- {#each anime as an}
-      <div class="h-72 container relative rounded-md" style="aspect-ratio: 21 / 5;">
-        <div
-          class="absolute top-0 left-0 w-full h-full"
-          style="background-image: url('{an.coverImg}'); z-index: -1; background-size: cover; background-position: center;"
-        />
-        <div
-          class="flex absolute bg-black bg-opacity-80 text-white flex-col opacity-0 h-full w-full p-3 transition-all ease-linear duration-150 top-0 left-0 inner"
-        >
-          <span>{an.title}</span>
-          <span>{an.score}</span>
-          <span>{an.genres}</span>
-        </div>
-      </div>
-    {/each} -->
+  <div
+    on:mouseenter={(_) => (focus = true)}
+    on:mouseleave={(_) => (focus = false)}
+    class="mx-5 rounded-lg relative"
+    style="background-image: url('{anime[index]
+      .coverImg}'); background-size: cover; width: 96vw; aspect-ratio: 21 / 5; height: 24vw; transition: background-image 500ms ease-in-out"
+  >
     <div
-      class="mx-5 rounded-lg"
-      style="background-image: url('{anime[index]
-        .coverImg}'); background-size: cover; width: 96vw; aspect-ratio: 21 / 5; height: 24vw; transition: background-image 500ms ease-in-out"
-    />
+      class:opacity-100={focus}
+      class="absolute top-0 transition-all ease-in-out duration-500 opacity-0 left-0 px-20 py-14 flex flex-col gap-10 h-full center bg-black text-white bg-opacity-90"
+    >
+      <h2 class="text-2xl font-semibold">{getTitle(anime[index])}</h2>
+      <div class="flex gap-4">
+        {#if anime[index].genres}
+          {#each anime[index].genres.split(",")?.slice(0, 3) as genre}
+            <span
+              class="text-sm px-2 py-1 rounded-sm"
+              style="background-color: {getGenreColor(genre)};">{genre}</span
+            >
+          {/each}
+        {/if}
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-5 text-amber-400">
+          <FaStar />
+        </div>
+        {anime[index].score}
+      </div>
+      <button class="btn bg-accent">Learn more</button>
+    </div>
   </div>
   <button on:click={nextSlide} class="nav-btn right-0 top-0">
     <div class="w-8">
@@ -60,9 +71,10 @@
 </div>
 
 <style lang="postcss">
-  .container:hover > .inner {
+  .opacity-100 {
     opacity: 1;
   }
+
   .nav-btn {
     @apply absolute transition-all ease-linear duration-150 opacity-0 w-40 h-full bg-opacity-80 justify-center items-center flex top-0 bg-black z-30 px-3 py-2 rounded-lg font-black text-white;
   }

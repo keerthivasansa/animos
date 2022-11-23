@@ -5,6 +5,8 @@ import { config } from "dotenv"
 
 config();
 
+console.info("Starting app . . .")
+
 // register url for prisma
 process.env.DATABASE_URL = 'file:./cache.db'
 
