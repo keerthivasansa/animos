@@ -3,53 +3,70 @@
 @tailwind utilities;
 
 :root {
-	--primary-blue: rgb(241, 42, 62);
-	--accent-color: #caf2ff;
-	--primary-dark: #202020;
-	--secondary-dark: #2d2f33;
-	--input-dark: #2e2e2e;
-	--plyr-color-main: var(--accent-color);
-	--dark-1: #1d1d1d;
+  --primary-blue: rgb(241, 42, 62);
+  --accent-color: #caf2ff;
+  --primary-dark: #202020;
+  --secondary-dark: #2d2f33;
+  --input-dark: #2e2e2e;
+  --plyr-color-main: var(--accent-color);
+  --dark-1: #1d1d1d;
 }
 
 input[type="color"] {
-    -webkit-appearance: none;
-    border: none;
+  -webkit-appearance: none;
+  border: none;
 }
 input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 0;
+  padding: 0;
 }
 input[type="color"]::-webkit-color-swatch {
-    border: none;
+  border: none;
 }
 
 button {
-	@apply px-5 py-2 rounded-md w-fit font-semibold text-sm;
+  @apply px-5 py-2 rounded-md w-fit font-semibold text-sm;
 }
 
 .bg-dark-1 {
-	background-color: var(--dark-1);
+  background-color: var(--dark-1);
 }
 
 .accent-font {
-	color: var(--accent-color);
+  color: var(--accent-color);
 }
 
-input, select {
-	color: black;
+input,
+select {
+  color: black;
 }
 
 .bg-accent {
-	background-color: var(--accent-color);
-	color: var(--accent-font);
+  background-color: var(--accent-color);
+  color: var(--accent-font);
 }
 
 nav {
-	background-color: var(--primary-dark);
+  background-color: var(--primary-dark);
 }
 
 body {
-	background-color: var(--secondary-dark);
-	font-family: 'Poppins';
-	overflow-x: hidden;
+  background-color: var(--secondary-dark);
+  font-family: "Poppins";
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-left: 1px solid rgb(94, 94, 94);
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 10px;
 }
