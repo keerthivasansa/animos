@@ -8,7 +8,7 @@
   export let anime: AnimeWithGenre[];
 
   let index = 0;
-  let focus = false;
+  let focus = true;
 
   function nextSlide() {
     index += 1;
@@ -26,7 +26,7 @@
 </script>
 
 <!-- TODO implement infinite scrolling -->
-<div class="w-full py-3 slider relative">
+<div class="w-full my-8 py-3 slider relative overflow-hidden rounded-lg">
   <button on:click={prevSlide} class="nav-btn left-0 top-0">
     <div class="w-8">
       <FaPrev />
@@ -34,16 +34,20 @@
   </button>
   <div
     on:mouseenter={(_) => (focus = true)}
-    on:mouseleave={(_) => (focus = false)}
     class="mx-5 rounded-lg relative"
     style="background-image: url('{anime[index]
       .coverImg}'); background-size: cover; width: 96vw; aspect-ratio: 21 / 5; height: 24vw; transition: background-image 500ms ease-in-out"
   >
     <div
       class:opacity-100={focus}
-      class="absolute top-0 transition-all ease-in-out duration-500 opacity-0 left-0 px-20 py-14 flex flex-col gap-10 h-full center bg-black text-white bg-opacity-90"
+      class="absolute top-0 rounded-l-lg transition-all ease-in-out duration-500 opacity-0 left-0 px-14 py-12 flex flex-col gap-10 h-full center bg-black text-white bg-opacity-95"
     >
-      <h2 class="text-2xl font-semibold">{getTitle(anime[index])}</h2>
+      <h2
+        title={getTitle(anime[index])}
+        class="text-2xl title-box w-full max-w-xs font-semibold text-ellipsis"
+      >
+        {getTitle(anime[index])}
+      </h2>
       <div class="flex gap-4">
         {#if anime[index].genres}
           {#each anime[index].genres.split(",")?.slice(0, 3) as genre}
@@ -58,7 +62,14 @@
         <div class="w-5 text-amber-400">
           <FaStar />
         </div>
-        {anime[index].score}
+        <span>
+          {anime[index].score}
+        </span>
+        {#if ["R", "R18"].includes(anime[index].ageRating)}
+          <span class="ml-5 bg-red-800 text-white px-2 rounded-md text-md py-1"
+            >18+</span
+          >
+        {/if}
       </div>
       <button class="btn bg-accent">Learn more</button>
     </div>
@@ -71,6 +82,13 @@
 </div>
 
 <style lang="postcss">
+  .title-box {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
   .opacity-100 {
     opacity: 1;
   }

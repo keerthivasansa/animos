@@ -21,15 +21,16 @@ model Genre {
 }
 
 model Anime {
-  kitsuId     Int   @id
+  kitsuId     Int      @id
   malId       Int?     @unique
   synopsis    String
+  ageRating   String
   title_en    String?
   title_jp    String?
   title       String
   posterImg   String
   coverImg    String?
-  genres      String 
+  genres      String // comma seperated values
   score       Float
   episodes    Int?
   slug        String?

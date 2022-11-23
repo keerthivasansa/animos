@@ -43,6 +43,11 @@
           <FaStar />
         </div>
         <span>{anime.score}</span>
+        {#if ["R", "R18"].includes(anime.ageRating)}
+          <span class="ml-5 bg-red-800 text-white px-2 rounded-md text-sm py-1"
+            >18+</span
+          >
+        {/if}
       </div>
       <button class="text-xs my-5 bg-accent">Learn more</button>
     </div>

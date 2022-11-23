@@ -16,6 +16,7 @@ function transformKitsuToAnime(kitsuData): Anime {
   anime.kitsuId = parseInt(kitsuData.id);
   anime.title_en = data.titles.en_us ?? data.titles.en;
   anime.title_jp = data.titles.en_jp;
+  anime.ageRating = data.ageRating ?? "G";
   anime.title = data.canonicalTitle;
   anime.posterImg = data.posterImage?.large ?? "";
   anime.coverImg = data.coverImage?.large ?? "";
@@ -80,20 +81,23 @@ export async function getPosters() {
   let result = await Promise.all(
     res.data.map(async (anime) => {
       let data = transformKitsuToAnime(anime);
+      console.log({ rating: data.ageRating });
       data.genres = await getGenres(data.kitsuId);
       return data;
     })
   );
   await db.$transaction(
-    result.map((anime, index) =>
-      db.anime.upsert({
+    result.map((anime, index) => {
+      if (!anime.ageRating)
+        throw new Error("Missing age rating for " + anime.kitsuId);
+      return db.anime.upsert({
         create: anime,
         update: { poster: anime.poster },
         where: {
           kitsuId: anime.kitsuId,
         },
-      })
-    )
+      });
+    })
   );
   return result;
 }
