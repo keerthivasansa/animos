@@ -20,21 +20,32 @@ model Genre {
   name  String @unique
 }
 
+model AnimeRelation {
+  role          String
+  sourceId      Int
+  anime         Anime  @relation(fields: [destinationId], references: [kitsuId])
+  destinationId Int
+
+  @@id([sourceId, destinationId])
+}
+
 model Anime {
-  kitsuId     Int      @id
-  malId       Int?     @unique
-  synopsis    String
-  ageRating   String
-  title_en    String?
-  title_jp    String?
-  title       String
-  posterImg   String
-  coverImg    String?
-  genres      String // comma seperated values
-  score       Float
-  episodes    Int?
-  slug        String?
-  dubSlug     String?
-  poster      Int?
-  lastUpdated DateTime @default(now()) @updatedAt
+  kitsuId   Int     @id
+  malId     Int?    @unique
+  synopsis  String
+  ageRating String
+  title_en  String?
+  title_jp  String?
+  title     String
+  posterImg String
+  coverImg  String?
+  genres    String // comma seperated values
+  score     Float
+  episodes  Int?
+  slug      String?
+  dubSlug   String?
+  poster    Int?
+
+  lastUpdated   DateTime        @default(now()) @updatedAt
+  relation AnimeRelation[]
 }

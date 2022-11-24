@@ -21,12 +21,12 @@
     return await window.api.anime.related(kitsuId);
   }
 
-  let maxDescription = 10;
+  let maxDescription: number;
   let showExpand = false;
   let synopsisElem: HTMLElement;
 
   onMount(() => {
-    maxDescription = convertRemToPixels(15);
+    maxDescription = convertRemToPixels(9);
     showExpand = (synopsisElem?.clientHeight ?? 0) > maxDescription;
     console.log("Height:");
     console.log({ height: synopsisElem?.offsetHeight, maxDescription });
@@ -47,11 +47,11 @@
     <div class="relative px-2">
       <p
         bind:this={synopsisElem}
-        class="mt-5 synopsis transition-all ease-in-out duration-500"
+        class="mt-5 synopsis transition-all text-gray-200 ease-in-out duration-500"
         class:limit-lines={!descriptionExpand}
         style={descriptionExpand || !showExpand
-          ? "height: max-content;"
-          : "height: 15rem;"}
+          ? "height: max-content; line-height: 1.8rem;"
+          : `height: ${maxDescription}px; line-height: 1.65rem`}
       >
         {anime.synopsis}
       </p>
@@ -127,8 +127,6 @@
 
   .limit-lines {
     overflow: hidden;
-    line-height: 1.5rem;
-    height: max-content;
     text-overflow: ellipsis;
   }
 </style>

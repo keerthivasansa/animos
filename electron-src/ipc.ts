@@ -40,8 +40,8 @@ ipcMain.handle("anime:recommendations", async (event, malId: number) => {
   return result;
 });
 
-ipcMain.handle("anime:related", async (event, kitsuId: number) => {
-  let result = await getAllRelatedAnime(kitsuId, ["prequel", "sequel"]);
+ipcMain.handle("anime:related", async (event, kitsuId: string) => {
+  let result = await getAllRelatedAnime((kitsuId), ["prequel", "sequel"]);
   return result;
 });
 

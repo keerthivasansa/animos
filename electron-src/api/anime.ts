@@ -20,6 +20,7 @@ function transformKitsuToAnime(kitsuData): Anime {
   anime.title = data.canonicalTitle;
   anime.posterImg = data.posterImage?.large ?? "";
   anime.coverImg = data.coverImage?.large ?? "";
+  anime.genres = '';
   anime.score = parseInt(data.averageRating ?? "0") / 10;
   anime.episodes = data.episodeCount;
   return anime;
@@ -122,6 +123,7 @@ export async function getPartialInfo(
 ): Promise<AnimeWithGenre> {
   let anime: AnimeWithGenre = { ...animeData, genre: [] };
   if (!anime.malId) anime.malId = await getMalId(anime.kitsuId);
+  if (anime.genres == "") anime.genres = await getGenres(anime.kitsuId);
   if (!anime.slug) {
     let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
     let result = await httpGet(animix);
@@ -212,7 +214,7 @@ export async function search(query: string) {
   return result;
 }
 
-export async function getAllRelatedAnime(kitsuId: number, roles: string[]) {
+export async function getAllRelatedAnime(kitsuId: string, roles: string[]) {
   let related = {
     character: [],
     sequel: [],
@@ -221,6 +223,25 @@ export async function getAllRelatedAnime(kitsuId: number, roles: string[]) {
     prequel: [],
     alternative_version: [],
   };
+  let relatedAnimes = await db.animeRelation.findMany({
+    where: {
+      sourceId: parseInt(kitsuId),
+    },
+    select: {
+      anime: true,
+      role: true,
+    },
+  });
+  if (relatedAnimes.length == 1 && relatedAnimes[0].role == "NULL") {
+    // no related anime
+    return related;
+  } else if (relatedAnimes.length > 0) {
+    relatedAnimes.forEach((relation) => {
+      related[relation.role].push(relation.anime);
+    });
+    return related;
+  }
+
   console.log(kitsuId, roles);
   let resp = await httpGet(
     `https://kitsu.io/api/edge/anime/${kitsuId}?include=mediaRelationships.destination`
@@ -250,6 +271,28 @@ export async function getAllRelatedAnime(kitsuId: number, roles: string[]) {
         });
       }
     })
+  );
+  let promises = [];
+
+  await db.$transaction(
+    Object.keys(related)
+      .map((key) =>
+        related[key].map((anime) => [
+          db.anime.upsert({
+            where: { kitsuId: anime.kitsuId },
+            create: anime,
+            update: {},
+          }),
+          db.animeRelation.create({
+            data: {
+              role: key,
+              sourceId: parseInt(kitsuId),
+              destinationId: anime.kitsuId,
+            },
+          }),
+        ])
+      )
+      .flat(2)
   );
   return related;
 }
