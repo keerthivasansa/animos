@@ -1,8 +1,8 @@
 import { httpGet } from "../utils";
 import type { Anime } from "@prisma/client";
 import {
+    getGenres,
   getGenresFromIncluded,
-  getMalId,
   getMalIdFromIncluded,
   recurseRelations,
   transformKitsuToAnime,
@@ -12,6 +12,9 @@ import { db } from "../../db";
 
 // TODO look into other parameters that are useful
 // TODO look for upcoming new episodes
+
+// TODO add getGenre
+
 
 export async function getRecommendations(malId: number) {
   let res = await httpGet(
@@ -44,7 +47,7 @@ export async function getPosters() {
     })
   );
   await db.$transaction(
-    result.map((anime, index) => {
+    result.map((anime, _) => {
       if (!anime.ageRating)
         throw new Error("Missing age rating for " + anime.kitsuId);
       return db.anime.upsert({
@@ -59,37 +62,7 @@ export async function getPosters() {
   return result;
 }
 
-async function getGenres(kitsuId: number) {
-  let response = await httpGet(
-    `https://kitsu.io/api/edge/anime/${kitsuId}/categories?sort=-totalMediaCount`
-  );
-  let genreArr = response.data
-    .map((data) => data.attributes.title)
-    .slice(0, 5)
-    .sort();
-  return genreArr.join(",");
-}
 
-export async function getPartialInfo(anime: Anime): Promise<Anime> {
-  if (!anime.malId) anime.malId = await getMalId(anime.kitsuId);
-
-  if (anime.genres == "") anime.genres = await getGenres(anime.kitsuId);
-  if (!anime.slug) {
-    let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
-    let result = await httpGet(animix);
-    let slugs = result["Gogoanime"].map((obj) => obj.url.split("/").pop());
-    anime.slug = slugs[0];
-    anime.dubSlug = slugs[1];
-  }
-  if (!anime.episodes && anime.slug) {
-    let gogoInfo = await httpGet(`https://gogoanime.lu/category/${anime.slug}`);
-    const $ = load(gogoInfo);
-    anime.episodes = parseInt(
-      $("#episode_page > li").last().find("a").attr("ep_end") ?? "0"
-    );
-  }
-  return anime;
-}
 
 export async function getInfo(kitsuId: number): Promise<Anime> {
   let info = `https://kitsu.io/api/edge/anime/${kitsuId}?include=categories,mappings&fields[categories]=title,totalMediaCount`;
@@ -161,7 +134,6 @@ export async function getAllRelatedAnime(kitsuId: string, roles: string[]) {
   console.log(kitsuId, roles);
 
   related = await recurseRelations(parseInt(kitsuId), ["prequel", "sequel"]);
-  let promises = [];
 
   await db.$transaction(
     Object.keys(related)

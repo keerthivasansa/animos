@@ -1,4 +1,5 @@
 import { Anime } from "@prisma/client";
+import { load } from "cheerio";
 import { httpGet } from "../utils";
 
 export function transformKitsuToAnime(kitsuData: Record<string, any>): Anime {
@@ -15,6 +16,38 @@ export function transformKitsuToAnime(kitsuData: Record<string, any>): Anime {
   anime.genres = "";
   anime.score = parseInt(data.averageRating ?? "0") / 10;
   anime.episodes = data.episodeCount;
+  return anime;
+}
+
+export async function getGenres(kitsuId: number) {
+  let response = await httpGet(
+    `https://kitsu.io/api/edge/anime/${kitsuId}/categories?sort=-totalMediaCount`
+  );
+  let genreArr = response.data
+    .map((data) => data.attributes.title)
+    .slice(0, 5)
+    .sort();
+  return genreArr.join(",");
+}
+
+export async function getPartialInfo(anime: Anime): Promise<Anime> {
+  if (!anime.malId) anime.malId = await getMalId(anime.kitsuId);
+
+  if (anime.genres == "") anime.genres = await getGenres(anime.kitsuId);
+  if (!anime.slug) {
+    let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
+    let result = await httpGet(animix);
+    let slugs = result["Gogoanime"].map((obj) => obj.url.split("/").pop());
+    anime.slug = slugs[0];
+    anime.dubSlug = slugs[1];
+  }
+  if (!anime.episodes && anime.slug) {
+    let gogoInfo = await httpGet(`https://gogoanime.lu/category/${anime.slug}`);
+    const $ = load(gogoInfo);
+    anime.episodes = parseInt(
+      $("#episode_page > li").last().find("a").attr("ep_end") ?? "0"
+    );
+  }
   return anime;
 }
 

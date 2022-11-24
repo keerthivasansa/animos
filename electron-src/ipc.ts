@@ -1,9 +1,8 @@
 import { Anime } from "@prisma/client";
 import { ipcMain } from "electron";
-import { api } from "./api-v2";
+import { api } from "./api";
 import {
   getAllRelatedAnime,
-  getGenre,
   getPosters,
   getRecommendations,
 } from "./api/anime";
@@ -32,7 +31,7 @@ ipcMain.handle("anime:search", async (event, query: string) => {
 });
 
 ipcMain.handle("anime:genre", async (event, genre: string) => {
-  let result = await getGenre(genre);
+  let result = []
   return result;
 });
 
