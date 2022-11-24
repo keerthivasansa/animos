@@ -20,7 +20,7 @@ const config = {
 		},
 		alias: {
 			'$bg/*': '../backend/*',
-			"$electron-src/": "../electron-src/*",
+			"$electron-src/*": "../electron-src/*",
 			"$lib/*": "src/lib/*"
 		},
 		csp: {
