@@ -1,11 +1,10 @@
 import { contextBridge, ipcRenderer } from "electron";
 import type { Anime } from "@prisma/client";
-import { AnimeWithGenre } from "./api/anime";
 
 const endpoints = {
   anime: {
     info: (kitsuId: number) =>
-      ipcRenderer.invoke("anime:info", kitsuId) as Promise<AnimeWithGenre>,
+      ipcRenderer.invoke("anime:info", kitsuId) as Promise<Anime>,
     search: (query: string) =>
       ipcRenderer.invoke("anime:search", query) as Promise<Anime[]>,
     posters: () => ipcRenderer.invoke("anime:posters") as Promise<Anime[]>,

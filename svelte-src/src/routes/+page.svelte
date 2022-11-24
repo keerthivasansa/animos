@@ -1,8 +1,7 @@
 <script lang="ts">
-  import type { AnimeWithGenre } from "$electron-src/api/anime";
   import Carousel from "$lib/components/Carousel.svelte";
   import CoverAnime from "$lib/components/CoverAnime.svelte";
-  import { onMount } from "svelte";
+  import type { Anime } from "@prisma/client";
 
   async function get(id: number) {
     let anime = await window.api.anime.info(id);
@@ -10,7 +9,7 @@
     return anime;
   }
 
-  async function getPosters(): Promise<AnimeWithGenre[]> {
+  async function getPosters(): Promise<Anime[]> {
     let posters = await window.api.anime.posters();
     console.log(posters);
     return posters as any;
@@ -32,6 +31,11 @@
       <CoverAnime {anime} />
     {/await}
     {#await get(1376)}
+      Loading anime
+    {:then anime}
+      <CoverAnime {anime} />
+    {/await}
+    {#await get(11209)}
       Loading anime
     {:then anime}
       <CoverAnime {anime} />

@@ -8,12 +8,14 @@
   import { accentClr, showSettings } from "$lib/stores";
   import { onMount } from "svelte";
   import { capitalize, lightOrDark } from "$lib/utils";
+  import { page } from "$app/stores";
 
-  let search: string = "";
+  let searchQuery = $page.url.searchParams.get("q") ?? "";
+
   let marginLeft = -4.25;
 
   function autoCapWords() {
-    search = search
+    searchQuery = searchQuery
       .split(" ")
       .map((word) => capitalize(word))
       .join(" ");
@@ -62,17 +64,22 @@
     </a>
   </div>
   <div class="flex gap-2">
-    <input
-      type="text"
-      bind:value={search}
-      on:input={autoCapWords}
-      class="rounded-md {search == ''
-        ? 'w-32'
-        : 'w-60'} font-semibold px-4 py-2 focus:w-60 transition-all ease-in-out duration-200"
-    />
-    <IconBtn>
-      <FaSearch />
-    </IconBtn>
+    <form action="/search">
+      <input
+        type="text"
+        name="q"
+        bind:value={searchQuery}
+        on:input={autoCapWords}
+        class="rounded-md {searchQuery == ''
+          ? 'w-32'
+          : 'w-60'} font-semibold px-4 py-2 focus:w-60 transition-all ease-in-out duration-200"
+      />
+      <button type="submit">
+        <IconBtn>
+          <FaSearch />
+        </IconBtn>
+      </button>
+    </form>
   </div>
 </nav>
 <slot />

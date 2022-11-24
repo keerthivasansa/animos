@@ -20,7 +20,7 @@ function transformKitsuToAnime(kitsuData): Anime {
   anime.title = data.canonicalTitle;
   anime.posterImg = data.posterImage?.large ?? "";
   anime.coverImg = data.coverImage?.large ?? "";
-  anime.genres = '';
+  anime.genres = "";
   anime.score = parseInt(data.averageRating ?? "0") / 10;
   anime.episodes = data.episodeCount;
   return anime;
@@ -114,14 +114,7 @@ async function getGenres(kitsuId: number) {
   return genreArr.join(",");
 }
 
-export interface AnimeWithGenre extends Anime {
-  genre: string[];
-}
-
-export async function getPartialInfo(
-  animeData: Anime
-): Promise<AnimeWithGenre> {
-  let anime: AnimeWithGenre = { ...animeData, genre: [] };
+export async function getPartialInfo(anime: Anime): Promise<Anime> {
   if (!anime.malId) anime.malId = await getMalId(anime.kitsuId);
   if (anime.genres == "") anime.genres = await getGenres(anime.kitsuId);
   if (!anime.slug) {

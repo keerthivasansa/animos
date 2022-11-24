@@ -20,7 +20,7 @@
     "dev": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run svelte:dev\" \"npm run electron:dev\"",
     "electron:start": "tsc && electron dist/index.js | pino-pretty",
     "electron:dev": "nodemon",
-    "build": "npm run svelte:build && tsc && electron-build"
+    "build": "npm run svelte:build && tsc && electron-builder"
   },
   "build": {
     "appId": "com.keerthivasan.animos",

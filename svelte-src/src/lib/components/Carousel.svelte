@@ -2,10 +2,10 @@
   import FaNext from "svelte-icons/fa/FaAngleRight.svelte";
   import FaStar from "svelte-icons/fa/FaStar.svelte";
   import FaPrev from "svelte-icons/fa/FaAngleLeft.svelte";
-  import type { AnimeWithGenre } from "$electron-src/api/anime";
   import { getGenreColor } from "$lib/utils";
+  import type { Anime } from "@prisma/client";
 
-  export let anime: AnimeWithGenre[];
+  export let anime: Anime[];
 
   let index = 0;
   let focus = true;
@@ -15,7 +15,7 @@
     if (index == anime.length) index = 0;
   }
 
-  function getTitle(anime: AnimeWithGenre) {
+  function getTitle(anime: Anime) {
     return anime.title_en ?? anime.title ?? anime.title_jp;
   }
 

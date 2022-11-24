@@ -1,14 +1,12 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
-  import type { AnimeWithGenre } from "$electron-src/api/anime";
   import { coverAnimeFocus } from "$lib/stores";
-  import { getGenreColor, getTitle } from "$lib/utils";
+  import { getTitle } from "$lib/utils";
+  import type { Anime } from "@prisma/client";
   import { onMount } from "svelte";
   import FaStar from "svelte-icons/fa/FaStar.svelte";
   import Genres from "./Genres.svelte";
 
-  export let anime: AnimeWithGenre;
+  export let anime: Anime;
   export let infoOnHover = true;
 
   let currentCoverAnime: number;
