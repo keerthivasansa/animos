@@ -195,7 +195,7 @@ async function getMalId(kitsuId: number) {
 
 export async function search(query: string) {
   let resp = await httpGet(
-    `https://kitsu.io/api/edge/anime?filter[text]=${query}`
+    `https://kitsu.io/api/edge/anime/?filter[text]=${query}&page[offset]=0&page[limit]=20`
   );
   let result = resp.data.map((anime) => {
     let t_anime = transformKitsuToAnime(anime);

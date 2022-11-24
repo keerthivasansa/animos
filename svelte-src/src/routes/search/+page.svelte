@@ -1,7 +1,9 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import CoverAnime from "$lib/components/CoverAnime.svelte";
+  import IconTxtBtn from "$lib/components/IconTxtBtn.svelte";
   import { Skeleton } from "flowbite-svelte";
+  import FaFilter from "svelte-icons/fa/FaFilter.svelte";
 
   let keyword = ". . .";
 
@@ -36,3 +38,9 @@
     </div>
   </div>
 </section>
+
+<style>
+  .bg-filters {
+    background-color: rgb(0, 0, 0);
+  }
+</style>

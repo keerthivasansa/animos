@@ -15,10 +15,10 @@
 
 <div
 	class:bg-accent={bgAccent}
-	class="justify-center gap-2 cursor-pointer items-center w-fit pl-4 font-semibold flex rounded-md {fontColor}"
+	class="justify-center gap-2 cursor-pointer items-center text-sm w-fit pl-4 font-semibold flex rounded-md {fontColor}"
 >
     <span>{text}</span>
-    <div class="w-10 h-10 p-3">
+    <div class="w-9 h-9 p-3">
         <slot/>
     </div>
 </div>

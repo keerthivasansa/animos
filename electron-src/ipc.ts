@@ -27,6 +27,7 @@ ipcMain.handle("anime:posters", async (event) => {
 
 ipcMain.handle("anime:search", async (event, query: string) => {
   let results = await api.anime.search(query);
+  console.log("Found", results.length, "results for:", query);
   return results;
 });
 
