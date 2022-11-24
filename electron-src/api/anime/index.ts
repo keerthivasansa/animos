@@ -1,7 +1,14 @@
-import { batchHttpGet, httpGet } from "./utils";
+import { httpGet } from "../utils";
 import type { Anime } from "@prisma/client";
+import {
+  getGenresFromIncluded,
+  getMalId,
+  getMalIdFromIncluded,
+  recurseRelations,
+  transformKitsuToAnime,
+} from "./utils";
 import { load } from "cheerio";
-import { db } from "../db";
+import { db } from "../../db";
 
 // TODO look into other parameters that are useful
 // TODO look for upcoming new episodes
@@ -11,16 +18,6 @@ export async function getRecommendations(malId: number) {
     `https://api.jikan.moe/v4/anime/${malId}/recommendations`
   );
   return res.data.slice(0, 25).map((data) => data.entry);
-}
-
-// TODO change to kitsu
-export async function getGenre(genre: string) {
-  let genreId = await fetchGenre(genre);
-
-  console.log("Fetching animes in genre:", genre, " id:", genreId);
-  let url = `https://api.jikan.moe/v4/anime?genres=${genreId}&order_by=score&type=tv&sort=desc`;
-  let res = await httpGet(url);
-  return res.data;
 }
 
 const lastWeek = new Date(Date.now() - 7 * 86400 * 1000);
@@ -75,6 +72,7 @@ async function getGenres(kitsuId: number) {
 
 export async function getPartialInfo(anime: Anime): Promise<Anime> {
   if (!anime.malId) anime.malId = await getMalId(anime.kitsuId);
+
   if (anime.genres == "") anime.genres = await getGenres(anime.kitsuId);
   if (!anime.slug) {
     let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
@@ -91,28 +89,6 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
     );
   }
   return anime;
-}
-
-function getGenresFromIncluded(included) {
-  let genresObjs = included.filter((obj) => obj.type == "categories");
-  console.log(
-    genresObjs.map((obj) => {
-      return {
-        name: obj.attributes.title,
-        count: obj.attributes.totalMediaCount,
-      };
-    })
-  );
-  return genresObjs
-    .sort((a, b) => b.attributes.totalMediaCount - a.attributes.totalMediaCount)
-    .map((obj) => obj.attributes.title);
-}
-
-function getMalIdFromIncluded(included) {
-  let malId = included.filter(
-    (obj) => obj.attributes.externalSite == "myanimelist/anime"
-  )[0].attributes.externalId;
-  return parseInt(malId);
 }
 
 export async function getInfo(kitsuId: number): Promise<Anime> {
@@ -140,18 +116,6 @@ export async function getInfo(kitsuId: number): Promise<Anime> {
   return anime;
 }
 
-async function getMalId(kitsuId: number) {
-  let res = await httpGet(
-    `https://kitsu.io/api/edge/anime/${kitsuId}/mappings`
-  );
-  let data = res.data.filter(
-    (obj) => obj.attributes.externalSite == "myanimelist/anime"
-  )[0];
-  console.log(data);
-  console.log(data.attributes.externalId);
-  return parseInt(data.attributes.externalId);
-}
-
 export async function search(query: string) {
   let resp = await httpGet(
     `https://kitsu.io/api/edge/anime/?filter[text]=${query}&page[offset]=0&page[limit]=20`
@@ -167,7 +131,14 @@ export async function search(query: string) {
 }
 
 export async function getAllRelatedAnime(kitsuId: string, roles: string[]) {
-  
+  let related = {
+    character: [],
+    sequel: [],
+    other: [],
+    spinoff: [],
+    prequel: [],
+    alternative_version: [],
+  };
   let relatedAnimes = await db.animeRelation.findMany({
     where: {
       sourceId: parseInt(kitsuId),
@@ -188,7 +159,8 @@ export async function getAllRelatedAnime(kitsuId: string, roles: string[]) {
   }
 
   console.log(kitsuId, roles);
-  
+
+  related = await recurseRelations(parseInt(kitsuId), ["prequel", "sequel"]);
   let promises = [];
 
   await db.$transaction(
