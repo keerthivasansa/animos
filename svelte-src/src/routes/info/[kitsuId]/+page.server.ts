@@ -1,5 +1,5 @@
 import type { PageServerLoad } from "./$types";
-import { api } from "$electron-src/api-v2"
+import { api } from "$electron-src/api"
 
 export const load: PageServerLoad = async ({ params }) => {
     let kitsuId = parseInt(params.kitsuId)
