@@ -1,9 +1,9 @@
 import type { Anime } from "@prisma/client";
-import { api } from "../electron-src/api-v2";
+import { api } from "../electron-src/api";
 
 describe("Anime", () => {
   it("Fetch info for: one-piece", async () => {
-    let anime = await api.anime.info(12);
+    let anime = await api.anime.getInfo(12);
 
     expect(anime).toEqual(
       expect.objectContaining({
