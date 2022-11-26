@@ -47,7 +47,7 @@
 </script>
 
 <section class="flex justify-between px-4 text-white">
-  <div class="aspect-video rounded-lg fixed w-240">
+  <div class="rounded-lg overflow-hidden my-10 fixed w-240">
     {#if pageState == State.Loading}
       <div
         style="width: 60rem;"
@@ -68,6 +68,7 @@
         )}
       />
       <div class="mx-5 my-4">
+        <div class="text-sm text-gray-100 my-4">Episode {result.currentEp.number}</div>
         <h3 class="text-xl font-bold">
           {result.currentEp.title}
         </h3>
@@ -86,8 +87,8 @@
               href="/episode?episodeId={ep.number}&animeId={animeId}"
             >
               <button
-                style={ep.id == episodeNum
-                  ? "border: 1px solid var(--accent-color);"
+                style={ep.number == episodeNum
+                  ? "border: 3px solid var(--accent-color);"
                   : ""}
                 class="cursor-pointer w-full text-left border-slate-400 border-2 rounded-md my-2 px-4 py-3"
               >
@@ -115,6 +116,5 @@
 
   .w-240 {
     max-width: 60rem;
-    max-height: 34rem;
   }
 </style>
