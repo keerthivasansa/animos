@@ -128,22 +128,18 @@
         episode.number,
         length
       );
-      console.log({ skipTimes });
+      episode.skipTimes = skipTimes;
+      window.player = await initVideoPlayer();
     } else {
       console.log(episode.skipTimes);
     }
 
-    episode.skipTimes = episode.skipTimes.map((skip) => {
-      skip.end -= 5;
-      skip.start -= 5;
-      return skip;
-    });
-
     player.on("progress", (event) => {
       currentSkip = null;
       episode.skipTimes.forEach((skip, index) => {
-        if (player.currentTime > skip.start && player.currentTime < skip.end)
+        if (player.currentTime > skip.start && player.currentTime < skip.end) {
           currentSkip = skip;
+        }
       });
     });
 

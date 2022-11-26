@@ -29,8 +29,8 @@
       "--accent-font",
       lightOrDark(accent) == "dark" ? "white" : "black"
     );
-    accentClr.set(accent);
     accentClr.subscribe((val) => {
+      document.body.style.setProperty("--plyr-color-main", val);
       document.body.style.setProperty("--accent-color", val);
       document.body.style.setProperty(
         "--accent-font",
