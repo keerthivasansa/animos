@@ -15,10 +15,10 @@ ipcMain.handle("system:get-preferences", async (event) => {
       id: 0,
     },
   });
-  console.log("Preferences:")
+  console.log("Preferences:");
   console.log({ preferences });
   if (!preferences) {
-    console.log("no preference found")
+    console.log("no preference found");
     preferences = {
       accentColor: "#caf2ff",
       id: 0,
@@ -98,3 +98,20 @@ ipcMain.handle("cache:http-delete", async (event) => {
   await db.response.deleteMany({});
   return "ok";
 });
+
+ipcMain.handle(
+  "episode:set-watchtime",
+  async (event, kitsuId: number, episodeNum: number, watchTime: number) => {
+    await db.episode.update({
+      data: {
+        watchTime,
+      },
+      where: {
+        animeKitsuId_number: {
+          animeKitsuId: kitsuId,
+          number: episodeNum,
+        },
+      },
+    });
+  }
+);

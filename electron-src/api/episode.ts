@@ -61,7 +61,8 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
       skipTimes: true,
       title: true,
       animeKitsuId: true,
-      number: true,
+      watchTime: true,
+      number: true
     },
   });
   if (episode && episode.source != "") {
@@ -103,6 +104,7 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
       title: true,
       animeKitsuId: true,
       skipTimes: true,
+      watchTime: true
     },
   });
 
@@ -114,6 +116,8 @@ export async function getSkipTimes(
   episodeNum: number,
   episodeLength: number
 ) {
+  if (episodeNum == 0) return [];
+
   let anime = await db.anime.findUnique({
     where: {
       kitsuId,
@@ -125,9 +129,7 @@ export async function getSkipTimes(
   let { malId } = anime;
   try {
     let aniSkip = await httpGet(
-      `https://api.aniskip.com/v2/skip-times/${malId}/${
-        episodeNum == 0 ? 1 : episodeNum
-      }?types[]=op&types[]=ed&episodeLength=${episodeLength}`
+      `https://api.aniskip.com/v2/skip-times/${malId}/${episodeNum}?types[]=op&types[]=ed&episodeLength=${episodeLength}`
     );
     let skip = aniSkip.results.map((data) => {
       return {

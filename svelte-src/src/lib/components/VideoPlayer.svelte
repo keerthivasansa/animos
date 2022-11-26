@@ -42,10 +42,6 @@
     }
     return new Promise((res, _) => {
       const video = document.getElementById("player") as HTMLVideoElement;
-      video.onerror = (event, src, line, col, err) => {
-        console.log("video error:");
-        console.log(err);
-      };
       const defaultOptions: PlyrOptions = {
         keyboard: {
           focused: true,
@@ -98,10 +94,6 @@
     });
   }
 
-  function savePlayback() {
-    let watchTime = parseInt(window.player.currentTime.toFixed(0));
-  }
-
   onMount(async () => {
     // default options with no quality update in case Hls is not supported
 
@@ -114,10 +106,8 @@
 
     window.player = player;
 
-    // let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
-
     await player.play();
-    player.currentTime = 0;
+    player.currentTime = episode.watchTime;
     player.pause();
 
     let length = parseFloat(player.duration.toFixed(2));
@@ -141,6 +131,11 @@
           currentSkip = skip;
         }
       });
+      window.api.episode.setWatchTime(
+        episode.animeKitsuId,
+        episode.number,
+        player.currentTime
+      );
     });
 
     player.on("ended", () => {
@@ -151,8 +146,6 @@
       }
     });
   });
-
-  onDestroy(savePlayback);
 </script>
 
 <div class="relative">

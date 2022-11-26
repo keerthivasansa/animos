@@ -29,6 +29,13 @@ const endpoints = {
         episodeNum,
         episodeLength
       ),
+    setWatchTime: (kitsuId: number, episodeNum: number, watchTime: number) =>
+      ipcRenderer.invoke(
+        "episode:set-watchtime",
+        kitsuId,
+        episodeNum,
+        watchTime
+      ),
   },
   system: {
     getPreferences: () =>

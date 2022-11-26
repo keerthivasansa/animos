@@ -36,6 +36,7 @@ model Episode {
   id           Int
   animeKitsuId Int
   number       Int
+  watchTime    Float      @default(0)
   source       String     @default("")
   skipTimes    SkipTime[]
 
