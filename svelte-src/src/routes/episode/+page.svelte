@@ -63,6 +63,9 @@
     {:else}
       <VideoPlayer
         episode={result.currentEp}
+        hasNextEp={result.allEpisodes.some(
+          (ep) => ep.number > result.currentEp.number
+        )}
       />
       <div class="mx-5 my-4">
         <h3 class="text-xl font-bold">

@@ -1,5 +1,6 @@
 import log from "electron-log";
 import { httpGet } from "./utils";
+import { AxiosError } from "axios";
 import {
   fetchAnimixEpisodeSource,
   fetchGogoanimeEpisodeSource,
@@ -58,6 +59,9 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
       source: true,
       id: true,
       skipTimes: true,
+      title: true,
+      animeKitsuId: true,
+      number: true,
     },
   });
   if (episode && episode.source != "") {
@@ -97,6 +101,7 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
       number: true,
       source: true,
       title: true,
+      animeKitsuId: true,
       skipTimes: true,
     },
   });
@@ -118,35 +123,53 @@ export async function getSkipTimes(
     throw new Error("Anime not found in the database, kitsuId:" + kitsuId);
   }
   let { malId } = anime;
-  let aniSkip = await httpGet(
-    `https://api.aniskip.com/v2/skip-times/${malId}/${
-      episodeNum == 0 ? 1 : episodeNum
-    }?types[]=op&types[]=ed&episodeLength=${episodeLength}`
-  );
-  let skip = aniSkip.results.map((data) => {
-    return {
-      type: data.skipType,
-      start: data.interval.startTime,
-      end: data.interval.endTime,
-      episodeNumber: episodeNum,
-      episodeAnimeKitsuId: kitsuId,
-    };
-  });
-  console.log(skip);
-  await db.$transaction(
-    skip.map((skipobj) =>
-      db.skipTime.upsert({
-        create: skipobj,
-        where: {
-          episodeAnimeKitsuId_episodeNumber_type: {
-            episodeNumber: episodeNum,
-            type: skipobj.type,
-            episodeAnimeKitsuId: kitsuId,
+  try {
+    let aniSkip = await httpGet(
+      `https://api.aniskip.com/v2/skip-times/${malId}/${
+        episodeNum == 0 ? 1 : episodeNum
+      }?types[]=op&types[]=ed&episodeLength=${episodeLength}`
+    );
+    let skip = aniSkip.results.map((data) => {
+      return {
+        type: data.skipType,
+        start: data.interval.startTime,
+        end: data.interval.endTime,
+        episodeNumber: episodeNum,
+        episodeAnimeKitsuId: kitsuId,
+      };
+    });
+    console.log(skip);
+    await db.$transaction(
+      skip.map((skipobj) =>
+        db.skipTime.upsert({
+          create: skipobj,
+          where: {
+            episodeAnimeKitsuId_episodeNumber_type: {
+              episodeNumber: episodeNum,
+              type: skipobj.type,
+              episodeAnimeKitsuId: kitsuId,
+            },
           },
-        },
-        update: {},
-      })
-    )
-  );
-  return skip;
+          update: {},
+        })
+      )
+    );
+    return skip;
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      if (err.status == 404) {
+        console.log("No skip times found");
+        let skip = await db.skipTime.create({
+          data: {
+            end: 9999,
+            start: 9999,
+            type: "nil",
+            episodeAnimeKitsuId: kitsuId,
+            episodeNumber: episodeNum,
+          },
+        });
+        return [skip];
+      }
+    }
+  }
 }

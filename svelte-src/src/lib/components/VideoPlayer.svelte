@@ -7,7 +7,9 @@
   import type { SkipTime } from "@prisma/client";
 
   export let episode: EpisodeWithSkip;
+  export let hasNextEp: boolean;
   const src = episode.source;
+
   let currentSkip: SkipTime | null;
 
   function updateQuality(newQuality: number) {
@@ -48,6 +50,9 @@
         keyboard: {
           focused: true,
           global: true,
+        },
+        loop: {
+          active: false,
         },
         markers: {
           enabled: true,
@@ -141,6 +146,13 @@
           currentSkip = skip;
       });
     });
+
+    player.on("ended", () => {
+      console.log("going to next ep");
+      location.href = `/episode?animeId=${episode.animeKitsuId}&episodeId=${
+        episode.number + 1
+      }`;
+    });
   });
 
   onDestroy(savePlayback);
@@ -153,8 +165,7 @@
   </video>
   {#if currentSkip}
     <button
-      on:click={(_) =>
-        (window.player.currentTime = currentSkip?.end ?? 0)}
+      on:click={(_) => (window.player.currentTime = currentSkip?.end ?? 0)}
       class="absolute bottom-14 bg-black bg-opacity-95 right-5"
       >{currentSkip.type == "op" ? "Skip Intro" : "Skip Outro"}</button
     >
