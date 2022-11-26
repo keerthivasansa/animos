@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import type { Anime } from "@prisma/client";
+import type { Anime, Preferences } from "@prisma/client";
 
 const endpoints = {
   anime: {
@@ -30,8 +30,11 @@ const endpoints = {
         episodeLength
       ),
   },
-  cache: {
-    httpDelete: () => ipcRenderer.invoke("cache:http-delete"),
+  system: {
+    getPreferences: () =>
+      ipcRenderer.invoke("system:get-preferences") as Promise<Preferences>,
+    setPreferences: (update: Preferences) =>
+      ipcRenderer.invoke("system:set-preferences", update),
   },
 };
 

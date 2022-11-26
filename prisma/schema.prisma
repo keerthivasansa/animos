@@ -51,6 +51,11 @@ model AnimeRelation {
   @@id([sourceId, destinationId])
 }
 
+model Preferences {
+  id          Int    @id
+  accentColor String
+}
+
 model Anime {
   kitsuId     Int     @id
   malId       Int?    @unique

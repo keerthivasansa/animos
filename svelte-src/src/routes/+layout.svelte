@@ -22,20 +22,21 @@
   }
 
   onMount(async () => {
-    let accent = getComputedStyle(document.body)
-      .getPropertyValue("--accent-color")
-      .trim();
-    document.body.style.setProperty(
-      "--accent-font",
-      lightOrDark(accent) == "dark" ? "white" : "black"
-    );
-    accentClr.subscribe((val) => {
+    let preferences = await window.api.system.getPreferences();
+    console.log("Preferences:");
+    console.log(preferences);
+    let accent = preferences.accentColor;
+    console.log("Accent color from preferences: ", accent);
+    accentClr.set(accent);
+    accentClr.subscribe(async (val) => {
+      console.log("setting accent to ", val);
       document.body.style.setProperty("--plyr-color-main", val);
       document.body.style.setProperty("--accent-color", val);
       document.body.style.setProperty(
         "--accent-font",
         lightOrDark(val) == "dark" ? "white" : "black"
       );
+      await window.api.system.setPreferences({ accentColor: val, id: 0 })
     });
   });
 </script>

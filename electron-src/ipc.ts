@@ -1,6 +1,5 @@
 import { Anime } from "@prisma/client";
 import { ipcMain } from "electron";
-import { number } from "zod";
 import { api } from "./api";
 import {
   getAllRelatedAnime,
@@ -9,6 +8,34 @@ import {
 } from "./api/anime";
 import { episodes, getEpisode, getSkipTimes } from "./api/episode";
 import { db } from "./db";
+
+ipcMain.handle("system:get-preferences", async (event) => {
+  let preferences = await db.preferences.findUnique({
+    where: {
+      id: 0,
+    },
+  });
+  console.log("Preferences:")
+  console.log({ preferences });
+  if (!preferences) {
+    console.log("no preference found")
+    preferences = {
+      accentColor: "#caf2ff",
+      id: 0,
+    };
+    await db.preferences.create({ data: preferences });
+  }
+  return preferences;
+});
+
+ipcMain.handle("system:set-preferences", async (event, update) => {
+  await db.preferences.update({
+    data: update,
+    where: {
+      id: 0,
+    },
+  });
+});
 
 ipcMain.handle("anime:info", async (event, kitsuId: number) => {
   console.info("Cache fail, fetching info for", kitsuId);

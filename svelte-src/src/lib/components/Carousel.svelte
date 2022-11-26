@@ -23,6 +23,18 @@
     index -= 1;
     if (index < 0) index = anime.length - 1;
   }
+
+  // caches all the images together so they dont load when it comes to focus
+  function cacheImages() {
+    anime.forEach((an) => {
+      const img = document.createElement("img");
+      img.src = an.posterImg;
+      img.onload = () => {
+        document.removeChild(img);
+      };
+    });
+  }
+  cacheImages();
 </script>
 
 <!-- TODO implement infinite scrolling -->

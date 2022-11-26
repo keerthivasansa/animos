@@ -144,10 +144,11 @@
     });
 
     player.on("ended", () => {
-      console.log("going to next ep");
-      location.href = `/episode?animeId=${episode.animeKitsuId}&episodeId=${
-        episode.number + 1
-      }`;
+      if (hasNextEp) {
+        location.href = `/episode?animeId=${episode.animeKitsuId}&episodeId=${
+          episode.number + 1
+        }`;
+      }
     });
   });
 

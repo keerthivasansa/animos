@@ -49,11 +49,15 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
   );
   let gogoInfo = await httpGet(`https://gogoanime.lu/category/${anime.slug}`);
   const $ = load(gogoInfo);
-  let epStart = $("#episode_page").find("a").first().attr("ep_start");
   let epEnd = $("#episode_page").find("a").last().attr("ep_end");
-  console.log({ epStart, epEnd });
+  let gogoId = $("#movie_id").val();
+  console.log({ gogoId });
+  const gogoEpInfo = await httpGet(
+    `https://ajax.gogo-load.com/ajax/load-list-episode?id=${gogoId}&ep_start=0&ep_end=1`
+  );
+  const $2 = load(gogoEpInfo);
   anime.episodes = parseInt(epEnd);
-  anime.zeroEpisode = epStart == "0";
+  anime.zeroEpisode = $2("div.name").last().text() == "EP 0";
   return anime;
 }
 
