@@ -1,12 +1,13 @@
 import { Anime } from "@prisma/client";
 import { ipcMain } from "electron";
+import { number } from "zod";
 import { api } from "./api";
 import {
   getAllRelatedAnime,
   getPosters,
   getRecommendations,
 } from "./api/anime";
-import { episodes, getEpisode } from "./api/episode";
+import { episodes, getEpisode, getSkipTimes } from "./api/episode";
 import { db } from "./db";
 
 ipcMain.handle("anime:info", async (event, kitsuId: number) => {
@@ -31,7 +32,7 @@ ipcMain.handle("anime:search", async (event, query: string) => {
 });
 
 ipcMain.handle("anime:genre", async (event, genre: string) => {
-  let result = []
+  let result = [];
   return result;
 });
 
@@ -41,7 +42,7 @@ ipcMain.handle("anime:recommendations", async (event, malId: number) => {
 });
 
 ipcMain.handle("anime:related", async (event, kitsuId: string) => {
-  let result = await getAllRelatedAnime((kitsuId), ["prequel", "sequel"]);
+  let result = await getAllRelatedAnime(kitsuId, ["prequel", "sequel"]);
   return result;
 });
 
@@ -51,9 +52,17 @@ ipcMain.handle("episode:info", async (event, kitsuId: number) => {
 });
 
 ipcMain.handle(
+  "episode:skip-times",
+  async (event, kitsuId: number, episodeNum: number, episodeLength: number) => {
+    let result = await getSkipTimes(kitsuId, episodeNum, episodeLength);
+    return result;
+  }
+);
+
+ipcMain.handle(
   "episode:get",
-  async (event, malId: number, slug: string, episodeNum: number) => {
-    let result = await getEpisode(malId, slug, episodeNum);
+  async (event, kitsuId: number, episodeNum: number) => {
+    let result = await getEpisode(kitsuId, episodeNum);
     return result;
   }
 );

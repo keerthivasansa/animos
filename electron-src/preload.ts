@@ -16,8 +16,19 @@ const endpoints = {
   },
   episode: {
     info: (kitsuId: number) => ipcRenderer.invoke("episode:info", kitsuId),
-    get: (malId: number, slug: string, episodeNum: number) =>
-      ipcRenderer.invoke("episode:get", malId, slug, episodeNum),
+    get: (kitsuId: number, episodeNum: number) =>
+      ipcRenderer.invoke("episode:get", kitsuId, episodeNum),
+    getSkipTimes: (
+      kitsuId: number,
+      episodeNum: number,
+      episodeLength: number
+    ) =>
+      ipcRenderer.invoke(
+        "episode:skip-times",
+        kitsuId,
+        episodeNum,
+        episodeLength
+      ),
   },
   cache: {
     httpDelete: () => ipcRenderer.invoke("cache:http-delete"),

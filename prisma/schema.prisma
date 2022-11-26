@@ -20,6 +20,28 @@ model Genre {
   name  String @unique
 }
 
+model SkipTime {
+  type                String
+  start               Float
+  end                 Float
+  Episode             Episode? @relation(fields: [episodeAnimeKitsuId, episodeNumber], references: [animeKitsuId, number])
+  episodeAnimeKitsuId Int
+  episodeNumber       Int
+
+  @@id([episodeAnimeKitsuId, episodeNumber, type])
+}
+
+model Episode {
+  title        String
+  id           Int
+  animeKitsuId Int
+  number       Int
+  source       String     @default("")
+  skipTimes    SkipTime[]
+
+  @@id([animeKitsuId, number])
+}
+
 model AnimeRelation {
   role          String
   sourceId      Int
@@ -30,22 +52,23 @@ model AnimeRelation {
 }
 
 model Anime {
-  kitsuId   Int     @id
-  malId     Int?    @unique
-  synopsis  String
-  ageRating String
-  title_en  String?
-  title_jp  String?
-  title     String
-  posterImg String
-  coverImg  String?
-  genres    String // comma seperated values
-  score     Float
-  episodes  Int?
-  slug      String?
-  dubSlug   String?
-  poster    Int?
+  kitsuId     Int     @id
+  malId       Int?    @unique
+  synopsis    String
+  ageRating   String
+  title_en    String?
+  title_jp    String?
+  zeroEpisode Boolean @default(false)
+  title       String
+  posterImg   String
+  coverImg    String?
+  genres      String // comma seperated values
+  score       Float
+  episodes    Int?
+  slug        String?
+  dubSlug     String?
+  poster      Int?
 
-  lastUpdated   DateTime        @default(now()) @updatedAt
-  relation AnimeRelation[]
+  lastUpdated DateTime        @default(now()) @updatedAt
+  relation    AnimeRelation[]
 }

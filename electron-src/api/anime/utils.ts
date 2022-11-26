@@ -41,13 +41,19 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
     anime.slug = slugs[0];
     anime.dubSlug = slugs[1];
   }
-  if (!anime.episodes && anime.slug) {
-    let gogoInfo = await httpGet(`https://gogoanime.lu/category/${anime.slug}`);
-    const $ = load(gogoInfo);
-    anime.episodes = parseInt(
-      $("#episode_page > li").last().find("a").attr("ep_end") ?? "0"
-    );
-  }
+  console.log(
+    "Fetching episodes for ",
+    anime.kitsuId,
+    anime.slug,
+    anime.episodes
+  );
+  let gogoInfo = await httpGet(`https://gogoanime.lu/category/${anime.slug}`);
+  const $ = load(gogoInfo);
+  let epStart = $("#episode_page").find("a").first().attr("ep_start");
+  let epEnd = $("#episode_page").find("a").last().attr("ep_end");
+  console.log({ epStart, epEnd });
+  anime.episodes = parseInt(epEnd);
+  anime.zeroEpisode = epStart == "0";
   return anime;
 }
 

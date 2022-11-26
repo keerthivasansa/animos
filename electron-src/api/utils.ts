@@ -34,15 +34,6 @@ export async function batchHttpGet<T extends Record<string, string>>(
 
 export async function httpGet(url: string): Promise<any> {
   console.debug(`Fetching URL ${url}`);
-  let responseObj = await db.response.findUnique({
-    where: {
-      url,
-    },
-  });
-  if (responseObj) return JSON.parse(responseObj.response);
   let response = await axios.get(url);
-  await db.response.create({
-    data: { url, response: JSON.stringify(response.data) },
-  });
   return response.data;
 }

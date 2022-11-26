@@ -1,139 +1,162 @@
 <script lang="ts">
-	import Hls from 'hls.js';
-	import Plyr from 'plyr';
-	import type  { Options as PlyrOptions } from "plyr";
-	import { onDestroy, onMount } from 'svelte';
+  import Hls from "hls.js";
+  import Plyr from "plyr";
+  import type { Options as PlyrOptions } from "plyr";
+  import { onDestroy, onMount } from "svelte";
+  import type { EpisodeWithSkip } from "$lib/types";
+  import type { SkipTime } from "@prisma/client";
 
-	export let src = '';
-	export let type = '';
-	export let episodeId: number;
-	export let animeMalId: number;
-	export let updateVideoLength = false;
+  export let episode: EpisodeWithSkip;
+  const src = episode.source;
+  let currentSkip: SkipTime | null;
 
-	function updateQuality(newQuality: number) {
-		window.hls.levels.forEach((level: any, levelIndex: number) => {
-			if (level.height === newQuality) {
-				console.log('Found quality match with ' + newQuality);
-				window.hls.currentLevel = levelIndex;
-			}
-		});
-	}
+  function updateQuality(newQuality: number) {
+    window.hls.levels.forEach((level: any, levelIndex: number) => {
+      if (level.height === newQuality) {
+        console.log("Found quality match with " + newQuality);
+        window.hls.currentLevel = levelIndex;
+      }
+    });
+  }
 
-	async function isSourceExpired(url:string): Promise<boolean> {
-		return new Promise((res, rej) => {
-			const xhr = new XMLHttpRequest();
-			
-			xhr.open("HEAD", url);
+  async function isSourceExpired(url: string): Promise<boolean> {
+    return new Promise((res, rej) => {
+      const xhr = new XMLHttpRequest();
 
-			xhr.onload = () => res(false);
-			xhr.onerror = () => res(true);
+      xhr.open("HEAD", url);
 
-			xhr.send();
-		})
-	}
+      xhr.onload = () => res(false);
+      xhr.onerror = () => res(true);
 
-	async function initVideoPlayer(): Promise<Plyr> {
-		console.log('src:', src);
-		console.log('type: ', type);
-		let linkExpired = await isSourceExpired(src);
-		if (linkExpired) {
-			console.log("Link expired, fetching new link . . .")
-			src = (await window.api.renewSource(animeMalId, episodeId)).source
-		}
-		return new Promise((res, _) => {
-			const video = document.getElementById('player') as HTMLVideoElement;
-			video.onerror = (event, src, line, col, err) => {
-				console.log('video error:');
-				console.log(err);
-			};
-			const defaultOptions: PlyrOptions = {
-				keyboard: {
-					focused: true, 
-					global: true
-				}, 
-			};
-			if (Hls.isSupported()) {
-				const hls = new Hls();
-				hls.loadSource(src);
-				// From the m3u8 playlist, hls parses the manifest and returns
-				// all available video qualities. This is important, in this approach,
-				// we will have one source on the Plyr player.
-				hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-					console.log('parsed');
-					// Transform available levels into an array of integers (height values).
-					const availableQualities = hls.levels.map((l) => l.height);
-					// Add new qualities to option
-					let quality = {
-						default: 720,
-						options: availableQualities,
-						// this ensures Plyr to use Hls to update quality level
-						// Ref: https://github.com/sampotts/plyr/blob/master/src/js/html5.js#L77
-						forced: true,
-						onChange: (e: number) => updateQuality(e)
-					};
-                    defaultOptions.quality = quality
-					// Initialize new Plyr player with quality options
-					hls.attachMedia(video);
-			        const player = new Plyr(video, defaultOptions);
+      xhr.send();
+    });
+  }
 
-					res(player);
-				});
-				window.hls = hls;
-			} else {
-    			const player = new Plyr(video);
-				res(player);
-			}
-		});
-	}
+  async function initVideoPlayer(): Promise<Plyr> {
+    let linkExpired = await isSourceExpired(src);
+    if (linkExpired) {
+      console.log("Link expired, fetching new link . . .");
+      // src = (await window.api.renewSource(animeMalId, episodeId)).source
+    }
+    return new Promise((res, _) => {
+      const video = document.getElementById("player") as HTMLVideoElement;
+      video.onerror = (event, src, line, col, err) => {
+        console.log("video error:");
+        console.log(err);
+      };
+      const defaultOptions: PlyrOptions = {
+        keyboard: {
+          focused: true,
+          global: true,
+        },
+        markers: {
+          enabled: true,
+          points: episode.skipTimes.map((skip) => {
+            return {
+              label: skip.type == "op" ? "Intro" : "Outro",
+              time: skip.start,
+            };
+          }),
+        },
+      };
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(src);
+        // From the m3u8 playlist, hls parses the manifest and returns
+        // all available video qualities. This is important, in this approach,
+        // we will have one source on the Plyr player.
+        hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+          console.log("parsed");
+          // Transform available levels into an array of integers (height values).
+          const availableQualities = hls.levels.map((l) => l.height);
+          // Add new qualities to option
+          let quality = {
+            default: 720,
+            options: availableQualities,
+            // this ensures Plyr to use Hls to update quality level
+            // Ref: https://github.com/sampotts/plyr/blob/master/src/js/html5.js#L77
+            forced: true,
+            onChange: (e: number) => updateQuality(e),
+          };
+          defaultOptions.quality = quality;
+          // Initialize new Plyr player with quality options
+          hls.attachMedia(video);
+          const player = new Plyr(video, defaultOptions);
 
-	function savePlayback() {
-		let watchTime = parseInt(window.player.currentTime.toFixed(0));
-		window.api.setWatchTime(animeMalId, episodeId, watchTime);
-	}
+          res(player);
+        });
+        window.hls = hls;
+      } else {
+        const player = new Plyr(video);
+        res(player);
+      }
+    });
+  }
 
-	onMount(async () => {
-		// default options with no quality update in case Hls is not supported
+  function savePlayback() {
+    let watchTime = parseInt(window.player.currentTime.toFixed(0));
+  }
 
-		let player = await initVideoPlayer();
+  onMount(async () => {
+    // default options with no quality update in case Hls is not supported
 
-		player.on('error', (err) => {
-			console.log('Plyr error:');
-			console.log(err);
-		});
+    let player = await initVideoPlayer();
 
-		window.player = player;
+    player.on("error", (err) => {
+      console.log("Plyr error:");
+      console.log(err);
+    });
 
-		let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
+    window.player = player;
 
-		await player.play();
-		player.currentTime = PrevwatchTime;
-		await player.pause();
+    // let PrevwatchTime = await window.api.getWatchTime(animeMalId, episodeId);
 
-		player.on('enterfullscreen', () => {
-			window.api.fullscreen(true);
-		});
+    await player.play();
+    player.currentTime = 0;
+    player.pause();
 
-		player.on('exitfullscreen', () => {
-			window.api.fullscreen(false);
-		});
+    let length = parseFloat(player.duration.toFixed(2));
+    console.log("Episode length: ", length);
+    if (!episode.skipTimes.length) {
+      let skipTimes = await window.api.episode.getSkipTimes(
+        episode.animeKitsuId,
+        episode.number,
+        length
+      );
+      console.log({ skipTimes });
+    } else {
+      console.log(episode.skipTimes);
+    }
 
-		player.on("canplay", () => {
-			if (updateVideoLength)	{
-				console.log("Setting episode length");
-				let length = parseInt(player.duration.toFixed(0));
-				window.api.setEpisodeLength(animeMalId, episodeId, length);
-			}
-			setInterval(savePlayback, 3000);
-		})
+    episode.skipTimes = episode.skipTimes.map((skip) => {
+      skip.end -= 5;
+      skip.start -= 5;
+      return skip;
+    });
 
-	});
+    player.on("progress", (event) => {
+      currentSkip = null;
+      episode.skipTimes.forEach((skip, index) => {
+        if (player.currentTime > skip.start && player.currentTime < skip.end)
+          currentSkip = skip;
+      });
+    });
+  });
 
-	onDestroy(savePlayback);
+  onDestroy(savePlayback);
 </script>
 
-<div>
-	<video id="player" controls style="border-radius: 12px;">
-		<source {src} />
-		<track src="" kind="captions">
-	</video>
+<div class="relative">
+  <video id="player" controls style="border-radius: 12px;">
+    <source {src} />
+    <track src="" kind="captions" />
+  </video>
+  {#if currentSkip}
+    <button
+      on:click={(_) =>
+        (window.player.currentTime = currentSkip?.end ?? 0)}
+      class="absolute bottom-14 bg-black bg-opacity-95 right-5"
+      >{currentSkip.type == "op" ? "Skip Intro" : "Skip Outro"}</button
+    >
+  {/if}
 </div>

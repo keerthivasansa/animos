@@ -1,9 +1,10 @@
 import { httpGet } from "../utils";
 import type { Anime } from "@prisma/client";
 import {
-    getGenres,
+  getGenres,
   getGenresFromIncluded,
   getMalIdFromIncluded,
+  getPartialInfo,
   recurseRelations,
   transformKitsuToAnime,
 } from "./utils";
@@ -14,8 +15,6 @@ import { db } from "../../db";
 // TODO look for upcoming new episodes
 
 // TODO add getGenre
-
-
 export async function getRecommendations(malId: number) {
   let res = await httpGet(
     `https://api.jikan.moe/v4/anime/${malId}/recommendations`
@@ -62,40 +61,46 @@ export async function getPosters() {
   return result;
 }
 
-
-
 export async function getInfo(kitsuId: number): Promise<Anime> {
+  let anime = await db.anime.findUnique({
+    where: {
+      kitsuId,
+    },
+  });
+  if (anime) {
+    console.log("Found anime in cache", anime.kitsuId);
+    return anime;
+  }
   let info = `https://kitsu.io/api/edge/anime/${kitsuId}?include=categories,mappings&fields[categories]=title,totalMediaCount`;
   let result = await httpGet(info);
-  let anime = transformKitsuToAnime(result.data);
+  anime = transformKitsuToAnime(result.data);
   console.debug("Included for kitsuId: " + kitsuId);
   anime.genres = getGenresFromIncluded(result.included).join(",");
 
   console.log({ genres: anime.genres });
   anime.malId = getMalIdFromIncluded(result.included);
-  console.log("Anime MAL ID: ", anime.malId);
-  let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
-  let animixRes = await httpGet(animix);
-  let slugs = animixRes["Gogoanime"].map((obj) => obj.url.split("/").pop());
-  anime.slug = slugs[0];
-  anime.dubSlug = slugs[1];
-  if (!anime.episodes && anime.slug) {
-    let gogoInfo = await httpGet(`https://gogoanime.lu/category/${anime.slug}`);
-    const $ = load(gogoInfo);
-    anime.episodes = parseInt(
-      $("#episode_page > li").last().find("a").attr("ep_end") ?? "0"
-    );
-  }
+  anime = await getPartialInfo(anime);
+  await db.anime.create({
+    data: anime,
+  });
   return anime;
 }
 
 export async function search(query: string) {
   let resp = await httpGet(
-    `https://kitsu.io/api/edge/anime/?filter[text]=${query}&page[offset]=0&page[limit]=20`
+    `https://kitsu.io/api/edge/anime?filter[text]=${query}&include=categories&fields[categories]=title`
   );
+  let categorieObjs = resp.included.filter((obj) => obj.type == "categories");
+  console.log(categorieObjs[0]);
   let result = resp.data.map((anime) => {
     let t_anime = transformKitsuToAnime(anime);
-    console.log(t_anime);
+    let categoryIds = anime.relationships.categories.data.map((cat) => cat.id);
+    console.log(categoryIds);
+    let categories = categoryIds.map(
+      (cat) => categorieObjs.filter((obj) => obj.id == cat)[0].attributes.title
+    );
+    console.log(categories);
+    t_anime.genres = categories.join(",");
     t_anime.slug = "";
     t_anime.dubSlug = "";
     return t_anime;

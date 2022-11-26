@@ -25,6 +25,12 @@
   let showExpand = false;
   let synopsisElem: HTMLElement;
 
+  function generateRange(start: number, end: number) {
+    let arr = [];
+    for (let i = start; i <= end; i++) arr.push(i);
+    return arr;
+  }
+
   onMount(() => {
     maxDescription = convertRemToPixels(9);
     showExpand = (synopsisElem?.clientHeight ?? 0) > maxDescription;
@@ -102,11 +108,13 @@
       <div
         class="mt-10 flex gap-5 flex-wrap max-w-xl justify-center items-center"
       >
-        {#each Array.from({ length: anime.episodes ?? 0 }) as _, index}
-          <span
-            class="w-10 text-center px-2 py-1 rounded-sm font-semibold bg-gray-300 text-black"
-            >{index}</span
-          >
+        {#each generateRange(anime.zeroEpisode ? 0 : 1, anime.episodes ?? 0) as epNo}
+          <a href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&zeroEp={anime.zeroEpisode}">
+            <span
+              class="w-10 text-center px-2 py-1 rounded-sm font-semibold bg-gray-300 text-black"
+              >{epNo}</span
+            >
+          </a>
         {/each}
       </div>
     </div>
