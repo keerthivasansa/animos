@@ -33,14 +33,19 @@ export async function getPosters() {
         gt: lastWeek,
       },
     },
+    orderBy: {
+      poster: "asc",
+    },
   });
   if (records.length > 1) return records;
-  let res = await httpGet("https://kitsu.io/api/edge/trending/anime");
+  let res = (await httpGet("https://kitsu.io/api/edge/trending/anime")) as {
+    data: any[];
+  };
   let result = await Promise.all(
-    res.data.map(async (anime) => {
+    res.data.map(async (anime, index) => {
       let data = transformKitsuToAnime(anime);
-      console.log({ rating: data.ageRating });
       data.genres = await getGenres(data.kitsuId);
+      data.poster = index;
       return data;
     })
   );

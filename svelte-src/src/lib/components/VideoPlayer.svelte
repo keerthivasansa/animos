@@ -108,10 +108,16 @@
 
     await player.play();
     player.currentTime = episode.watchTime;
-    player.pause();
 
-    let length = parseFloat(player.duration.toFixed(2));
-    console.log("Episode length: ", length);
+    if (player.duration && !episode.length) {
+      console.log("Setting episode length:", player.duration);
+      window.api.episode.setLength(
+        episode.animeKitsuId,
+        episode.number,
+        player.duration
+      );
+    }
+
     if (!episode.skipTimes.length) {
       let skipTimes = await window.api.episode.getSkipTimes(
         episode.animeKitsuId,
@@ -124,6 +130,14 @@
       console.log(episode.skipTimes);
     }
 
+    let saveProgress = setInterval(() => {
+      window.api.episode.setWatchTime(
+        episode.animeKitsuId,
+        episode.number,
+        player.currentTime
+      );
+    }, 5000);
+
     player.on("progress", (event) => {
       currentSkip = null;
       episode.skipTimes.forEach((skip, index) => {
@@ -131,11 +145,6 @@
           currentSkip = skip;
         }
       });
-      window.api.episode.setWatchTime(
-        episode.animeKitsuId,
-        episode.number,
-        player.currentTime
-      );
     });
 
     player.on("ended", () => {
@@ -145,6 +154,8 @@
         }`;
       }
     });
+
+    onDestroy(() => clearInterval(saveProgress));
   });
 </script>
 

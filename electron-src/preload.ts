@@ -44,6 +44,9 @@ const endpoints = {
         episodeNum,
         watchTime
       ),
+    setLength: (kitsuId:number, episodeNum: number, length:number) => ipcRenderer.invoke("episode:set-length", kitsuId, episodeNum, length),
+    getContinueWatching: () =>
+      ipcRenderer.invoke("episode:get-continue-watching"),
   },
   system: {
     getPreferences: () =>

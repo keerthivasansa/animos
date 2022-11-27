@@ -64,9 +64,9 @@
       <div
         use:clickOutside
         on:outclick={(_) => (showFilters = false)}
-        class="flex {showFilters
-          ? 'opacity-100'
-          : 'opacity-0'} flex-col absolute z-20 transition-opacity duration-500 ease-in-out gap-3 bg-black bg-opacity-90 px-4 rounded-lg py-5 text-gray-200"
+        class="{showFilters
+          ? 'opacity-100 z-20'
+          : 'opacity-0 -z-10'} flex flex-col absolute transition-all duration-500 ease-in-out gap-3 bg-black bg-opacity-90 px-4 rounded-lg py-5 text-gray-200"
         style="top: 100%; left: 0;"
       >
         <div>

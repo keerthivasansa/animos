@@ -39,6 +39,9 @@ model Episode {
   watchTime    Float      @default(0)
   source       String     @default("")
   skipTimes    SkipTime[]
+  anime        Anime      @relation(fields: [animeKitsuId], references: [kitsuId])
+  lastUpdated  DateTime   @default(now()) @updatedAt
+  length       Float?
 
   @@id([animeKitsuId, number])
 }
@@ -79,4 +82,5 @@ model Anime {
 
   lastUpdated DateTime        @default(now()) @updatedAt
   relation    AnimeRelation[]
+  Episode     Episode[]
 }

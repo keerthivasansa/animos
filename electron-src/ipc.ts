@@ -74,7 +74,7 @@ ipcMain.handle("anime:posters", async (event) => {
 
 ipcMain.handle(
   "anime:search",
-  async (event, filters: Record<string, string>, page:number) => {
+  async (event, filters: Record<string, string>, page: number) => {
     let results = await api.anime.search(filters, page);
     console.log("Found", results.data.length, "results for:", filters);
     return results;
@@ -136,5 +136,53 @@ ipcMain.handle(
         },
       },
     });
+  }
+);
+
+ipcMain.handle("episode:get-continue-watching", async (event) => {
+  let episodes = await db.episode.findMany({
+    select: {
+      watchTime: true,
+      length: true,
+      number: true,
+      anime: {
+        select: {
+          title: true,
+          posterImg: true,
+        },
+      },
+    },
+    distinct: "animeKitsuId",
+    take: 5,
+    where: {
+      length: {
+        not: null,
+      },
+      watchTime: {
+        gt: 0,
+      },
+    },
+    orderBy: {
+      lastUpdated: "desc",
+    },
+  });
+  return episodes;
+});
+
+ipcMain.handle(
+  "episode:set-length",
+  async (event, animeKitsuId: number, episodeNum: number, length: number) => {
+    await db.episode.update({
+      where: {
+        animeKitsuId_number: {
+          animeKitsuId,
+          number: episodeNum,
+        },
+      },
+      data: {
+        length,
+      },
+    });
+    return;
   }
 );
