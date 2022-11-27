@@ -33,7 +33,7 @@ export const fetchAnimixEpisodeSource = async ({ episodeId }) => {
   const $ = load(res.data);
   const epList = JSON.parse($("#epslistplace").text());
 
-  console.log({ episodeNum });
+  console.log({ epList });
 
   if (episodeNum == "0") {
     console.log("Zero episode detected");

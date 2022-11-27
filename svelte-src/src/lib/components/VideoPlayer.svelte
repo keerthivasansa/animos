@@ -9,6 +9,7 @@
   export let episode: EpisodeWithSkip;
   export let hasNextEp: boolean;
   let src = episode.source;
+  let saveProgressInterval: NodeJS.Timer;
 
   let currentSkip: SkipTime | null;
 
@@ -38,7 +39,10 @@
     let linkExpired = await isSourceExpired(src);
     if (linkExpired) {
       console.log("Link expired, fetching new link . . .");
-      src = await window.api.episode.renewSource(episode.animeKitsuId, episode.number);
+      src = await window.api.episode.renewSource(
+        episode.animeKitsuId,
+        episode.number
+      );
     }
     return new Promise((res, _) => {
       const video = document.getElementById("player") as HTMLVideoElement;
@@ -84,6 +88,20 @@
           hls.attachMedia(video);
           const player = new Plyr(video, defaultOptions);
 
+          player.on("loadedmetadata", () => {
+            console.log("getting skip times");
+            if (episode.skipTimes) return;
+            window.api.episode
+              .getSkipTimes(
+                episode.animeKitsuId,
+                episode.number,
+                Math.ceil(player.duration)
+              )
+              .then((result) => {
+                episode.skipTimes = result;
+                console.log(result);
+              });
+          });
           res(player);
         });
         window.hls = hls;
@@ -118,19 +136,14 @@
       );
     }
 
-    if (!episode.skipTimes.length) {
-      let skipTimes = await window.api.episode.getSkipTimes(
-        episode.animeKitsuId,
-        episode.number,
-        length
-      );
-      episode.skipTimes = skipTimes;
-      window.player = await initVideoPlayer();
-    } else {
-      console.log(episode.skipTimes);
-    }
+    console.log(episode.skipTimes);
 
-    let saveProgress = setInterval(() => {
+    console.log("Waiting for canplay event");
+    player.once("ready", async () => {
+      console.log("Loading skip times");
+    });
+
+    saveProgressInterval = setInterval(() => {
       window.api.episode.setWatchTime(
         episode.animeKitsuId,
         episode.number,
@@ -154,9 +167,9 @@
         }`;
       }
     });
-
-    onDestroy(() => clearInterval(saveProgress));
   });
+
+  onDestroy(() => clearInterval(saveProgressInterval));
 </script>
 
 <div class="relative">

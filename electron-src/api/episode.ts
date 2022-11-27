@@ -1,11 +1,9 @@
 import log from "electron-log";
 import { httpGet } from "./utils";
 import { AxiosError } from "axios";
-import {
-  fetchAnimixEpisodeSource,
-  fetchGogoanimeEpisodeSource,
-} from "./scraper";
+import { fetchAnimixEpisodeSource } from "./scraper";
 import { db } from "../db";
+import { Episode } from "@prisma/client";
 
 async function getSource(kitsuId: number, episodeNum: number) {
   let anime = await db.anime.findUnique({
@@ -17,8 +15,9 @@ async function getSource(kitsuId: number, episodeNum: number) {
     throw new Error("Anime not found in the database, kitsuId:" + kitsuId);
   }
   let { slug } = anime;
+
   let episodeSlug = `${slug}-episode-${episodeNum}`;
-  log.info(`Fetching source and skip times for ${kitsuId} - EP${episodeNum}`);
+  log.info(`Fetching source and skip times for ${kitsuId} - EP${episodeNum} with slug: ${episodeSlug}`);
   let source = await fetchAnimixEpisodeSource({
     episodeId: episodeSlug,
   });
@@ -26,7 +25,7 @@ async function getSource(kitsuId: number, episodeNum: number) {
 }
 
 export async function episodes(kitsuId: number, page: number = 1) {
-  let { zeroEpisode } = await db.anime.findUnique({
+  let anime = await db.anime.findUnique({
     where: {
       kitsuId,
     },
@@ -36,6 +35,25 @@ export async function episodes(kitsuId: number, page: number = 1) {
       animeKitsuId: kitsuId,
     },
   });
+  // if (anime.type != "TV") {
+  //   let eps = [];
+  //   for (let i = 1; i <= anime.episodes; i++) {
+  //     eps.push({
+  //       animeKitsuId: kitsuId,
+  //       number: i,
+  //       id: i,
+  //       title: i.toString(),
+  //     });
+  //   }
+  //   await db.$transaction(
+  //     eps.map((ep) =>
+  //       db.episode.create({
+  //         data: ep,
+  //       })
+  //     )
+  //   );
+  //   return eps;
+  // }
   if (episodes.length) return episodes;
   log.debug(
     `Fetching episode information for anime. Kitsu Id: ${kitsuId}, page: ${page}`
@@ -48,10 +66,10 @@ export async function episodes(kitsuId: number, page: number = 1) {
       id: parseInt(ep.id),
       number: ep.attributes.number,
       animeKitsuId: kitsuId,
-      title: ep.attributes.canonicalTitle,
+      title: ep.attributes.canonicalTitle ?? `EP${ep.attributes.number}`,
     };
   });
-  if (zeroEpisode) {
+  if (anime.zeroEpisode) {
     let firstEp = episodes[0];
     let zeroEp: any = {};
     Object.assign(zeroEp, firstEp);
@@ -87,7 +105,7 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
     console.log("Cache hit");
     return episode;
   }
-  let { id: episodeId } = episode;
+
   let epSource = await getSource(kitsuId, episodeNum);
   episode = await db.episode.update({
     where: {

@@ -66,6 +66,7 @@ model Anime {
   malId       Int?    @unique
   synopsis    String
   ageRating   String
+  type        String  @default("")
   title_en    String?
   liked       Boolean @default(false)
   title_jp    String?
