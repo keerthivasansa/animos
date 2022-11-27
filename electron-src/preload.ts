@@ -5,8 +5,12 @@ const endpoints = {
   anime: {
     info: (kitsuId: number) =>
       ipcRenderer.invoke("anime:info", kitsuId) as Promise<Anime>,
-    search: (filters: Record<string, string>) =>
-      ipcRenderer.invoke("anime:search", filters) as Promise<Anime[]>,
+    search: (filters: Record<string, string>, page: number) =>
+      ipcRenderer.invoke("anime:search", filters, page) as Promise<{
+        data: Anime[];
+        totalItems: number;
+        currentPage: number;
+      }>,
     posters: () => ipcRenderer.invoke("anime:posters") as Promise<Anime[]>,
     genre: (name: string) =>
       ipcRenderer.invoke("anime:genre", name) as Promise<Anime[]>,

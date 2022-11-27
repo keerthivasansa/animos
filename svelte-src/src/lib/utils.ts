@@ -55,7 +55,7 @@ export function getGenreColor(name: string) {
 }
 
 export function getTitle(anime: Anime): string {
-  return anime.title_en ?? anime.title;
+  return (anime.title_en || anime.title || anime.title_jp) ?? '';
 }
 
 export function capitalize(word: string) {

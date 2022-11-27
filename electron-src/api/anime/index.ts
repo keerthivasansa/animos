@@ -89,15 +89,17 @@ export async function getInfo(kitsuId: number): Promise<Anime> {
   return anime;
 }
 
-export async function search(filters: Record<string, any>) {
+export async function search(filters: Record<string, any>, page: number) {
   const searchUrl = new URL("https://kitsu.io/api/edge/anime");
   searchUrl.searchParams.set("include", "categories");
+  searchUrl.searchParams.set("page[limit]", "20");
+  searchUrl.searchParams.set("page[offset]", ((page - 1) * 20).toString());
   Object.keys(filters).forEach((k) =>
     searchUrl.searchParams.set(`filter[${k}]`, filters[k])
   );
   console.log({ url: searchUrl.toString() });
   let resp = await httpGet(searchUrl.toString());
-  if (resp.meta.count == 0) return [];
+  if (resp.meta.count == 0) return { data: [], totalItems: 0, currentPage: 1 };
   let categorieObjs = resp.included.filter((obj) => obj.type == "categories");
   console.log(categorieObjs[0]);
   let result = resp.data.map((anime) => {
@@ -114,7 +116,7 @@ export async function search(filters: Record<string, any>) {
     return t_anime;
   });
   console.timeEnd("search");
-  return result;
+  return { data: result, totalItems: resp.meta.count, currentPage: page };
 }
 
 export async function getAllRelatedAnime(kitsuId: string, roles: string[]) {

@@ -8,33 +8,44 @@
   import { clickOutside } from "$lib/actions";
   import type { Anime } from "@prisma/client";
   import { onMount } from "svelte";
-  // import BadgeSelector from "$lib/components/BadgeSelector.svelte";
+  import { DarkPaginationNav } from "svelte-paginate";
 
   let query = $page.url.searchParams.get("q");
   let showFilters = false;
-  let results: Anime[];
+  let results: { data: Anime[]; totalItems: number; currentPage: number };
 
   let filters = {
-    averageRating: [0, 9],
+    averageRating: [0, 100],
     season: [],
     year: [1960, 2022],
     text: query ?? "",
+    subtype: ["TV", "OVA", "ONA", "Special", "Movie"],
+    page: 1,
   };
 
   async function getSearch() {
     showFilters = false;
+    if (filters.subtype.includes("Special")) {
+      filters.subtype.splice(filters.subtype.indexOf("Special"), 1, "special");
+    }
+    if (filters.subtype.includes("Movie")) {
+      filters.subtype.splice(filters.subtype.indexOf("Movie"), 1, "movie");
+    }
     let newFilters: Record<string, string> = {
-      ...filters,
-      averageRating: filters.averageRating.map((val) => val * 10).join(".."),
+      averageRating: filters.averageRating.join(".."),
+      text: filters.text,
       year: filters.year.join(".."),
       season: filters.season.join(","),
+      subtype: filters.subtype.join(","),
     };
     let finalFilters: Record<string, string> = {};
     Object.keys(newFilters)
       .filter((key) => newFilters[key] != "")
       .forEach((key) => (finalFilters[key] = newFilters[key]));
     console.log(finalFilters);
-    results = await window.api.anime.search(finalFilters);
+    results = await window.api.anime.search(finalFilters, filters.page);
+    console.log("Results:");
+    console.log(results);
   }
 
   onMount(getSearch);
@@ -56,14 +67,14 @@
         on:outclick={(_) => (showFilters = false)}
         class="flex {showFilters
           ? 'opacity-100'
-          : 'opacity-0'} flex-col absolute z-20 transition-opacity duration-500 ease-in-out w-64 gap-3 bg-black bg-opacity-90 px-4 rounded-lg py-5 text-gray-200"
+          : 'opacity-0'} flex-col absolute z-20 transition-opacity duration-500 ease-in-out gap-3 bg-black bg-opacity-90 px-4 rounded-lg py-5 text-gray-200"
         style="top: 100%; left: 0;"
       >
         <div>
           Score: {filters.averageRating[0]} - {filters.averageRating[1]}
           <Slider
             min={0}
-            max={9}
+            max={100}
             first={true}
             last={true}
             pips={true}
@@ -81,6 +92,13 @@
           />
         </div>
         <div>
+          <div class="mb-2">Type:</div>
+          <BadgeSelector
+            values={["TV", "OVA", "ONA", "Movie", "Special"]}
+            bind:selected={filters.subtype}
+          />
+        </div>
+        <div>
           <span>Year: {filters.year[0]} - {filters.year[1]}</span>
           <Slider min={1960} max={2022} bind:values={filters.year} range />
         </div>
@@ -88,15 +106,30 @@
       </div>
     </div>
 
-    <div class="flex my-10 gap-5 flex-wrap">
-      {#if results}
-        {#if results.length == 0}
-          <span class="text-gray-300">No results found</span>
-        {/if}
-        {#each results as anime (anime.kitsuId)}
+    {#if results}
+      {#if results.data.length == 0}
+        <span class="text-gray-300">No results found</span>
+      {/if}
+      <div class="flex my-10 gap-5 flex-wrap">
+        {#each results.data as anime (anime.kitsuId)}
           <CoverAnime {anime} />
         {/each}
+      </div>
+      {#if results.totalItems > 0}
+        <div class="w-full center">
+          <DarkPaginationNav
+            totalItems={results.totalItems}
+            pageSize={20}
+            currentPage={results.currentPage}
+            limit={2}
+            showStepOptions={true}
+            on:setPage={(e) => {
+              filters.page = e.detail.page;
+              getSearch();
+            }}
+          />
+        </div>
       {/if}
-    </div>
+    {/if}
   </div>
 </section>
