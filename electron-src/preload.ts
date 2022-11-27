@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 import type { Anime, Episode, Preferences } from "@prisma/client";
+import type { EpisodeWithAnime } from "./types";
 
 const endpoints = {
   anime: {
@@ -44,9 +45,12 @@ const endpoints = {
         episodeNum,
         watchTime
       ),
-    setLength: (kitsuId:number, episodeNum: number, length:number) => ipcRenderer.invoke("episode:set-length", kitsuId, episodeNum, length),
+    setLength: (kitsuId: number, episodeNum: number, length: number) =>
+      ipcRenderer.invoke("episode:set-length", kitsuId, episodeNum, length),
     getContinueWatching: () =>
-      ipcRenderer.invoke("episode:get-continue-watching") as Promise<Episode[]>,
+      ipcRenderer.invoke("episode:get-continue-watching") as Promise<
+        EpisodeWithAnime[]
+      >,
   },
   system: {
     getPreferences: () =>

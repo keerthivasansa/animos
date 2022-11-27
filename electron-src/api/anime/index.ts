@@ -94,14 +94,23 @@ export async function getInfo(kitsuId: number): Promise<Anime> {
   return anime;
 }
 
-export async function search(filters: Record<string, any>, page: number) {
+export async function search(
+  filters: Record<string, any>,
+  page: number,
+  otherParams: Record<string, string> = {}
+) {
   const searchUrl = new URL("https://kitsu.io/api/edge/anime");
   searchUrl.searchParams.set("include", "categories");
   searchUrl.searchParams.set("page[limit]", "20");
+
   searchUrl.searchParams.set("page[offset]", ((page - 1) * 20).toString());
   Object.keys(filters).forEach((k) =>
     searchUrl.searchParams.set(`filter[${k}]`, filters[k])
   );
+  Object.keys(otherParams).forEach((k) =>
+    searchUrl.searchParams.set(k, otherParams[k])
+  );
+
   console.log({ url: searchUrl.toString() });
   let resp = await httpGet(searchUrl.toString());
   if (resp.meta.count == 0) return { data: [], totalItems: 0, currentPage: 1 };
@@ -180,7 +189,7 @@ export async function getAllRelatedAnime(kitsuId: string, roles: string[]) {
 }
 
 export async function getUserRecommendations() {
-  let genres = await db.anime.findMany({
+  let likedAnime = await db.anime.findFirst({
     select: {
       genres: true,
     },
@@ -191,9 +200,13 @@ export async function getUserRecommendations() {
       lastUpdated: "desc",
     },
   });
-  let genresLiked = genres.map((anime) => anime.genres.split(",")).flat();
-  let distinctGenres = genresLiked.filter(
-    (elem, index) => genresLiked.indexOf(elem) == index
+  return search(
+    {
+      categories: likedAnime.genres.split(",").slice(0, 3).join(","),
+    },
+    1,
+    {
+      sort: "-averageRating",
+    }
   );
-  console.log({ distinctGenres });
 }

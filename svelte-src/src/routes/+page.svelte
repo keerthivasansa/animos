@@ -19,6 +19,10 @@
   async function getContinueWatching() {
     return window.api.episode.getContinueWatching();
   }
+
+  async function getRecommended() {
+    return window.api.anime.getUserRecommendations();
+  }
 </script>
 
 {#await getPosters()}
@@ -27,36 +31,57 @@
   <Carousel anime={trendingAnime} />
 {/await}
 
-<section class="px-10 my-5 text-white">
-  <h2 class="text-2xl font-semibold">Continue Watching</h2>
-  {#await getContinueWatching()}
-    Loading . . .
-  {:then episodes}
-    <div class="flex gap-5 my-8">
-      {#each episodes as ep}
-        <a href="/episode?animeId={ep.anime.kitsuId}&episodeId={ep.number}">
-          <div class="flex flex-col gap-2 items-center">
-            <CoverAnime anime={ep.anime} infoOnHover={false} navigate={false} />
-            <div
-              class="flex justify-between w-full text-sm my-2 text-gray-300 px-2"
-            >
-              <span>Episode {ep.number}</span>
-              <span
-                >{formatTime(ep.watchTime)} / {formatTime(ep.length ?? 0)}</span
+<main class="px-10 my-5 text-white">
+  <section>
+    <h2 class="text-2xl font-semibold">Continue Watching</h2>
+    {#await getContinueWatching()}
+      Loading . . .
+    {:then episodes}
+      <div class="flex gap-12 my-8">
+        {#each episodes as ep}
+          <a href="/episode?animeId={ep.anime.kitsuId}&episodeId={ep.number}">
+            <div class="flex flex-col gap-2 items-center">
+              <CoverAnime
+                anime={ep.anime}
+                infoOnHover={false}
+                navigate={false}
+              />
+              <div
+                class="flex justify-between w-full text-sm my-2 text-gray-300 px-2"
               >
+                <span>Episode {ep.number}</span>
+                <span
+                  >{formatTime(ep.watchTime)} / {formatTime(
+                    ep.length ?? 0
+                  )}</span
+                >
+              </div>
+              <progress
+                style="accent-color: var(--accent-color); height: 1rem;"
+                class="rounded-lg"
+                max={ep.length}
+                value={ep.watchTime}
+              />
             </div>
-            <progress
-              style="accent-color: var(--accent-color); height: 1rem;"
-              class="rounded-lg"
-              max={ep.length}
-              value={ep.watchTime}
-            />
-          </div>
-        </a>
-      {/each}
-    </div>
-  {/await}
-</section>
+          </a>
+        {/each}
+      </div>
+    {/await}
+  </section>
+
+  <section>
+    {#await getRecommended() then animes}
+      {#if animes.totalItems}
+        <h2 class="text-2xl font-semibold my-5">Recommended:</h2>
+        <div class="flex gap-5 flex-wrap">
+          {#each animes.data as anime}
+            <CoverAnime {anime} />
+          {/each}
+        </div>
+      {/if}
+    {/await}
+  </section>
+</main>
 
 <style lang="postcss">
   ::-webkit-progress-bar {

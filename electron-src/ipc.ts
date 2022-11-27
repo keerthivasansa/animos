@@ -164,6 +164,7 @@ ipcMain.handle("episode:get-continue-watching", async (event) => {
   return episodes;
 });
 
+
 ipcMain.handle(
   "episode:set-length",
   async (event, animeKitsuId: number, episodeNum: number, length: number) => {
