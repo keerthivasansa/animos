@@ -53,8 +53,9 @@ model AnimeRelation {
 }
 
 model Preferences {
-  id          Int    @id
-  accentColor String
+  id          Int     @id
+  accentColor String?
+  genres      String?
 }
 
 model Anime {
@@ -63,6 +64,7 @@ model Anime {
   synopsis    String
   ageRating   String
   title_en    String?
+  liked       Boolean @default(false)
   title_jp    String?
   zeroEpisode Boolean @default(false)
   title       String

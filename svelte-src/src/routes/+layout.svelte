@@ -22,12 +22,13 @@
   }
 
   onMount(async () => {
+    console.time("Running +layout");
     let preferences = await window.api.system.getPreferences();
     console.log("Preferences:");
     console.log(preferences);
     let accent = preferences.accentColor;
     console.log("Accent color from preferences: ", accent);
-    accentClr.set(accent);
+    accentClr.set(accent ?? '');
     accentClr.subscribe(async (val) => {
       console.log("setting accent to ", val);
       document.body.style.setProperty("--plyr-color-main", val);
@@ -37,7 +38,9 @@
         lightOrDark(val) == "dark" ? "white" : "black"
       );
       await window.api.system.setPreferences({ accentColor: val, id: 0 })
+    
     });
+    console.timeEnd("Running +layout");
   });
 </script>
 

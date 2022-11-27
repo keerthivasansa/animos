@@ -8,7 +8,6 @@ import {
   recurseRelations,
   transformKitsuToAnime,
 } from "./utils";
-import { load } from "cheerio";
 import { db } from "../../db";
 
 // TODO look into other parameters that are useful
@@ -80,16 +79,25 @@ export async function getInfo(kitsuId: number): Promise<Anime> {
   console.log({ genres: anime.genres });
   anime.malId = getMalIdFromIncluded(result.included);
   anime = await getPartialInfo(anime);
-  await db.anime.create({
-    data: anime,
+  await db.anime.upsert({
+    create: anime,
+    update: anime,
+    where: {
+      kitsuId,
+    },
   });
   return anime;
 }
 
-export async function search(query: string) {
-  let resp = await httpGet(
-    `https://kitsu.io/api/edge/anime?filter[text]=${query}&include=categories&fields[categories]=title`
+export async function search(filters: Record<string, any>) {
+  const searchUrl = new URL("https://kitsu.io/api/edge/anime");
+  searchUrl.searchParams.set("include", "categories");
+  Object.keys(filters).forEach((k) =>
+    searchUrl.searchParams.set(`filter[${k}]`, filters[k])
   );
+  console.log({ url: searchUrl.toString() });
+  let resp = await httpGet(searchUrl.toString());
+  if (resp.meta.count == 0) return [];
   let categorieObjs = resp.included.filter((obj) => obj.type == "categories");
   console.log(categorieObjs[0]);
   let result = resp.data.map((anime) => {
@@ -105,6 +113,7 @@ export async function search(query: string) {
     t_anime.dubSlug = "";
     return t_anime;
   });
+  console.timeEnd("search");
   return result;
 }
 
@@ -161,4 +170,23 @@ export async function getAllRelatedAnime(kitsuId: string, roles: string[]) {
       .flat(2)
   );
   return related;
+}
+
+export async function getUserRecommendations() {
+  let genres = await db.anime.findMany({
+    select: {
+      genres: true,
+    },
+    where: {
+      liked: true,
+    },
+    orderBy: {
+      lastUpdated: "desc",
+    },
+  });
+  let genresLiked = genres.map((anime) => anime.genres.split(",")).flat();
+  let distinctGenres = genresLiked.filter(
+    (elem, index) => genresLiked.indexOf(elem) == index
+  );
+  console.log({ distinctGenres });
 }

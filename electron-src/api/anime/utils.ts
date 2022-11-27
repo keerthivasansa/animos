@@ -57,7 +57,9 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
   );
   const $2 = load(gogoEpInfo);
   anime.episodes = parseInt(epEnd);
+  console.log("First episode text:", $2("div.name").last().text());
   anime.zeroEpisode = $2("div.name").last().text() == "EP 0";
+  console.log("Zero episode:", anime.zeroEpisode);
   return anime;
 }
 

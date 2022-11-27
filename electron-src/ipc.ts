@@ -5,6 +5,7 @@ import {
   getAllRelatedAnime,
   getPosters,
   getRecommendations,
+  getUserRecommendations,
 } from "./api/anime";
 import { episodes, getEpisode, getSkipTimes } from "./api/episode";
 import { db } from "./db";
@@ -22,6 +23,7 @@ ipcMain.handle("system:get-preferences", async (event) => {
     preferences = {
       accentColor: "#caf2ff",
       id: 0,
+      genres: "",
     };
     await db.preferences.create({ data: preferences });
   }
@@ -35,6 +37,24 @@ ipcMain.handle("system:set-preferences", async (event, update) => {
       id: 0,
     },
   });
+});
+
+ipcMain.handle("anime:like", async (event, kitsuId: number, liked: boolean) => {
+  let updates = await db.anime.update({
+    where: {
+      kitsuId,
+    },
+    data: {
+      liked,
+    },
+  });
+  console.log({ like: updates.liked, liked });
+  return;
+});
+
+ipcMain.handle("anime:user-recommendations", async (event) => {
+  let result = await getUserRecommendations();
+  return result;
 });
 
 ipcMain.handle("anime:info", async (event, kitsuId: number) => {
@@ -52,11 +72,14 @@ ipcMain.handle("anime:posters", async (event) => {
   return res;
 });
 
-ipcMain.handle("anime:search", async (event, query: string) => {
-  let results = await api.anime.search(query);
-  console.log("Found", results.length, "results for:", query);
-  return results;
-});
+ipcMain.handle(
+  "anime:search",
+  async (event, filters: Record<string, string>) => {
+    let results = await api.anime.search(filters);
+    console.log("Found", results.length, "results for:", filters);
+    return results;
+  }
+);
 
 ipcMain.handle("anime:genre", async (event, genre: string) => {
   let result = [];

@@ -5,14 +5,18 @@ const endpoints = {
   anime: {
     info: (kitsuId: number) =>
       ipcRenderer.invoke("anime:info", kitsuId) as Promise<Anime>,
-    search: (query: string) =>
-      ipcRenderer.invoke("anime:search", query) as Promise<Anime[]>,
+    search: (filters: Record<string, string>) =>
+      ipcRenderer.invoke("anime:search", filters) as Promise<Anime[]>,
     posters: () => ipcRenderer.invoke("anime:posters") as Promise<Anime[]>,
     genre: (name: string) =>
       ipcRenderer.invoke("anime:genre", name) as Promise<Anime[]>,
     recommendations: (kitsuId: number) =>
       ipcRenderer.invoke("anime:recommendations", kitsuId) as Promise<Anime[]>,
     related: (kitsuId: number) => ipcRenderer.invoke("anime:related", kitsuId),
+    setLike: (kitsuId: number, liked: boolean) =>
+      ipcRenderer.invoke("anime:like", kitsuId, liked),
+    getUserRecommendations: () =>
+      ipcRenderer.invoke("anime:user-recommendations"),
   },
   episode: {
     info: (kitsuId: number) => ipcRenderer.invoke("episode:info", kitsuId),

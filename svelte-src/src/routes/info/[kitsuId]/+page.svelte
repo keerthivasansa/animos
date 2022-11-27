@@ -3,6 +3,7 @@
   import Genres from "$lib/components/Genres.svelte";
   import IconBtn from "$lib/components/IconBtn.svelte";
   import FaDown from "svelte-icons/fa/FaArrowDown.svelte";
+  import FaHeart from "svelte-icons/fa/FaHeart.svelte";
   import { capitalize, convertRemToPixels, getTitle } from "$lib/utils";
   import CoverAnime from "$lib/components/CoverAnime.svelte";
   import FaUp from "svelte-icons/fa/FaArrowUp.svelte";
@@ -109,7 +110,9 @@
         class="mt-10 flex gap-5 flex-wrap max-w-xl justify-center items-center"
       >
         {#each generateRange(anime.zeroEpisode ? 0 : 1, anime.episodes ?? 0) as epNo}
-          <a href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&zeroEp={anime.zeroEpisode}">
+          <a
+            href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&zeroEp={anime.zeroEpisode}"
+          >
             <span
               class="w-10 text-center px-2 py-1 rounded-sm font-semibold bg-gray-300 text-black"
               >{epNo}</span
@@ -119,6 +122,20 @@
       </div>
     </div>
   </div>
+</div>
+
+<div
+  on:click={(_) => {
+    anime.liked = !anime.liked;
+    window.api.anime.setLike(anime.kitsuId, anime.liked);
+  }}
+  class="fixed overflow-hidden active:scale-110 rounded-lg text-gray-800 {anime.liked
+    ? 'bg-accent'
+    : 'bg-gray-400'} bottom-8 right-8"
+>
+  <IconBtn bgAccent={false}>
+    <FaHeart />
+  </IconBtn>
 </div>
 
 <style>
