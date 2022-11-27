@@ -6,6 +6,7 @@ import {
   fetchGogoanimeEpisodeSource,
 } from "./scraper";
 import { db } from "../db";
+import { Episode } from "@prisma/client";
 
 export async function episodes(kitsuId: number, page: number = 1) {
   let { zeroEpisode } = await db.anime.findUnique({
@@ -19,18 +20,33 @@ export async function episodes(kitsuId: number, page: number = 1) {
     },
   });
   if (episodes.length) return episodes;
-  log.debug(
-    `Fetching episode information for anime. Kitsu Id: ${kitsuId}, page: ${page}`
-  );
-  let res = await httpGet(
-    `https://kitsu.io/api/edge/episodes?filter[mediaId]=${kitsuId}`
-  );
-  episodes = res.data.map((ep) => {
+
+  let recursions = 0;
+  let apiData: Array<JSON> = [];
+  for (let i = -1; i < recursions; i++) {
+    log.debug(
+      `Fetching episode information for anime. Kitsu Id: ${kitsuId}, page: ${recursions}`
+    );
+    let res = await httpGet(`https://kitsu.io/api/edge/episodes?filter[mediaId]=${kitsuId}&page[limit]=20&page[offset]=${recursions * 20}`);
+
+    (res.data as JSON[]).forEach((episode) => {
+      apiData.push(episode)
+    })
+
+    if (res.links.next !== undefined) {
+      recursions += 1;
+    }
+  }
+  
+  episodes = apiData.map((ep: any) => {
     return {
       id: parseInt(ep.id),
       number: ep.attributes.number,
       animeKitsuId: kitsuId,
       title: ep.attributes.canonicalTitle,
+      description: ep.attributes.description,
+      watchTime: 0,
+      source: "",
     };
   });
   if (zeroEpisode) {
@@ -42,7 +58,7 @@ export async function episodes(kitsuId: number, page: number = 1) {
     episodes.splice(0, 1);
     episodes.unshift(zeroEp, firstEp);
   }
-  console.log(episodes);
+  // log.debug(episodes);
   await db.$transaction(episodes.map((ep) => db.episode.create({ data: ep })));
   return episodes;
 }

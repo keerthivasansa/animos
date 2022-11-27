@@ -14,11 +14,36 @@
   let relatedExpand = false;
   let kitsuId = parseInt($page.params.kitsuId ?? "");
 
+  interface Episode {
+    title: string;
+    id: number;
+    number: number;
+    description: string;
+  }
+
   export let data: PageData;
 
   let { anime } = data;
   async function getRelated() {
     return await window.api.anime.related(kitsuId);
+  }
+
+  async function getEpisodes(kitsuId: number) {
+    return (await window.api.episode.info(kitsuId)) as Episode[];
+  }
+
+  // please improve this
+  let fixed = false;
+  function getEpisodeText(epNo: number, episodes: Episode[]): string {
+    try {
+      if (fixed) {
+        return `${epNo + 1}` + " - " + episodes[epNo].title;
+      }
+      return `${epNo}` + " - " + episodes[epNo - 1].title;
+    } catch {
+      fixed = true;
+      return `${epNo + 1}` + " - " + episodes[epNo].title;
+    }
   }
 
   let maxDescription: number;
@@ -65,6 +90,7 @@
         <div
           class="absolute bottom-0 left-0 w-full h-full bg-black rounded-b-lg black-gradient"
         />
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="absolute cursor-pointer"
           style="bottom: -1rem;left: calc(50% - 2rem)"
@@ -77,6 +103,7 @@
       {/if}
     </div>
     <div class="mt-10">
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div on:click={(_) => (relatedExpand = !relatedExpand)}>
         <IconTxtBtn text={"Related"}>
           {#if relatedExpand}
@@ -105,17 +132,14 @@
     </div>
     <div>
       <h3 class="font-semibold text-xl mt-16">Episodes</h3>
-      <div
-        class="mt-10 flex gap-5 flex-wrap max-w-xl justify-center items-center"
-      >
-        {#each generateRange(anime.zeroEpisode ? 0 : 1, anime.episodes ?? 0) as epNo}
-          <a href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&zeroEp={anime.zeroEpisode}">
-            <span
-              class="w-10 text-center px-2 py-1 rounded-sm font-semibold bg-gray-300 text-black"
-              >{epNo}</span
-            >
-          </a>
-        {/each}
+      <div class="mt-10 flex gap-5 flex-wrap max-w-xl justify-center items-center">
+        {#await getEpisodes(anime.kitsuId) then episodes}
+          {#each generateRange(anime.zeroEpisode ? 0 : 1, anime.episodes ?? 0) as epNo}
+            <button class="cursor-pointer w-full text-left border-slate-300 border-2 rounded-md my-2 px-4 py-3">
+              <span class="my-4">{getEpisodeText(epNo, episodes)}</span>
+            </button>
+          {/each}
+        {/await}
       </div>
     </div>
   </div>
@@ -130,7 +154,7 @@
     );
   }
   p {
-    max-width: 45rem;
+    max-width: 35rem;
   }
 
   .limit-lines {
