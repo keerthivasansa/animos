@@ -132,14 +132,18 @@
     </div>
     <div>
       <h3 class="font-semibold text-xl mt-16">Episodes</h3>
-      <div class="mt-10 flex gap-5 flex-wrap max-w-xl justify-center items-center">
+      <div
+        class="mt-10 flex gap-5 flex-wrap max-w-xl justify-center items-center"
+      >
         {#await getEpisodes(anime.kitsuId) then episodes}
           {#each generateRange(anime.zeroEpisode ? 0 : 1, anime.episodes ?? 0) as epNo}
-            <button class="cursor-pointer w-full text-left border-slate-300 border-2 rounded-md my-2 px-4 py-3">
-              <span class="my-4">{getEpisodeText(epNo, episodes)}</span>
-            </button>
+            <a href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&zeroEp={anime.zeroEpisode}">
+              <button class="cursor-pointer w-full text-left border-slate-300 border-2 rounded-md my-2 px-4 py-3">
+                <span class="my-4">{getEpisodeText(epNo, episodes)}</span>
+              </button>
+            </a>
           {/each}
-        {/await}
+        {/await}5
       </div>
     </div>
   </div>
