@@ -145,12 +145,7 @@ ipcMain.handle("episode:get-continue-watching", async (event) => {
       watchTime: true,
       length: true,
       number: true,
-      anime: {
-        select: {
-          title: true,
-          posterImg: true,
-        },
-      },
+      anime: true
     },
     distinct: "animeKitsuId",
     take: 5,

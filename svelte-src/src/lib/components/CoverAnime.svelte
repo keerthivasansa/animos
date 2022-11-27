@@ -8,6 +8,7 @@
 
   export let anime: Anime;
   export let infoOnHover = true;
+  export let navigate = true;
 
   let currentCoverAnime: number;
 
@@ -27,7 +28,11 @@
   });
 </script>
 
-<a href="/info/{anime.kitsuId}?title={animeTitle}" data-sveltekit-reload>
+<svelte:element
+  this={navigate ? "a" : "div"}
+  href="/info/{anime.kitsuId}?title={animeTitle}"
+  data-sveltekit-reload=""
+>
   <div
     style="height: {contentSize};"
     class="relative w-48 "
@@ -79,4 +84,4 @@
       </div>
     </div>
   </div>
-</a>
+</svelte:element>

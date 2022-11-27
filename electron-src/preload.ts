@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import type { Anime, Preferences } from "@prisma/client";
+import type { Anime, Episode, Preferences } from "@prisma/client";
 
 const endpoints = {
   anime: {
@@ -46,7 +46,7 @@ const endpoints = {
       ),
     setLength: (kitsuId:number, episodeNum: number, length:number) => ipcRenderer.invoke("episode:set-length", kitsuId, episodeNum, length),
     getContinueWatching: () =>
-      ipcRenderer.invoke("episode:get-continue-watching"),
+      ipcRenderer.invoke("episode:get-continue-watching") as Promise<Episode[]>,
   },
   system: {
     getPreferences: () =>

@@ -55,7 +55,7 @@ export function getGenreColor(name: string) {
 }
 
 export function getTitle(anime: Anime): string {
-  return (anime.title_en || anime.title || anime.title_jp) ?? '';
+  return (anime.title_en || anime.title || anime.title_jp) ?? "";
 }
 
 export function capitalize(word: string) {
@@ -73,4 +73,12 @@ export function getNumberOfLines(elementId: string) {
 
 export function convertRemToPixels(rem: number) {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+
+export function formatTime(seconds: number) {
+  console.log({ seconds });
+  let minutes = Math.floor(seconds / 60);
+  let secs = Math.floor(seconds % 60);
+
+  return `${minutes}:${secs < 10 ? 0 : ""}${secs}`;
 }
