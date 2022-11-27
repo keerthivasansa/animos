@@ -8,7 +8,7 @@
 
   export let episode: EpisodeWithSkip;
   export let hasNextEp: boolean;
-  const src = episode.source;
+  let src = episode.source;
 
   let currentSkip: SkipTime | null;
 
@@ -38,7 +38,7 @@
     let linkExpired = await isSourceExpired(src);
     if (linkExpired) {
       console.log("Link expired, fetching new link . . .");
-      // src = (await window.api.renewSource(animeMalId, episodeId)).source
+      src = await window.api.episode.renewSource(episode.animeKitsuId, episode.number);
     }
     return new Promise((res, _) => {
       const video = document.getElementById("player") as HTMLVideoElement;

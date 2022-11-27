@@ -7,7 +7,7 @@ import {
   getRecommendations,
   getUserRecommendations,
 } from "./api/anime";
-import { episodes, getEpisode, getSkipTimes } from "./api/episode";
+import { episodes, getEpisode, getSkipTimes, renewSource } from "./api/episode";
 import { db } from "./db";
 
 ipcMain.handle("system:get-preferences", async (event) => {
@@ -163,6 +163,11 @@ ipcMain.handle("episode:get-continue-watching", async (event) => {
   });
   return episodes;
 });
+
+ipcMain.handle("episode:renew-source", async (event, kitsuId:number, episodeNum:number) => {
+  let source = await renewSource(kitsuId, episodeNum);
+  return source;
+})
 
 
 ipcMain.handle(

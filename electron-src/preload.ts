@@ -51,6 +51,8 @@ const endpoints = {
       ipcRenderer.invoke("episode:get-continue-watching") as Promise<
         EpisodeWithAnime[]
       >,
+    renewSource: (kitsuId: number, episodeNum: number) =>
+      ipcRenderer.invoke("episode:renew-source", kitsuId, episodeNum),
   },
   system: {
     getPreferences: () =>

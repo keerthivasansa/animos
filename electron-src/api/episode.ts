@@ -7,6 +7,24 @@ import {
 } from "./scraper";
 import { db } from "../db";
 
+async function getSource(kitsuId: number, episodeNum: number) {
+  let anime = await db.anime.findUnique({
+    where: {
+      kitsuId,
+    },
+  });
+  if (!anime) {
+    throw new Error("Anime not found in the database, kitsuId:" + kitsuId);
+  }
+  let { slug } = anime;
+  let episodeSlug = `${slug}-episode-${episodeNum}`;
+  log.info(`Fetching source and skip times for ${kitsuId} - EP${episodeNum}`);
+  let source = await fetchAnimixEpisodeSource({
+    episodeId: episodeSlug,
+  });
+  return source;
+}
+
 export async function episodes(kitsuId: number, page: number = 1) {
   let { zeroEpisode } = await db.anime.findUnique({
     where: {
@@ -62,31 +80,15 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
       title: true,
       animeKitsuId: true,
       watchTime: true,
-      number: true
+      number: true,
     },
   });
   if (episode && episode.source != "") {
     console.log("Cache hit");
     return episode;
   }
-  let anime = await db.anime.findUnique({
-    where: {
-      kitsuId,
-    },
-  });
   let { id: episodeId } = episode;
-  if (!anime) {
-    throw new Error("Anime not found in the database, kitsuId:" + kitsuId);
-  }
-
-  let { slug } = anime;
-  let episodeSlug = `${slug}-episode-${episodeNum}`;
-  log.info(`Fetching source and skip times for ${episodeId}`);
-  let epSource = await fetchAnimixEpisodeSource({
-    episodeId: episodeSlug,
-  });
-  log.debug(epSource);
-
+  let epSource = await getSource(kitsuId, episodeNum);
   episode = await db.episode.update({
     where: {
       animeKitsuId_number: {
@@ -104,7 +106,7 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
       title: true,
       animeKitsuId: true,
       skipTimes: true,
-      watchTime: true
+      watchTime: true,
     },
   });
 
@@ -174,4 +176,20 @@ export async function getSkipTimes(
       }
     }
   }
+}
+
+export async function renewSource(kitsuId: number, episodeNum: number) {
+  let source = await getSource(kitsuId, episodeNum);
+  await db.episode.update({
+    where: {
+      animeKitsuId_number: {
+        animeKitsuId: kitsuId,
+        number: episodeNum,
+      },
+    },
+    data: {
+      source,
+    },
+  });
+  return source;
 }

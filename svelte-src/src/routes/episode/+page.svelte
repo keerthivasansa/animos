@@ -61,18 +61,22 @@
         <div class="animate-pulse bg-slate-700 w-52 h-10 rounded-lg" />
       </div>
     {:else}
-      <VideoPlayer
-        episode={result.currentEp}
-        hasNextEp={result.allEpisodes.some(
-          (ep) => ep.number > result.currentEp.number
-        )}
-      />
-      <div class="mx-5 my-4">
-        <div class="text-sm text-gray-100 my-4">Episode {result.currentEp.number}</div>
-        <h3 class="text-xl font-bold">
-          {result.currentEp.title}
-        </h3>
-        <br />
+      <div class="overflow-y-auto">
+        <VideoPlayer
+          episode={result.currentEp}
+          hasNextEp={result.allEpisodes.some(
+            (ep) => ep.number > result.currentEp.number
+          )}
+        />
+        <div class="mx-5 my-4">
+          <div class="text-sm text-gray-100 my-4">
+            Episode {result.currentEp.number}
+          </div>
+          <h3 class="text-xl font-bold">
+            {result.currentEp.title}
+          </h3>
+          <br />
+        </div>
       </div>
     {/if}
   </div>
@@ -116,5 +120,9 @@
 
   .w-240 {
     max-width: 60rem;
+  }
+  .video-container {
+    max-height: 30rem;
+    max-width: 55rem;
   }
 </style>
