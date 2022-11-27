@@ -8,7 +8,7 @@
   import { clickOutside } from "$lib/actions";
   import type { Anime } from "@prisma/client";
   import { onMount } from "svelte";
-  import { DarkPaginationNav } from "svelte-paginate";
+  import { DarkPaginationNav, PaginationNav } from "svelte-paginate";
 
   let query = $page.url.searchParams.get("q");
   let showFilters = false;
@@ -19,24 +19,23 @@
     season: [],
     year: [1960, 2022],
     text: query ?? "",
-    subtype: ["TV", "OVA", "ONA", "Special", "Movie"],
+    subtype: [],
+    ageRating: [],
     page: 1,
   };
 
   async function getSearch() {
     showFilters = false;
-    if (filters.subtype.includes("Special")) {
-      filters.subtype.splice(filters.subtype.indexOf("Special"), 1, "special");
-    }
-    if (filters.subtype.includes("Movie")) {
-      filters.subtype.splice(filters.subtype.indexOf("Movie"), 1, "movie");
-    }
+
     let newFilters: Record<string, string> = {
       averageRating: filters.averageRating.join(".."),
       text: filters.text,
       year: filters.year.join(".."),
-      season: filters.season.join(","),
-      subtype: filters.subtype.join(","),
+      season: filters.season.map((val: string) => val.toLowerCase()).join(","),
+      subtype: filters.subtype
+        .map((val: string) => val.toLowerCase())
+        .join(","),
+      ageRating: filters.ageRating.join(","),
     };
     let finalFilters: Record<string, string> = {};
     Object.keys(newFilters)
@@ -87,8 +86,16 @@
         <div>
           <div class="mb-2">Season:</div>
           <BadgeSelector
-            values={["Fall", "Spring"]}
+            values={["Fall", "Spring", "Winter", "Summer"]}
             bind:selected={filters.season}
+          />
+        </div>
+
+        <div>
+          <div class="mb-2">Age Rating:</div>
+          <BadgeSelector
+            values={["PG", "G", "R", "R18"]}
+            bind:selected={filters.ageRating}
           />
         </div>
         <div>
@@ -116,7 +123,7 @@
         {/each}
       </div>
       {#if results.totalItems > 0}
-        <div class="w-full center">
+        <div class="w-full center paginate">
           <DarkPaginationNav
             totalItems={results.totalItems}
             pageSize={20}
@@ -133,3 +140,16 @@
     {/if}
   </div>
 </section>
+
+<style>
+  .paginate :global(.option),
+  .paginate :global(.option.prev),
+  .paginate :global(.option.next) {
+    color: white;
+  }
+
+  .paginate :global(.option.active),
+  :global(.option.disabled) {
+    color: grey;
+  }
+</style>
