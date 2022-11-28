@@ -1,5 +1,5 @@
 {
-  "version": "0.2.2",
+  "version": "0.3.0",
   "name": "animos",
   "main": "dist/index.js",
   "license": "CC-BY-NC-ND-4.0",
@@ -25,11 +25,13 @@
   "build": {
     "appId": "com.keerthivasan.animos",
     "productName": "Animos",
-    "publish": [{
-      "provider": "github",
-      "owner": "Nectres",
-      "repo": "animos"
-    }],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Nectres",
+        "repo": "animos"
+      }
+    ],
     "asar": true,
     "directories": {
       "output": "out"
