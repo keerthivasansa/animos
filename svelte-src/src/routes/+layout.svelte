@@ -83,13 +83,13 @@
 </script>
 
 {#await getUpdates() then updateCheckResult}
-  {#if showUpdate}
+  {#if showUpdate && updateCheckResult}
     <div
       class="w-screen h-screen flex z-50 justify-center bg-black bg-opacity-40 items-center overflow-hidden fixed top-0 left-0"
     >
       <div
         use:clickOutside
-        on:outclick={(_) => closeUpdateDialog()}
+        on:outclick={closeUpdateDialog}
         class="rounded-lg text-white bg-gray-700 flex gap-4 flex-col font-semibold px-10 py-8"
       >
         <h3 class="text-3xl my-4">Update Found</h3>

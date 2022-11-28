@@ -3,18 +3,24 @@
 
 // and what to do when importing types
 declare namespace App {
-	// interface Locals {}
-	// interface PageData {}
-	// interface Error {}
-	// interface Platform {}
+  // interface Locals {}
+  // interface PageData {}
+  // interface Error {}
+  // interface Platform {}
 }
 
-declare module 'svelte-plyr' {
-	export class Plyr extends SvelteComponentTyped {}
+declare module "svelte-plyr" {
+  export class Plyr extends SvelteComponentTyped {}
 }
 
 declare interface Window {
-	player: import("plyr"),
-	hls: import('hls.js'),
-	api: import("../../electron-src/preload").EndpointType
+  player: import("plyr");
+  hls: import("hls.js");
+  api: import("../../electron-src/preload").EndpointType;
+}
+
+declare namespace svelte.JSX {
+  interface HTMLAttributes<T> {
+    onoutclick: () => void;
+  }
 }

@@ -58,7 +58,7 @@ const endpoints = {
   system: {
     getPreferences: () =>
       ipcRenderer.invoke("system:get-preferences") as Promise<Preferences>,
-    setPreferences: (update: Preferences) =>
+    setPreferences: (update: Record<string, any>) =>
       ipcRenderer.invoke("system:set-preferences", update),
     getUpdates: () =>
       ipcRenderer.invoke("system:get-updates") as Promise<{
