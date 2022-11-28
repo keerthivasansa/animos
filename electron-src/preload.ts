@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 import type { Anime, Episode, Preferences } from "@prisma/client";
 import type { EpisodeWithAnime } from "./types";
+import { UpdateCheckResult } from "electron-updater";
 
 const endpoints = {
   anime: {
@@ -59,6 +60,15 @@ const endpoints = {
       ipcRenderer.invoke("system:get-preferences") as Promise<Preferences>,
     setPreferences: (update: Preferences) =>
       ipcRenderer.invoke("system:set-preferences", update),
+    getUpdates: () =>
+      ipcRenderer.invoke("system:get-updates") as Promise<{
+        version: string;
+        releaseNotes: string;
+      }>,
+    downloadUpdate: () => ipcRenderer.invoke("system:download-update"),
+    onProgress: (cb: (val: number) => void) => {
+      ipcRenderer.on("download-progress", (event, val) => cb(val));
+    },
   },
 };
 

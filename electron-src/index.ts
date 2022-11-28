@@ -14,12 +14,37 @@ process.env.DATABASE_URL = "file:./cache.db";
 // register all the ipc functions
 import "./ipc";
 
+
 // TODO add strong type support for electron files
 const loadPath = serve({ directory: "output" });
 
 console.log({ loadPath });
 
-autoUpdater.checkForUpdatesAndNotify();
+console.log("App version:" + app.getVersion());
+
+autoUpdater.setFeedURL({
+  provider: "github",
+  repo: "animos",
+  owner: "Nectres",
+});
+autoUpdater.forceDevUpdateConfig = true;
+
+autoUpdater.on("update-downloaded", () => {
+  autoUpdater.quitAndInstall();
+});
+
+ipcMain.handle("system:get-updates", async (event) => {
+  let update = await autoUpdater.checkForUpdates();
+  return {
+    version: update.updateInfo.version,
+    releaseNotes: update.updateInfo.releaseNotes,
+  };
+});
+
+ipcMain.handle("system:download-update", () => {
+  autoUpdater.downloadUpdate();
+});
+
 app.enableSandbox();
 
 const isDev = !app.isPackaged;
@@ -49,11 +74,17 @@ const createWindow = () => {
 
   let webContents = win.webContents;
 
+  webContents.send("download-progress", 93)
+
   webContents.on("did-finish-load", () => {
     webContents.setZoomFactor(1);
   });
 
-  win.webContents;
+  
+
+  autoUpdater.on("download-progress", (info) => {
+    win.webContents.send("download-progress", info.percent);
+  });
 
   win.maximize();
 
