@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, session } from "electron";
 import serve from "electron-serve";
 import { join } from "path";
 import { config } from "dotenv";
+import { autoUpdater } from "electron-updater";
 
 config();
 
@@ -18,6 +19,7 @@ const loadPath = serve({ directory: "output" });
 
 console.log({ loadPath });
 
+autoUpdater.checkForUpdatesAndNotify();
 app.enableSandbox();
 
 const isDev = !app.isPackaged;
@@ -101,7 +103,6 @@ app.on("web-contents-created", (event, webContent) => {
       details.responseHeaders,
       currentOrigin
     );
-    console.log({ responseHeaders });
     cb({
       responseHeaders,
     });

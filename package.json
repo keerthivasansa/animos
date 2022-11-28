@@ -25,21 +25,11 @@
   "build": {
     "appId": "com.keerthivasan.animos",
     "productName": "Animos",
-    "win": {
-      "publish": [
-        "github"
-      ]
-    },
-    "mac": {
-      "publish": [
-        "github"
-      ]
-    },
-    "linux": {
-      "publish": [
-        "github"
-      ]
-    },
+    "publish": [{
+      "provider": "github",
+      "owner": "Nectres",
+      "repo": "animos"
+    }],
     "asar": true,
     "directories": {
       "output": "out"
@@ -83,6 +73,7 @@
     "electron-log": "^4.4.8",
     "electron-serve": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
+    "electron-updater": "^5.3.0",
     "express": "^4.18.2",
     "fast-xml-parser": "^4.0.11"
   }
