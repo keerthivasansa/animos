@@ -100,7 +100,7 @@ export async function search(
   otherParams: Record<string, string> = {}
 ) {
   const searchUrl = new URL("https://kitsu.io/api/edge/anime");
-  searchUrl.searchParams.set("include", "categories");
+  searchUrl.searchParams.set("include", "categories,streamingLinks");
   searchUrl.searchParams.set("page[limit]", "20");
 
   searchUrl.searchParams.set("page[offset]", ((page - 1) * 20).toString());
@@ -116,19 +116,25 @@ export async function search(
   if (resp.meta.count == 0) return { data: [], totalItems: 0, currentPage: 1 };
   let categorieObjs = resp.included.filter((obj) => obj.type == "categories");
   console.log(categorieObjs[0]);
-  let result = resp.data.map((anime) => {
-    let t_anime = transformKitsuToAnime(anime);
-    let categoryIds = anime.relationships.categories.data.map((cat) => cat.id);
-    console.log(categoryIds);
-    let categories = categoryIds.map(
-      (cat) => categorieObjs.filter((obj) => obj.id == cat)[0].attributes.title
-    );
-    console.log(categories);
-    t_anime.genres = categories.join(",");
-    t_anime.slug = "";
-    t_anime.dubSlug = "";
-    return t_anime;
-  });
+  let result = resp.data
+    // only get anime which has streaming links
+    .filter((anime) => anime.relationships.streamingLinks.data.length)
+    .map((anime) => {
+      let t_anime = transformKitsuToAnime(anime);
+      let categoryIds = anime.relationships.categories.data.map(
+        (cat) => cat.id
+      );
+      console.log(categoryIds);
+      let categories = categoryIds.map(
+        (cat) =>
+          categorieObjs.filter((obj) => obj.id == cat)[0].attributes.title
+      );
+      console.log(categories);
+      t_anime.genres = categories.join(",");
+      t_anime.slug = "";
+      t_anime.dubSlug = "";
+      return t_anime;
+    });
   console.timeEnd("search");
   return { data: result, totalItems: resp.meta.count, currentPage: page };
 }

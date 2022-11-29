@@ -14,7 +14,6 @@ process.env.DATABASE_URL = "file:./cache.db";
 // register all the ipc functions
 import "./ipc";
 
-
 // TODO add strong type support for electron files
 const loadPath = serve({ directory: "output" });
 
@@ -74,13 +73,11 @@ const createWindow = () => {
 
   let webContents = win.webContents;
 
-  webContents.send("download-progress", 93)
+  webContents.send("download-progress", 93);
 
   webContents.on("did-finish-load", () => {
     webContents.setZoomFactor(1);
   });
-
-  
 
   autoUpdater.on("download-progress", (info) => {
     win.webContents.send("download-progress", info.percent);
@@ -105,7 +102,6 @@ const createWindow = () => {
 
 const appOrigin = ["http://localhost:5173", "null"];
 const currentOrigin = isDev ? "http://localhost:5173" : "null";
-const appOriginString = appOrigin.join(",");
 
 // Checks for allow-origin header, if it is present with wildcard, returns it otherwise sets the origin of the application as the header value.
 function setAllowOrigin(
@@ -124,6 +120,8 @@ function setAllowOrigin(
         headers[header] = [origin];
         return headers;
       }
+    } else {
+      return headers;
     }
   }
 }
@@ -134,6 +132,7 @@ app.on("web-contents-created", (event, webContent) => {
       details.responseHeaders,
       currentOrigin
     );
+
     cb({
       responseHeaders,
     });

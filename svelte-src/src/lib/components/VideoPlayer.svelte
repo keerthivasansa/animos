@@ -23,6 +23,7 @@
   }
 
   async function isSourceExpired(url: string): Promise<boolean> {
+    console.log("Checking expiry for URL:", url);
     return new Promise((res, rej) => {
       const xhr = new XMLHttpRequest();
 
