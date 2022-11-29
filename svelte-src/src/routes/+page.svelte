@@ -6,12 +6,6 @@
   import { formatTime } from "$lib/utils";
   import type { Anime } from "@prisma/client";
 
-  async function get(id: number) {
-    let anime = await window.api.anime.info(id);
-    console.log(anime);
-    return anime;
-  }
-
   async function getPosters(): Promise<Anime[]> {
     let posters = await window.api.anime.posters();
     console.log(posters);
