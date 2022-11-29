@@ -20,8 +20,9 @@
     "dev": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run svelte:dev\" \"npm run electron:dev\"",
     "electron:start": "tsc && electron dist | pino-pretty",
     "electron:dev": "nodemon",
-    "build": "npm run svelte:build && tsc && electron-builder",
-    "publish": "npm run svelte:build && tsc && electron-builder -p always"
+    "build": "npm run prepublish && tsc && electron-builder",
+    "prepublish": "npm run svelte:build && npx prisma generate && tsc",
+    "publish": "electron-builder -p always"
   },
   "build": {
     "appId": "com.keerthivasan.animos",
