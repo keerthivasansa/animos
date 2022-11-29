@@ -24,13 +24,8 @@ jobs:
         with:
           node-version: 18.12.1
 
-      - name: Install NPM packages for electron
+      - name: Prepare for publishing
         run: npm install
-
-      - name: Install packages for Svelte
-        run: |
-          cd svelte-src
-          npm install
 
       - name: create env file
         run: |

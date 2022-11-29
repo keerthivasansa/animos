@@ -14,14 +14,15 @@
   },
   "description": "Animos is an application to discover and stream Anime with ease",
   "scripts": {
-    "svelte:dev": "cd svelte-src && yarn dev",
+    "svelte:install": "cd svelte-src && npm i",
+    "svelte:dev": "cd svelte-src && npm run dev",
     "test": "jest",
     "svelte:build": "cd svelte-src && yarn build",
     "dev": "concurrently -n=svelte,electron -c='#ff3e00',blue \"npm run svelte:dev\" \"npm run electron:dev\"",
     "electron:start": "tsc && electron dist | pino-pretty",
     "electron:dev": "nodemon",
     "build": "npm run prepublish && tsc && electron-builder",
-    "prepublish": "npm run svelte:build && npx prisma generate && tsc",
+    "prepare": "npm run svelte:install && npm run svelte:build && npx prisma generate && tsc",
     "publish": "electron-builder -p always"
   },
   "build": {
