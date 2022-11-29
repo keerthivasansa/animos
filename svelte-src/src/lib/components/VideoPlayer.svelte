@@ -39,10 +39,12 @@
     let linkExpired = await isSourceExpired(src);
     if (linkExpired) {
       console.log("Link expired, fetching new link . . .");
+      alert("Renewing video source, please wait for a few seconds . . .");
       src = await window.api.episode.renewSource(
         episode.animeKitsuId,
         episode.number
       );
+      console.log(src);
     }
     return new Promise((res, _) => {
       const video = document.getElementById("player") as HTMLVideoElement;
