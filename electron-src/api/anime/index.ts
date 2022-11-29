@@ -192,15 +192,13 @@ export async function getUserRecommendations() {
       lastUpdated: "desc",
     },
   });
-  if (!likedAnime)
-    return {
-      data: [],
-      totalItems: 0,
-      currentPage: 1,
-    };
+  let categories = "";
+  if (likedAnime)
+    categories = likedAnime.genres.split(",").slice(0, 3).join(",");
+  else categories = "Action, Drama";
   return search(
     {
-      categories: likedAnime.genres.split(",").slice(0, 3).join(","),
+      categories,
     },
     1,
     {
