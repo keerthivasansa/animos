@@ -35,25 +35,6 @@ export async function episodes(kitsuId: number, page: number = 1) {
       animeKitsuId: kitsuId,
     },
   });
-  // if (anime.type != "TV") {
-  //   let eps = [];
-  //   for (let i = 1; i <= anime.episodes; i++) {
-  //     eps.push({
-  //       animeKitsuId: kitsuId,
-  //       number: i,
-  //       id: i,
-  //       title: i.toString(),
-  //     });
-  //   }
-  //   await db.$transaction(
-  //     eps.map((ep) =>
-  //       db.episode.create({
-  //         data: ep,
-  //       })
-  //     )
-  //   );
-  //   return eps;
-  // }
   if (episodes.length) return episodes;
   log.debug(
     `Fetching episode information for anime. Kitsu Id: ${kitsuId}, page: ${page}`
