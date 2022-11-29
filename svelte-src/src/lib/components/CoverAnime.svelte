@@ -30,7 +30,7 @@
 
 <svelte:element
   this={navigate ? "a" : "div"}
-  href="/info/{anime.kitsuId}?title={animeTitle}"
+  href="/info?animeId={anime.kitsuId}&title={animeTitle}"
   data-sveltekit-reload=""
 >
   <div

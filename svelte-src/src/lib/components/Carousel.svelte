@@ -82,7 +82,7 @@
           >
         {/if}
       </div>
-      <a href="/info/{anime[index].kitsuId}?title={getTitle(anime[index])}">
+      <a href="/info/?animeId={anime[index].kitsuId}&title={getTitle(anime[index])}">
         <button class="btn bg-accent">Learn more</button></a
       >
     </div>

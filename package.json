@@ -22,7 +22,7 @@
     "electron:start": "tsc && electron dist | pino-pretty",
     "electron:dev": "nodemon",
     "build": "npm run prepublish && tsc && electron-builder",
-    "prepare": "npm run svelte:install && npm run svelte:build && npx prisma generate && tsc",
+    "prepare": "npx prisma migrate deploy && npx prisma generate && npm run svelte:install && npm run svelte:build && npx prisma generate && tsc",
     "publish": "electron-builder -p always"
   },
   "build": {

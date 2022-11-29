@@ -127,16 +127,16 @@ function setAllowOrigin(
 }
 
 app.on("web-contents-created", (event, webContent) => {
-  webContent.session.webRequest.onHeadersReceived((details, cb) => {
-    let responseHeaders = setAllowOrigin(
-      details.responseHeaders,
-      currentOrigin
-    );
+  // webContent.session.webRequest.onHeadersReceived((details, cb) => {
+  //   let responseHeaders = setAllowOrigin(
+  //     details.responseHeaders,
+  //     currentOrigin
+  //   );
 
-    cb({
-      responseHeaders,
-    });
-  });
+  //   cb({
+  //     responseHeaders,
+  //   });
+  // });
   session.defaultSession.setPermissionRequestHandler(
     (webContent, permission, cb) => {
       // deny all permissions.
@@ -146,18 +146,6 @@ app.on("web-contents-created", (event, webContent) => {
       else cb(false);
     }
   );
-  webContent.on("will-navigate", (event, url) => {
-    const parsedUrl = new URL(url);
-    // if the url is not within allowedOrigin, prevent navigating to it.
-    if (!appOrigin.includes(parsedUrl.origin) && parsedUrl.protocol != "app:") {
-      console.log(
-        "Unknown origin navigation detected. Origin: ",
-        parsedUrl.origin
-      );
-      console.log(parsedUrl);
-      event.preventDefault();
-    }
-  });
 });
 
 app.whenReady().then(() => {
