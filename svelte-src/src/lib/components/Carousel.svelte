@@ -37,7 +37,6 @@
   cacheImages();
 </script>
 
-<!-- TODO implement infinite scrolling -->
 <div class="w-full my-8 py-3 slider relative overflow-hidden rounded-lg">
   <button on:click={prevSlide} class="nav-btn left-0 top-0">
     <div class="w-8">
@@ -83,7 +82,9 @@
           >
         {/if}
       </div>
-      <button class="btn bg-accent">Learn more</button>
+      <a href="/info/{anime[index].kitsuId}?title={getTitle(anime[index])}">
+        <button class="btn bg-accent">Learn more</button></a
+      >
     </div>
   </div>
   <button on:click={nextSlide} class="nav-btn right-0 top-0">

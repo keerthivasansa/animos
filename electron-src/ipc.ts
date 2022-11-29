@@ -4,7 +4,6 @@ import { api } from "./api";
 import {
   getAllRelatedAnime,
   getPosters,
-  getRecommendations,
   getUserRecommendations,
 } from "./api/anime";
 import { episodes, getEpisode, getSkipTimes, renewSource } from "./api/episode";
@@ -83,11 +82,6 @@ ipcMain.handle(
 
 ipcMain.handle("anime:genre", async (event, genre: string) => {
   let result = [];
-  return result;
-});
-
-ipcMain.handle("anime:recommendations", async (event, malId: number) => {
-  let result = await getRecommendations(malId);
   return result;
 });
 

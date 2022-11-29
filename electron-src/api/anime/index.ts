@@ -12,15 +12,6 @@ import { db } from "../../db";
 
 // TODO look into other parameters that are useful
 // TODO look for upcoming new episodes
-
-// TODO add getGenre
-export async function getRecommendations(malId: number) {
-  let res = await httpGet(
-    `https://api.jikan.moe/v4/anime/${malId}/recommendations`
-  );
-  return res.data.slice(0, 25).map((data) => data.entry);
-}
-
 const lastWeek = new Date(Date.now() - 7 * 86400 * 1000);
 
 export async function getPosters() {
@@ -41,13 +32,8 @@ export async function getPosters() {
   let res = (await httpGet("https://kitsu.io/api/edge/trending/anime")) as {
     data: any[];
   };
-  let result = await Promise.all(
-    res.data.map(async (anime, index) => {
-      let data = transformKitsuToAnime(anime);
-      data.genres = await getGenres(data.kitsuId);
-      data.poster = index;
-      return data;
-    })
+  let result: Anime[] = await Promise.all(
+    res.data.map(async (anime, index) => getInfo(parseInt(anime.id)))
   );
   await db.$transaction(
     result.map((anime, _) => {
@@ -206,6 +192,12 @@ export async function getUserRecommendations() {
       lastUpdated: "desc",
     },
   });
+  if (!likedAnime)
+    return {
+      data: [],
+      totalItems: 0,
+      currentPage: 1,
+    };
   return search(
     {
       categories: likedAnime.genres.split(",").slice(0, 3).join(","),
