@@ -8,7 +8,7 @@
   import { clickOutside } from "$lib/actions";
   import type { Anime } from "@prisma/client";
   import { onMount } from "svelte";
-  import { DarkPaginationNav, PaginationNav } from "svelte-paginate";
+  import { DarkPaginationNav } from "svelte-paginate";
 
   let query = $page.url.searchParams.get("q");
   let showFilters = false;
@@ -63,7 +63,7 @@
       </button>
       <div
         use:clickOutside
-        on:outclick={(_) => (showFilters = false)}
+        on:outclick={() => (showFilters = false)}
         class="{showFilters
           ? 'opacity-100 z-20'
           : 'opacity-0 -z-10'} flex flex-col absolute transition-all duration-500 ease-in-out gap-3 bg-black bg-opacity-90 px-4 rounded-lg py-5 text-gray-200"
@@ -94,7 +94,7 @@
         <div>
           <div class="mb-2">Age Rating:</div>
           <BadgeSelector
-            values={["PG", "G", "R", "R18"]}
+            values={["All", "13+", "17+", "18+"]}
             bind:selected={filters.ageRating}
           />
         </div>

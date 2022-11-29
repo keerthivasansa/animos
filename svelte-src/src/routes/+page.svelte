@@ -19,6 +19,11 @@
   }
 
   async function getUpdates() {
+    let alreadyShowed = localStorage.getItem("update-show");
+    if (alreadyShowed) {
+      return;
+    }
+    localStorage.setItem("update-show", "true");
     let update = await window.api.system.getUpdates();
     if (!update.version) {
       console.log("No update found");

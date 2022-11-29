@@ -9,7 +9,6 @@
   import { onMount } from "svelte";
   import { capitalize, lightOrDark } from "$lib/utils";
   import { page } from "$app/stores";
-  import { clickOutside } from "$lib/actions";
 
   let searchQuery = $page.url.searchParams.get("q") ?? "";
 
