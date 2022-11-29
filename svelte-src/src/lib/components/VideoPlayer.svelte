@@ -114,7 +114,7 @@
       }
     });
   }
-
+  let fullscreen = false;
   onMount(async () => {
     // default options with no quality update in case Hls is not supported
 
@@ -163,6 +163,9 @@
       });
     });
 
+    player.on("enterfullscreen", () => fullscreen = true);
+    player.on("exitfullscreen", () => fullscreen = false);
+
     player.on("ended", () => {
       if (hasNextEp) {
         location.href = `/episode?animeId=${episode.animeKitsuId}&episodeId=${
@@ -176,7 +179,12 @@
 </script>
 
 <div class="relative">
-  <video id="player" controls style="border-radius: 12px;">
+  <video
+    id="player"
+    controls
+    style="border-radius: 12px"
+    class:limit-size={!fullscreen}
+  >
     <source {src} />
     <track src="" kind="captions" />
   </video>
@@ -188,3 +196,9 @@
     >
   {/if}
 </div>
+
+<style>
+  .limit-size {
+    height: 32rem;
+  }
+</style>

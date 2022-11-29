@@ -62,12 +62,15 @@
       </div>
     {:else}
       <div class="overflow-y-auto">
-        <VideoPlayer
+        <div>
+          <VideoPlayer
           episode={result.currentEp}
           hasNextEp={result.allEpisodes.some(
             (ep) => ep.number > result.currentEp.number
           )}
         />
+        </div>
+        
         <div class="mx-5 my-4">
           <div class="text-sm text-gray-100 my-4">
             Episode {result.currentEp.number}
@@ -120,9 +123,5 @@
 
   .w-240 {
     max-width: 60rem;
-  }
-  .video-container {
-    max-height: 30rem;
-    max-width: 55rem;
   }
 </style>
