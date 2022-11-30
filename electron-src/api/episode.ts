@@ -17,7 +17,9 @@ async function getSource(kitsuId: number, episodeNum: number) {
   let { slug } = anime;
 
   let episodeSlug = `${slug}-episode-${episodeNum}`;
-  log.info(`Fetching source and skip times for ${kitsuId} - EP${episodeNum} with slug: ${episodeSlug}`);
+  log.info(
+    `Fetching source and skip times for ${kitsuId} - EP${episodeNum} with slug: ${episodeSlug}`
+  );
   let source = await fetchAnimixEpisodeSource({
     episodeId: episodeSlug,
   });
@@ -30,26 +32,38 @@ export async function episodes(kitsuId: number, page: number = 1) {
       kitsuId,
     },
   });
-  let episodes = await db.episode.findMany({
+  let episodes: Partial<Episode>[] = await db.episode.findMany({
     where: {
       animeKitsuId: kitsuId,
     },
   });
   if (episodes.length) return episodes;
-  log.debug(
-    `Fetching episode information for anime. Kitsu Id: ${kitsuId}, page: ${page}`
-  );
-  let res = await httpGet(
-    `https://kitsu.io/api/edge/episodes?filter[mediaId]=${kitsuId}`
-  );
-  episodes = res.data.map((ep) => {
-    return {
-      id: parseInt(ep.id),
-      number: ep.attributes.number,
-      animeKitsuId: kitsuId,
-      title: ep.attributes.canonicalTitle ?? `EP${ep.attributes.number}`,
-    };
-  });
+
+  let recursions = 0;
+  for (let i = -1; i < recursions; i++) {
+    log.debug(
+      `Fetching episode information for anime. Kitsu Id: ${kitsuId}, page: ${recursions}`
+    );
+    let res = await httpGet(
+      `https://kitsu.io/api/edge/episodes?filter[mediaId]=${kitsuId}&page[limit]=20&page[offset]=${
+        recursions * 20
+      }`
+    );
+
+    res.data.forEach((episode: any) => {
+      episodes.push({
+        id: parseInt(episode.id),
+        number: episode.attributes.number,
+        animeKitsuId: kitsuId,
+        title:
+          episode.attributes.canonicalTitle ?? `EP${episode.attributes.number}`,
+      });
+    });
+
+    if (res.links.next !== undefined) {
+      recursions += 1;
+    }
+  }
   if (anime.zeroEpisode) {
     let firstEp = episodes[0];
     let zeroEp: any = {};
@@ -59,8 +73,9 @@ export async function episodes(kitsuId: number, page: number = 1) {
     episodes.splice(0, 1);
     episodes.unshift(zeroEp, firstEp);
   }
-  console.log(episodes);
-  await db.$transaction(episodes.map((ep) => db.episode.create({ data: ep })));
+  await db.$transaction(
+    episodes.map((ep: any) => db.episode.create({ data: ep }))
+  );
   return episodes;
 }
 
