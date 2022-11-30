@@ -103,8 +103,6 @@ export async function search(
   let categorieObjs = resp.included.filter((obj) => obj.type == "categories");
   console.log(categorieObjs[0]);
   let result = resp.data
-    // only get anime which has streaming links
-    .filter((anime) => anime.relationships.streamingLinks.data.length)
     .map((anime) => {
       let t_anime = transformKitsuToAnime(anime);
       let categoryIds = anime.relationships.categories.data.map(

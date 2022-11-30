@@ -1,5 +1,6 @@
 import { Anime } from "@prisma/client";
 import { load } from "cheerio";
+import { db } from "../../db";
 import { httpGet } from "../utils";
 
 export function transformKitsuToAnime(kitsuData: Record<string, any>): Anime {
@@ -37,22 +38,39 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
   if (anime.genres == "") anime.genres = await getGenres(anime.kitsuId);
   if (!anime.slug) {
     let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
-    let result = await httpGet(animix);
-    if (result["Gogoanime"]) {
-      let slugs = result["Gogoanime"].map((obj) => obj.url.split("/").pop());
-      anime.slug = slugs[0];
-      anime.dubSlug = slugs[1];
-    } else if (result["9anime"]) {
-      let slugs = result["9anime"].map((obj) => obj.url.split("/").pop());
-      let subSlug = slugs[0].split(".")[0];
-      anime.slug = subSlug;
-      console.log("Found slug from 9anime:", anime.slug);
-    }
-    if (!anime.slug) {
-      let data = await httpGet(`https://animixplay.to/anime/${anime.malId}`);
-      const $ = load(data);
-      console.log("another method to get slug:");
-      console.log($(".imguserlist > a").attr("href"));
+    try {
+      let result = await httpGet(animix);
+      if (result["Gogoanime"]) {
+        let slugs = result["Gogoanime"].map((obj) => obj.url.split("/").pop());
+        anime.slug = slugs[0];
+        anime.dubSlug = slugs[1];
+      } else if (result["9anime"]) {
+        let slugs = result["9anime"].map((obj) => obj.url.split("/").pop());
+        let subSlug = slugs[0].split(".")[0];
+        anime.slug = subSlug;
+        console.log("Found slug from 9anime:", anime.slug);
+      }
+      if (!anime.slug) {
+        let data = await httpGet(`https://animixplay.to/anime/${anime.malId}`);
+        const $ = load(data);
+        console.log("another method to get slug:");
+        console.log($(".imguserlist > a").attr("href"));
+      }
+      anime.available = true;
+    } catch {
+      anime = await db.anime.create({
+        data: {
+          available: false,
+          ageRating: "G",
+          genres: "",
+          kitsuId: anime.kitsuId,
+          posterImg: "",
+          title: "",
+          score: 0,
+          synopsis: "",
+        },
+      });
+      return anime;
     }
   }
   console.log(
