@@ -108,18 +108,20 @@
     <div class="my-14" style="width: 23rem;">
       <div>
         <span class="text-2xl font-semibold">Episodes</span>
-        <select
-          on:input={(e) => changeEpisodePage(parseInt(e.currentTarget.value))}
-          name="episode-page"
-          class="bg-gray-200 h-fit w-fit text-sm ml-5 rounded-md"
-          bind:value={episodePage}
-        >
-          {#each Array.from( { length: Math.ceil(totalEpisodes / 100) } ) as _, index}
-            <option value={index}
-              >{index * 100 + (zeroEp ? 0 : 1)} - {(index + 1) * 100}</option
-            >
-          {/each}
-        </select>
+        {#if totalEpisodes > 100}
+          <select
+            on:input={(e) => changeEpisodePage(parseInt(e.currentTarget.value))}
+            name="episode-page"
+            class="bg-gray-200 h-fit w-fit text-sm ml-5 rounded-md"
+            bind:value={episodePage}
+          >
+            {#each Array.from( { length: Math.ceil(totalEpisodes / 100) } ) as _, index}
+              <option value={index}
+                >{index * 100 + (zeroEp ? 0 : 1)} - {(index + 1) * 100}</option
+              >
+            {/each}
+          </select>
+        {/if}
       </div>
       <div class="flex gap-4 my-5 flex-col episode-wrapper">
         {#if pageState != State.Loading}

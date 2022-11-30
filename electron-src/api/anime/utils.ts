@@ -1,6 +1,8 @@
 import { Anime } from "@prisma/client";
+import axios from "axios";
 import { load } from "cheerio";
 import { db } from "../../db";
+import { headerOption } from "../scraper";
 import { httpGet } from "../utils";
 
 export function transformKitsuToAnime(kitsuData: Record<string, any>): Anime {
@@ -19,6 +21,18 @@ export function transformKitsuToAnime(kitsuData: Record<string, any>): Anime {
   anime.score = parseInt(data.averageRating ?? "0") / 10;
   anime.episodes = data.episodeCount;
   return anime;
+}
+
+export async function getEpInfo(slug: string) {
+  const res = await axios.get(`https://animixplay.to/v1/${slug}`, headerOption);
+  const $ = load(res.data);
+  const epList = JSON.parse($("#epslistplace").text());
+  let zeroEpisode = Object.keys(epList).includes("ep0");
+  let totalEpisodes = epList.eptotal;
+  return {
+    zeroEpisode,
+    totalEpisodes,
+  };
 }
 
 export async function getGenres(kitsuId: number) {
@@ -80,19 +94,15 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
     anime.slug,
     anime.episodes
   );
-  let gogoInfo = await httpGet(`https://gogoanime.lu/category/${anime.slug}`);
-  const $ = load(gogoInfo);
-  let epEnd = $("#episode_page").find("a").last().attr("ep_end");
-  let gogoId = $("#movie_id").val();
-  console.log({ gogoId });
-  const gogoEpInfo = await httpGet(
-    `https://ajax.gogo-load.com/ajax/load-list-episode?id=${gogoId}&ep_start=0&ep_end=1`
-  );
-  const $2 = load(gogoEpInfo);
-  anime.episodes = parseInt(epEnd);
-  console.log("First episode text:", $2("div.name").last().text());
-  anime.zeroEpisode = $2("div.name").last().text() == "EP 0";
-  console.log("Zero episode:", anime.zeroEpisode);
+
+  if (anime.slug) {
+    let epInfo = await getEpInfo(anime.slug);
+
+    console.log("received episodes from eplist");
+    console.log(epInfo);
+    anime.zeroEpisode = epInfo.zeroEpisode;
+    anime.episodes = epInfo.totalEpisodes;
+  }
   return anime;
 }
 

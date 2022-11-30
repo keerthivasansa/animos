@@ -19,7 +19,7 @@ const animixBase = "https://animixplay.to/";
 
 const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36";
-const headerOption = { headers: { "User-Agent": USER_AGENT } };
+export const headerOption = { headers: { "User-Agent": USER_AGENT } };
 
 export const fetchAnimixEpisodeSource = async ({ episodeId }) => {
   let episodeGogoLink;
@@ -32,6 +32,8 @@ export const fetchAnimixEpisodeSource = async ({ episodeId }) => {
   const res = await axios.get(animixBase + `v1/${animeId}`, headerOption);
   const $ = load(res.data);
   const epList = JSON.parse($("#epslistplace").text());
+  console.log("Starting episode:", $("button.playbutton").first().text())
+  console.log({ epList });
 
   if (episodeNum == "0") {
     console.log("Zero episode detected");
