@@ -25,7 +25,8 @@ const endpoints = {
       ipcRenderer.invoke("anime:user-recommendations"),
   },
   episode: {
-    info: (kitsuId: number) => ipcRenderer.invoke("episode:info", kitsuId),
+    info: (kitsuId: number, page: number) =>
+      ipcRenderer.invoke("episode:info", kitsuId, page),
     get: (kitsuId: number, episodeNum: number) =>
       ipcRenderer.invoke("episode:get", kitsuId, episodeNum),
     getSkipTimes: (

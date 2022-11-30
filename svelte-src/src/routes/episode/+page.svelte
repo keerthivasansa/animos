@@ -7,6 +7,14 @@
 
   let animeId: number;
   let episodeNum: number;
+  let episodePage: number;
+  $: {
+    console.log("Episode page changed:", episodePage);
+  }
+  let zeroEp = $page.url.searchParams.get("zeroEp");
+  let totalEpisodes = parseInt(
+    $page.url.searchParams.get("totalEpisode") ?? "0"
+  );
   interface Episode {
     title: string;
     id: number;
@@ -20,6 +28,14 @@
 
   let pageState: State = State.Loading;
 
+  function changeEpisodePage(page: number) {
+    if (page == Math.floor(episodeNum / 100)) return;
+    let ep = page * 100 + 1;
+    let url = `/episode?episodeId=${ep}&animeId=${animeId}&zeroEp=${zeroEp}&totalEpisode=${totalEpisodes}`;
+    console.log(url);
+    location.href = url;
+  }
+
   async function fetchEpisodeSrc() {
     let params = $page.url.searchParams;
     let episodeTempId = params.get("episodeId");
@@ -31,9 +47,14 @@
     animeId = parseInt(animeTempId);
     episodeNum = parseInt(episodeTempId);
 
-    console.log({ episodeId: episodeNum, animeId });
+    episodePage = Math.floor(episodeNum / 100);
+
+    console.log({ episodeId: episodeNum, animeId, episodePage });
     console.time("new anime");
-    let allEpisodes = (await window.api.episode.info(animeId)) as Episode[];
+    let allEpisodes = (await window.api.episode.info(
+      animeId,
+      episodePage + 1
+    )) as Episode[];
     let currentEp = await window.api.episode.get(animeId, episodeNum);
     result = {
       currentEp,
@@ -64,13 +85,13 @@
       <div class="overflow-y-auto">
         <div>
           <VideoPlayer
-          episode={result.currentEp}
-          hasNextEp={result.allEpisodes.some(
-            (ep) => ep.number > result.currentEp.number
-          )}
-        />
+            episode={result.currentEp}
+            hasNextEp={result.allEpisodes.some(
+              (ep) => ep.number > result.currentEp.number
+            )}
+          />
         </div>
-        
+
         <div class="mx-5 my-4">
           <div class="text-sm text-gray-100 my-4">
             Episode {result.currentEp.number}
@@ -85,7 +106,21 @@
   </div>
   <div class="episodes-container" style="margin-left: 65rem;">
     <div class="my-14" style="width: 23rem;">
-      <h3 class="text-2xl font-semibold">Episodes</h3>
+      <div>
+        <span class="text-2xl font-semibold">Episodes</span>
+        <select
+          on:input={(e) => changeEpisodePage(parseInt(e.currentTarget.value))}
+          name="episode-page"
+          class="bg-gray-200 h-fit w-fit text-sm ml-5 rounded-md"
+          bind:value={episodePage}
+        >
+          {#each Array.from( { length: Math.ceil(totalEpisodes / 100) } ) as _, index}
+            <option value={index}
+              >{index * 100 + (zeroEp ? 0 : 1)} - {(index + 1) * 100}</option
+            >
+          {/each}
+        </select>
+      </div>
       <div class="flex gap-4 my-5 flex-col episode-wrapper">
         {#if pageState != State.Loading}
           {#each result.allEpisodes as ep (ep.number)}

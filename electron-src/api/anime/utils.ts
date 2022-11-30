@@ -63,6 +63,7 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
           available: false,
           ageRating: "G",
           genres: "",
+          episodes: 0,
           kitsuId: anime.kitsuId,
           posterImg: "",
           title: "",

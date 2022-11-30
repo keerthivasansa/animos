@@ -26,7 +26,7 @@ async function getSource(kitsuId: number, episodeNum: number) {
   return source;
 }
 
-export async function episodes(kitsuId: number, page: number = 1) {
+export async function episodes(kitsuId: number, page: number) {
   let anime = await db.anime.findUnique({
     where: {
       kitsuId,
@@ -35,21 +35,28 @@ export async function episodes(kitsuId: number, page: number = 1) {
   let episodes: Partial<Episode>[] = await db.episode.findMany({
     where: {
       animeKitsuId: kitsuId,
+      number: {
+        gte: (page - 1) * 100,
+        lte: page * 100,
+      },
     },
   });
   if (episodes.length) return episodes;
 
+  let offset = (page - 1) * 100;
+
+  console.log({ page, offset });
+
   let recursions = 0;
-  for (let i = -1; i < recursions; i++) {
+  for (let i = 0; i < 5; i++) {
     log.debug(
       `Fetching episode information for anime. Kitsu Id: ${kitsuId}, page: ${recursions}`
     );
     let res = await httpGet(
-      `https://kitsu.io/api/edge/episodes?filter[mediaId]=${kitsuId}&page[limit]=20&page[offset]=${
-        recursions * 20
+      `https://kitsu.io/api/edge/episodes?filter[mediaId]=${kitsuId}&page[limit]=20&sort=number&page[offset]=${
+        offset + i * 20
       }`
     );
-
     res.data.forEach((episode: any) => {
       episodes.push({
         id: parseInt(episode.id),
@@ -59,9 +66,8 @@ export async function episodes(kitsuId: number, page: number = 1) {
           episode.attributes.canonicalTitle ?? `EP${episode.attributes.number}`,
       });
     });
-
-    if (res.links.next !== undefined) {
-      recursions += 1;
+    if (!res.links.next) {
+      break;
     }
   }
   if (anime.zeroEpisode) {
@@ -76,6 +82,7 @@ export async function episodes(kitsuId: number, page: number = 1) {
   await db.$transaction(
     episodes.map((ep: any) => db.episode.create({ data: ep }))
   );
+  console.log("Inserted", episodes.length, "records");
   return episodes;
 }
 

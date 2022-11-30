@@ -1,5 +1,4 @@
 import axios, { AxiosError } from "axios";
-import { db } from "../db";
 
 export async function batchHttpGet<T extends Record<string, string>>(
   urls: T

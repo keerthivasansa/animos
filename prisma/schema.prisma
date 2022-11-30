@@ -77,7 +77,7 @@ model Anime {
   coverImg    String?
   genres      String // comma seperated values
   score       Float
-  episodes    Int?
+  episodes    Int
   slug        String?
   dubSlug     String?
   poster      Int?

@@ -9,15 +9,13 @@
   import FaUp from "svelte-icons/fa/FaArrowUp.svelte";
   import IconTxtBtn from "$lib/components/IconTxtBtn.svelte";
   import { onMount } from "svelte";
-  import type { PageData } from "./$types";
   import type { Anime } from "@prisma/client";
   import FaCircleXMark from "$lib/components/FaCircleXMark.svelte";
 
   let descriptionExpand = false;
   let relatedExpand = false;
   let kitsuId = parseInt($page.params.kitsuId ?? "");
-
-  export let data: PageData;
+  let episodePage = 0;
 
   async function getRelated() {
     return await window.api.anime.related(kitsuId);
@@ -27,7 +25,8 @@
   let showExpand = false;
   let synopsisElem: HTMLElement;
 
-  function generateRange(start: number, end: number) {
+  function generateRange(start: number, end: number, max: number) {
+    if (end > max) end = max;
     let arr = [];
     for (let i = start; i <= end; i++) arr.push(i);
     return arr;
@@ -48,6 +47,7 @@
     let kitsuId = parseInt(idParam ?? "");
     let anime = await window.api.anime.info(kitsuId);
     console.log("anime fetched");
+    console.log(anime.episodes);
     return anime;
   }
 </script>
@@ -121,18 +121,34 @@
           {/if}
         </div>
         <div>
-          <h3 class="font-semibold text-xl mt-16">Episodes</h3>
+          <div class="mt-14">
+            <span class="font-semibold text-xl mt-16">Episodes</span>
+            {#if anime.episodes > 100}
+              <select
+                class="bg-gray-200 h-fit w-fit text-sm ml-5 rounded-md"
+                bind:value={episodePage}
+              >
+                {#each Array.from( { length: Math.ceil(anime.episodes / 100) } ) as _, index}
+                  <option value={index}
+                    >{index * 100 + (anime.zeroEpisode ? 0 : 1)} - {(index +
+                      1) *
+                      100}</option
+                  >
+                {/each}
+              </select>
+            {/if}
+          </div>
           <div
             class="mt-10 flex gap-5 flex-wrap max-w-xl justify-center items-center"
           >
-            {#each generateRange(anime.zeroEpisode ? 0 : 1, anime.episodes ?? 0) as epNo}
+            {#each generateRange(episodePage * 100 + (anime.zeroEpisode ? 0 : 1), (episodePage + 1) * 100, anime.episodes) as epNo}
               <a
-                href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&zeroEp={anime.zeroEpisode}"
+                style="width: {(anime.episodes?.toString().length ?? 0) +
+                  1.25}rem;"
+                class=" bg-gray-300 text-center rounded-sm"
+                href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&zeroEp={anime.zeroEpisode}&totalEpisode={anime.episodes}"
               >
-                <span
-                  class="w-10 text-center px-2 py-1 rounded-sm font-semibold bg-gray-300 text-black"
-                  >{epNo}</span
-                >
+                <span class="font-semibold text-black">{epNo}</span>
               </a>
             {/each}
           </div>

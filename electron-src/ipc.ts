@@ -90,8 +90,8 @@ ipcMain.handle("anime:related", async (event, kitsuId: string) => {
   return result;
 });
 
-ipcMain.handle("episode:info", async (event, kitsuId: number) => {
-  let result = await episodes(kitsuId);
+ipcMain.handle("episode:info", async (event, kitsuId: number, page:number) => {
+  let result = await episodes(kitsuId, page);
   return result;
 });
 
