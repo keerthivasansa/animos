@@ -43,50 +43,53 @@
       <FaPrev />
     </div>
   </button>
-  <div
-    on:mouseenter={(_) => (focus = true)}
-    class="mx-5 rounded-lg relative"
-    style="background-image: url('{anime[index]
-      .coverImg}'); background-size: cover; width: 96vw; aspect-ratio: 21 / 5; height: 24vw; transition: background-image 500ms ease-in-out"
+  <a
+    href="/info/?animeId={anime[index].kitsuId}&title={getTitle(anime[index])}"
   >
     <div
-      class:opacity-100={focus}
-      class="absolute top-0 rounded-l-lg transition-all ease-in-out duration-500 opacity-0 left-0 px-14 py-12 flex flex-col gap-10 h-full center bg-black text-white bg-opacity-95"
+      on:mouseenter={(_) => (focus = true)}
+      class="mx-5 rounded-lg relative"
+      style="background-image: url('{anime[index]
+        .coverImg}'); background-size: cover; width: 96vw; aspect-ratio: 21 / 5; height: 24vw; transition: background-image 500ms ease-in-out"
     >
-      <h2
-        title={getTitle(anime[index])}
-        class="text-2xl title-box w-full max-w-xs font-semibold text-ellipsis"
+      <div
+        class:opacity-100={focus}
+        class="absolute top-0 rounded-l-lg transition-all ease-in-out duration-500 opacity-0 left-0 px-14 py-12 flex flex-col gap-10 h-full center bg-black text-white bg-opacity-95"
       >
-        {getTitle(anime[index])}
-      </h2>
-      <div class="flex gap-4">
-        {#if anime[index].genres}
-          {#each anime[index].genres.split(",")?.slice(0, 3) as genre}
-            <span
-              class="text-sm px-2 py-1 rounded-sm"
-              style="background-color: {getGenreColor(genre)};">{genre}</span
-            >
-          {/each}
-        {/if}
-      </div>
-      <div class="flex items-center gap-2">
-        <div class="w-5 text-amber-400">
-          <FaStar />
+        <h2
+          title={getTitle(anime[index])}
+          class="text-2xl title-box w-full max-w-xs font-semibold text-ellipsis"
+        >
+          {getTitle(anime[index])}
+        </h2>
+        <div class="flex gap-4">
+          {#if anime[index].genres}
+            {#each anime[index].genres.split(",")?.slice(0, 3) as genre}
+              <span
+                class="text-sm px-2 py-1 rounded-sm"
+                style="background-color: {getGenreColor(genre)};">{genre}</span
+              >
+            {/each}
+          {/if}
         </div>
-        <span>
-          {anime[index].score}
-        </span>
-        {#if ["R", "R18"].includes(anime[index].ageRating)}
-          <span class="ml-5 bg-red-800 text-white px-2 rounded-md text-md py-1"
-            >18+</span
-          >
-        {/if}
+        <div class="flex items-center gap-2">
+          <div class="w-5 text-amber-400">
+            <FaStar />
+          </div>
+          <span>
+            {anime[index].score}
+          </span>
+          {#if ["R", "R18"].includes(anime[index].ageRating)}
+            <span
+              class="ml-5 bg-red-800 text-white px-2 rounded-md text-md py-1"
+              >18+</span
+            >
+          {/if}
+        </div>
       </div>
-      <a href="/info/?animeId={anime[index].kitsuId}&title={getTitle(anime[index])}">
-        <button class="btn bg-accent">Learn more</button></a
-      >
     </div>
-  </div>
+  </a>
+
   <button on:click={nextSlide} class="nav-btn right-0 top-0">
     <div class="w-8">
       <FaNext />
