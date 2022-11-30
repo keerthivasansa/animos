@@ -10,7 +10,7 @@
   <div class="flex gap-2 my-2 w-full">
     {#each anime.genres.split(",").slice(0, 3) as genre}
       <small
-        class="px-2 py-1 rounded-sm h-fit w-fit {size == 'small' ? 'text-xs' : ''}"
+        class="px-2 py-1 rounded-sm h-fit w-fit text-xs {size == 'small' ? '' : 'lg:text-base'}"
         style="background-color: {getGenreColor(genre)};">{genre}</small
       >
     {/each}

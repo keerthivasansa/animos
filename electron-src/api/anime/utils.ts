@@ -46,11 +46,17 @@ export async function getGenres(kitsuId: number) {
   return genreArr.join(",");
 }
 
-export async function getPartialInfo(anime: Anime): Promise<Anime> {
+export async function getPartialInfo(
+  anime: Anime,
+  kitsuSlug: string
+): Promise<Anime> {
+  console.log("Slug:", kitsuSlug);
   if (!anime.malId) anime.malId = await getMalId(anime.kitsuId);
 
   if (anime.genres == "") anime.genres = await getGenres(anime.kitsuId);
-  if (!anime.slug) {
+  anime.available = true;
+
+  if (!anime.slug && anime.malId && anime.malId > 0) {
     let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
     try {
       let result = await httpGet(animix);
@@ -58,19 +64,7 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
         let slugs = result["Gogoanime"].map((obj) => obj.url.split("/").pop());
         anime.slug = slugs[0];
         anime.dubSlug = slugs[1];
-      } else if (result["9anime"]) {
-        let slugs = result["9anime"].map((obj) => obj.url.split("/").pop());
-        let subSlug = slugs[0].split(".")[0];
-        anime.slug = subSlug;
-        console.log("Found slug from 9anime:", anime.slug);
       }
-      if (!anime.slug) {
-        let data = await httpGet(`https://animixplay.to/anime/${anime.malId}`);
-        const $ = load(data);
-        console.log("another method to get slug:");
-        console.log($(".imguserlist > a").attr("href"));
-      }
-      anime.available = true;
     } catch {
       anime = await db.anime.create({
         data: {
@@ -87,6 +81,13 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
       });
       return anime;
     }
+  } else {
+    console.log("Alternative method to get slug");
+    anime.slug = await getAlternativeSlug(
+      kitsuSlug,
+      anime.title || anime.title_en || anime.title_jp
+    );
+    console.log({ slug: anime.slug });
   }
   console.log(
     "Fetching episodes for ",
@@ -165,8 +166,9 @@ export function getGenresFromIncluded(included) {
 export function getMalIdFromIncluded(included) {
   let malId = included.filter(
     (obj) => obj.attributes.externalSite == "myanimelist/anime"
-  )[0].attributes.externalId;
-  return parseInt(malId);
+  )[0];
+  if (!malId) return -1;
+  return parseInt(malId.attributes.externalId);
 }
 
 export async function getMalId(kitsuId: number) {
@@ -179,4 +181,78 @@ export async function getMalId(kitsuId: number) {
   console.log(data);
   console.log(data.attributes.externalId);
   return parseInt(data.attributes.externalId);
+}
+
+function stringSigPart(word: string) {
+  if (!word) return word;
+  word = word.replace(/[!@#$%^&*():-]/g, "");
+  let articles = ["the", "a", "an", "in"];
+  let nw = word
+    .split(" ")
+    .filter((o) => !articles.includes(o.toLowerCase()))
+    .join(" ");
+  return nw.toLowerCase();
+}
+
+function stringSimilarity(s1: string, s2: string) {
+  var longer = s1;
+  var shorter = s2;
+  if (!s1 || !s2) return 0;
+  console.log({ longer, shorter });
+  if (s1.length < s2.length) {
+    longer = s2;
+    shorter = s1;
+  }
+  var longerLength = longer.length;
+  if (longerLength == 0) {
+    return 1.0;
+  }
+  return (longerLength - editDistance(longer, shorter)) / longerLength;
+}
+
+function editDistance(s1: string, s2: string) {
+  s1 = s1.toLowerCase();
+  s2 = s2.toLowerCase();
+
+  var costs = new Array();
+  for (var i = 0; i <= s1.length; i++) {
+    var lastValue = i;
+    for (var j = 0; j <= s2.length; j++) {
+      if (i == 0) costs[j] = j;
+      else {
+        if (j > 0) {
+          var newValue = costs[j - 1];
+          if (s1.charAt(i - 1) != s2.charAt(j - 1))
+            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+          costs[j - 1] = lastValue;
+          lastValue = newValue;
+        }
+      }
+    }
+    if (i > 0) costs[s2.length] = lastValue;
+  }
+  return costs[s2.length];
+}
+
+async function getAlternativeSlug(kitsuSlug: string, kitsuTitle: string) {
+  let resp = await axios.get(
+    `https://gogoanime.tel/search.html?keyword=${kitsuSlug}`
+  );
+  const $ = load(resp.data);
+  let sigTitle = stringSigPart(kitsuTitle);
+  let slug = "";
+  $("p.name > a").each((i, elem) => {
+    let animeTitle = $(elem).text();
+    let sigAnime = stringSigPart(animeTitle);
+    console.log({
+      sigAnime,
+      sigTitle,
+      match: stringSimilarity(sigAnime, sigTitle),
+    });
+    if (!slug && stringSimilarity(sigAnime, sigTitle) > 0.95) {
+      console.log("Found match");
+      slug = $(elem).attr("href").split("/")[2];
+    }
+  });
+  return slug;
 }

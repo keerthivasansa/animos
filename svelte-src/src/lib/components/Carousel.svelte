@@ -37,7 +37,7 @@
   cacheImages();
 </script>
 
-<div class="w-full my-8 py-3 slider relative overflow-hidden rounded-lg">
+<div class="w-full my-8 md:py-3 slider relative overflow-hidden rounded-lg">
   <button on:click={prevSlide} class="nav-btn left-0 top-0">
     <div class="w-8">
       <FaPrev />
@@ -54,11 +54,11 @@
     >
       <div
         class:opacity-100={focus}
-        class="absolute top-0 rounded-l-lg transition-all ease-in-out duration-500 opacity-0 left-0 px-14 py-12 flex flex-col gap-10 h-full center bg-black text-white bg-opacity-95"
+        class="absolute top-0 rounded-l-lg transition-all ease-in-out duration-500 opacity-0 left-0 p-8 text-sm lg:text-base lg:px-14 lg:py-12 flex flex-col gap-10 h-full center bg-black text-white bg-opacity-95"
       >
         <h2
           title={getTitle(anime[index])}
-          class="text-2xl title-box w-full max-w-xs font-semibold text-ellipsis"
+          class="text-base lg:text-2xl title-box w-full max-w-xs font-semibold text-ellipsis"
         >
           {getTitle(anime[index])}
         </h2>
