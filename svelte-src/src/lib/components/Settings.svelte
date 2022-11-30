@@ -35,6 +35,7 @@
 				<input
 					type="color"
 					class="w-5 h-5 rounded-sm"
+					style="background-color: {accentColor};"
 					bind:value={accentColor}
 					on:input={(_) => accentClr.set(accentColor)}
 				/>

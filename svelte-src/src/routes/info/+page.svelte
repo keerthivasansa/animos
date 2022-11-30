@@ -143,7 +143,7 @@
           >
             {#each generateRange(episodePage * 100 + (anime.zeroEpisode ? 0 : 1), (episodePage + 1) * 100, anime.episodes) as epNo}
               <a
-                style="width: {(anime.episodes?.toString().length ?? 0) +
+                style="width: {(anime.episodes.toString().length ?? 0) +
                   1.25}rem;"
                 class=" bg-gray-300 text-center rounded-sm"
                 href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&zeroEp={anime.zeroEpisode}&totalEpisode={anime.episodes}"
