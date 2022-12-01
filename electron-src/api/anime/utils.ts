@@ -55,56 +55,55 @@ export async function getPartialInfo(
 
   if (anime.genres == "") anime.genres = await getGenres(anime.kitsuId);
   anime.available = true;
-
-  if (!anime.slug && anime.malId && anime.malId > 0) {
-    let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
-    try {
+  try {
+    if (!anime.slug && anime.malId && anime.malId > 0) {
+      let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
       let result = await httpGet(animix);
       if (result["Gogoanime"]) {
         let slugs = result["Gogoanime"].map((obj) => obj.url.split("/").pop());
         anime.slug = slugs[0];
         anime.dubSlug = slugs[1];
       }
-    } catch {
-      anime = await db.anime.create({
-        data: {
-          available: false,
-          ageRating: "G",
-          genres: "",
-          episodes: 0,
-          kitsuId: anime.kitsuId,
-          posterImg: "",
-          title: "",
-          score: 0,
-          synopsis: "",
-        },
-      });
-      return anime;
+    } else {
+      console.log("Alternative method to get slug");
+      anime.slug = await getAlternativeSlug(
+        kitsuSlug,
+        anime.title || anime.title_en || anime.title_jp
+      );
+      console.log({ slug: anime.slug });
     }
-  } else {
-    console.log("Alternative method to get slug");
-    anime.slug = await getAlternativeSlug(
-      kitsuSlug,
-      anime.title || anime.title_en || anime.title_jp
+    console.log(
+      "Fetching episodes for ",
+      anime.kitsuId,
+      anime.slug,
+      anime.episodes
     );
-    console.log({ slug: anime.slug });
-  }
-  console.log(
-    "Fetching episodes for ",
-    anime.kitsuId,
-    anime.slug,
-    anime.episodes
-  );
 
-  if (anime.slug) {
-    let epInfo = await getEpInfo(anime.slug);
+    if (anime.slug) {
+      let epInfo = await getEpInfo(anime.slug);
 
-    console.log("received episodes from eplist");
-    console.log(epInfo);
-    anime.zeroEpisode = epInfo.zeroEpisode;
-    anime.episodes = epInfo.totalEpisodes;
+      console.log("received episodes from eplist");
+      console.log(epInfo);
+      anime.zeroEpisode = epInfo.zeroEpisode;
+      anime.episodes = epInfo.totalEpisodes;
+    }
+    return anime;
+  } catch { // either error at json conversion for anime with no episode sources / no mal id and no gogoanime slug
+    anime = await db.anime.create({
+      data: {
+        available: false,
+        ageRating: "G",
+        genres: "",
+        episodes: 0,
+        kitsuId: anime.kitsuId,
+        posterImg: "",
+        title: "",
+        score: 0,
+        synopsis: "",
+      },
+    });
+    return anime;
   }
-  return anime;
 }
 
 export async function recurseRelations(kitsuId: number, roles: string[]) {

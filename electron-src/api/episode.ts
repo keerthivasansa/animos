@@ -23,6 +23,17 @@ async function getSource(kitsuId: number, episodeNum: number) {
   let source = await fetchAnimixEpisodeSource({
     episodeId: episodeSlug,
   });
+  if (source == "") {
+    await db.anime.update({
+      where: {
+        kitsuId,
+      },
+      data: {
+        available: false,
+      },
+    });
+    return "fail";
+  }
   return source;
 }
 

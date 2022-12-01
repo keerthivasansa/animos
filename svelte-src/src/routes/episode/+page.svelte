@@ -56,6 +56,8 @@
       episodePage + 1
     )) as Episode[];
     let currentEp = await window.api.episode.get(animeId, episodeNum);
+    if (currentEp.source == 'fail')
+      return location.href = "/info?animeId=" + animeId
     result = {
       currentEp,
       allEpisodes,

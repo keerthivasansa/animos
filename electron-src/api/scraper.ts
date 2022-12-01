@@ -28,42 +28,46 @@ export const fetchAnimixEpisodeSource = async ({ episodeId }) => {
   const animeId = episodeId.split("-").reverse().splice(2).reverse().join("-");
   console.log({ animeId });
   const episodeNum = episodeId.split("-").splice(-1).join("");
+  try {
+    const res = await axios.get(animixBase + `v1/${animeId}`, headerOption);
+    const $ = load(res.data);
+    const epList = JSON.parse($("#epslistplace").text());
+    console.log("Starting episode:", $("button.playbutton").first().text());
+    console.log({ epList });
 
-  const res = await axios.get(animixBase + `v1/${animeId}`, headerOption);
-  const $ = load(res.data);
-  const epList = JSON.parse($("#epslistplace").text());
-  console.log("Starting episode:", $("button.playbutton").first().text())
-  console.log({ epList });
-
-  if (episodeNum == "0") {
-    console.log("Zero episode detected");
-    episodeGogoLink = new URL("https:" + epList["ep0"]);
-  } else if (epList.extra) {
-    if (episodeNum in epList.extra) {
-      episodeGogoLink = new URL("https:" + epList.extra[episodeNum]);
+    if (episodeNum == "0") {
+      console.log("Zero episode detected");
+      episodeGogoLink = new URL("https:" + epList["ep0"]);
+    } else if (epList.extra) {
+      if (episodeNum in epList.extra) {
+        episodeGogoLink = new URL("https:" + epList.extra[episodeNum]);
+      } else {
+        episodeGogoLink = new URL("https:" + epList[episodeNum - 1]);
+      }
     } else {
       episodeGogoLink = new URL("https:" + epList[episodeNum - 1]);
     }
-  } else {
-    episodeGogoLink = new URL("https:" + epList[episodeNum - 1]);
+    console.log(episodeGogoLink);
+
+    let liveApiLink;
+
+    //Checking if the episode source link is already a Plyr link or not
+    if (episodeGogoLink.href.includes("player.html")) {
+      liveApiLink = episodeGogoLink.href;
+    } else {
+      const content_id = episodeGogoLink.searchParams.get("id");
+      liveApiLink =
+        "https://animixplay.to/api/cW9" +
+        encodeString(`${content_id}LTXs3GrU8we9O${encodeString(content_id)}`);
+    }
+
+    const src = await decodeStreamingLinkAnimix(liveApiLink);
+
+    return src;
+  } catch {
+    console.log("Episode source not found");
+    return "";
   }
-  console.log(episodeGogoLink);
-
-  let liveApiLink;
-
-  //Checking if the episode source link is already a Plyr link or not
-  if (episodeGogoLink.href.includes("player.html")) {
-    liveApiLink = episodeGogoLink.href;
-  } else {
-    const content_id = episodeGogoLink.searchParams.get("id");
-    liveApiLink =
-      "https://animixplay.to/api/cW9" +
-      encodeString(`${content_id}LTXs3GrU8we9O${encodeString(content_id)}`);
-  }
-
-  const src = await decodeStreamingLinkAnimix(liveApiLink);
-
-  return src;
 };
 
 export const fetchGogoanimeEpisodeSource = async ({ episodeId }) => {
