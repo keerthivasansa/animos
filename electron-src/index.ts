@@ -1,4 +1,13 @@
-import { app, BrowserWindow, ipcMain, session } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  nativeImage,
+  Notification,
+  session,
+  Tray,
+} from "electron";
 import serve from "electron-serve";
 import { join } from "path";
 import { config } from "dotenv";
@@ -49,9 +58,9 @@ app.enableSandbox();
 const isDev = !app.isPackaged;
 
 let currentWindow: BrowserWindow;
+const iconPath = join(__dirname, "../build/icons/favicon.ico");
 
 const createWindow = () => {
-  let iconPath = join(__dirname, "../build/icons/favicon.ico");
   let preloadPath = join(__dirname, "../dist/preload.js");
   console.log({ preloadPath, iconPath });
   const win = new BrowserWindow({
@@ -126,6 +135,8 @@ function setAllowOrigin(
   }
 }
 
+const allowedPermissions = ["notifications", "fullscreen"];
+
 app.on("web-contents-created", (event, webContent) => {
   // webContent.session.webRequest.onHeadersReceived((details, cb) => {
   //   let responseHeaders = setAllowOrigin(
@@ -142,13 +153,27 @@ app.on("web-contents-created", (event, webContent) => {
       // deny all permissions.
       const url = webContent.getURL();
       console.log(url, "is requesting", permission);
-      if (permission == "fullscreen") cb(true);
+      if (allowedPermissions.includes(permission)) cb(true);
       else cb(false);
     }
   );
 });
 
 app.whenReady().then(() => {
+  app.setAppUserModelId("com.keerthivasan.animos");
+  let tray = new Tray(nativeImage.createFromPath(iconPath));
+  tray.setContextMenu(
+    Menu.buildFromTemplate([
+      {
+        label: "Open Last Watched Anime",
+        click: () => {
+          currentWindow.webContents;
+        },
+      },
+    ])
+  );
+  tray.on("double-click", () => console.log("Open last watched anime"));
+
   if (currentWindow) {
     currentWindow.show();
     currentWindow.focus();

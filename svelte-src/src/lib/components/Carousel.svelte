@@ -48,9 +48,9 @@
   >
     <div
       on:mouseenter={(_) => (focus = true)}
-      class="mx-5 rounded-lg relative"
+      class="px-2 sm:mx-5 rounded-lg relative carousel"
       style="background-image: url('{anime[index]
-        .coverImg}'); background-size: cover; width: 96vw; aspect-ratio: 21 / 5; height: 24vw; transition: background-image 500ms ease-in-out"
+        .coverImg}'); background-size: cover; aspect-ratio: 21 / 5;transition: background-image 500ms ease-in-out"
     >
       <div
         class:opacity-100={focus}
@@ -114,5 +114,16 @@
   }
   .nav-btn:hover {
     opacity: 1;
+  }
+
+  .carousel {
+    height: 15rem;
+  }
+
+  @media (min-width: 450px) {
+    .carousel {
+      width: 96vw;
+      height: 24vw;
+    }
   }
 </style>
