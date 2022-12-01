@@ -22,6 +22,7 @@ process.env.DATABASE_URL = "file:./cache.db";
 
 // register all the ipc functions
 import "./ipc";
+import { db } from "./db";
 
 // TODO add strong type support for electron files
 const loadPath = serve({ directory: "output" });
@@ -60,7 +61,7 @@ const isDev = !app.isPackaged;
 let currentWindow: BrowserWindow;
 const iconPath = join(__dirname, "../build/icons/favicon.ico");
 
-const createWindow = () => {
+async function createWindow() {
   let preloadPath = join(__dirname, "../dist/preload.js");
   console.log({ preloadPath, iconPath });
   const win = new BrowserWindow({
@@ -92,12 +93,10 @@ const createWindow = () => {
     win.webContents.send("download-progress", info.percent);
   });
 
-  win.maximize();
-
   if (isDev) {
-    win.loadURL("http://localhost:5173/");
+    await win.loadURL("http://localhost:5173/");
   } else {
-    loadPath(win);
+    await loadPath(win);
   }
 
   ipcMain.on("fullscreen", (event, makeFullscreen: boolean) => {
@@ -107,7 +106,7 @@ const createWindow = () => {
   win.show();
   win.focus();
   return win;
-};
+}
 
 const appOrigin = ["http://localhost:5173", "null"];
 const currentOrigin = isDev ? "http://localhost:5173" : "null";
@@ -159,16 +158,59 @@ app.on("web-contents-created", (event, webContent) => {
   );
 });
 
-app.whenReady().then(() => {
+async function getWindow(): Promise<BrowserWindow> {
+  if (currentWindow) return currentWindow;
+  currentWindow = await createWindow();
+  return new Promise((res, rej) => {
+    currentWindow.on("ready-to-show", () => res(currentWindow));
+  });
+}
+
+app.whenReady().then(async () => {
   app.setAppUserModelId("com.keerthivasan.animos");
   let tray = new Tray(nativeImage.createFromPath(iconPath));
   tray.setContextMenu(
     Menu.buildFromTemplate([
       {
         label: "Open Last Watched Anime",
-        click: () => {
-          currentWindow.webContents;
+        click: async () => {
+          let window = await getWindow();
+          let episode = await db.episode.findFirst({
+            where: {
+              length: {
+                not: null,
+              },
+              watchTime: {
+                gt: 0,
+              },
+            },
+            select: {
+              number: true,
+              anime: {
+                select: {
+                  kitsuId: true,
+                  title: true,
+                  episodes: true,
+                  zeroEpisode: true,
+                },
+              },
+            },
+            orderBy: {
+              lastUpdated: "desc",
+            },
+          });
+          console.log("Last watched anime was:", episode.anime.title);
+          let url = new URL(window.webContents.getURL());
+          let finalUrl =
+            url.origin +
+            `/episode?animeId=${episode.anime.kitsuId}&episodeId=${episode.number}&totalEpisode=${episode.anime.episodes}&zeroEp=${episode.anime.zeroEpisode}`;
+          console.log({ finalUrl });
+          window.webContents.loadURL(finalUrl);
         },
+      },
+      {
+        label: "Quit",
+        click: app.quit,
       },
     ])
   );
@@ -178,10 +220,12 @@ app.whenReady().then(() => {
     currentWindow.show();
     currentWindow.focus();
   } else {
-    currentWindow = createWindow();
+    currentWindow = await createWindow();
   }
 });
 
-app.on("window-all-closed", () => {
-  app.quit();
+// prevent quitting the app on window close
+app.on("window-all-closed", (e) => {
+  e.preventDefault();
+  currentWindow = null;
 });

@@ -9,6 +9,7 @@
   import { onMount } from "svelte";
   import { capitalize, lightOrDark } from "$lib/utils";
   import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
 
   let searchQuery = $page.url.searchParams.get("q") ?? "";
 
@@ -22,6 +23,9 @@
   }
 
   onMount(async () => {
+    window.api.system.onGoto((link) => {
+      goto(link);
+    });
     console.time("Running +layout");
     let preferences = await window.api.system.getPreferences();
     console.log("Preferences:");

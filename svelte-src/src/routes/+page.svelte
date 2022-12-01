@@ -48,7 +48,7 @@
 {/await}
 
 <main class="sm:px-10 my-5 text-white">
-  <section>
+  <section class="my-10">
     {#await getContinueWatching()}
       Loading . . .
     {:then episodes}
@@ -89,10 +89,10 @@
     {/await}
   </section>
 
-  <section>
+  <section class="my-24">
     {#await getRecommended() then animes}
       {#if animes.totalItems}
-        <h2 class="text-2xl text-center sm:text-right font-semibold my-5">
+        <h2 class="text-2xl text-center sm:text-left font-semibold my-5">
           Recommended:
         </h2>
         <div

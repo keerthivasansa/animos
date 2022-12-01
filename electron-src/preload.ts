@@ -57,6 +57,11 @@ const endpoints = {
       ipcRenderer.invoke("episode:renew-source", kitsuId, episodeNum),
   },
   system: {
+    onGoto: (cb: (link: string) => void) => {
+      ipcRenderer.on("goto", (event, link) => {
+        cb(link);
+      });
+    },
     getPreferences: () =>
       ipcRenderer.invoke("system:get-preferences") as Promise<Preferences>,
     setPreferences: (update: Record<string, any>) =>
