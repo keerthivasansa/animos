@@ -37,7 +37,9 @@
   cacheImages();
 </script>
 
-<div class="w-full my-8 md:py-3 slider relative overflow-hidden rounded-lg">
+<div
+  class="w-full grid place-items-center my-8 md:py-3 slider relative overflow-hidden rounded-lg"
+>
   <button on:click={prevSlide} class="nav-btn left-0 top-0">
     <div class="w-8">
       <FaPrev />
@@ -48,7 +50,7 @@
   >
     <div
       on:mouseenter={(_) => (focus = true)}
-      class="px-2 sm:mx-5 rounded-lg relative carousel"
+      class="md:px-2 lg:mx-5 rounded-lg relative carousel"
       style="background-image: url('{anime[index]
         .coverImg}'); background-size: cover; aspect-ratio: 21 / 5;transition: background-image 500ms ease-in-out"
     >
@@ -117,10 +119,11 @@
   }
 
   .carousel {
-    height: 15rem;
+    height: 40vw;
+    width: 90vw;
   }
 
-  @media (min-width: 450px) {
+  @media (min-width: 940px) {
     .carousel {
       width: 96vw;
       height: 24vw;
