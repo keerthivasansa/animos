@@ -4,6 +4,8 @@
   import FaPlay from "svelte-icons/fa/FaPlay.svelte";
   import { onMount } from "svelte";
   import { State, type EpisodeWithSkip } from "$lib/types";
+  import type { Episode } from "@prisma/client";
+  import EpisodeProgress from "$lib/components/EpisodeProgress.svelte";
 
   let animeId: number;
   let episodeNum: number;
@@ -15,11 +17,6 @@
   let totalEpisodes = parseInt(
     $page.url.searchParams.get("totalEpisode") ?? "0"
   );
-  interface Episode {
-    title: string;
-    id: number;
-    number: number;
-  }
 
   let result: {
     currentEp: EpisodeWithSkip;
@@ -56,8 +53,8 @@
       episodePage + 1
     )) as Episode[];
     let currentEp = await window.api.episode.get(animeId, episodeNum);
-    if (currentEp.source == 'fail')
-      return location.href = "/info?animeId=" + animeId
+    if (currentEp.source == "fail")
+      return (location.href = "/info?animeId=" + animeId);
     result = {
       currentEp,
       allEpisodes,
@@ -68,6 +65,15 @@
 
   onMount(fetchEpisodeSrc);
 </script>
+
+<svelte:window
+  on:load={(_) => {
+    console.log("loaded");
+    document
+      .getElementById(`ep-${result.currentEp.number}`)
+      ?.scrollIntoView({ behavior: "smooth" });
+  }}
+/>
 
 <section class="flex justify-between px-4 text-white">
   <div class="rounded-lg overflow-hidden my-10 fixed w-240">
@@ -132,14 +138,23 @@
               data-sveltekit-reload
               href="/episode?episodeId={ep.number}&animeId={animeId}"
             >
-              <button
+              <div
+                id="ep-{ep.number}"
                 style={ep.number == episodeNum
                   ? "border: 3px solid var(--accent-color);"
                   : ""}
-                class="cursor-pointer w-full text-left border-slate-400 border-2 rounded-md my-2 px-4 py-3"
+                class="{ep.watchTime / (ep.length ?? 1) > 0.9
+                  ? 'opacity-50'
+                  : 'opacity-100'} cursor-pointer font-semibold flex gap-2 flex-col text-sm w-full text-left border-slate-400 border-2 rounded-md my-2 px-4 py-2"
               >
                 <span class="my-4">{ep.number}. {ep.title}</span>
-              </button>
+                {#if ep.length}
+                  <EpisodeProgress
+                    length={ep.length ?? 0}
+                    watched={ep.watchTime}
+                  />
+                {/if}
+              </div>
             </a>
           {/each}
         {:else}

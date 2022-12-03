@@ -1,6 +1,7 @@
 <script lang="ts">
   import Carousel from "$lib/components/Carousel.svelte";
   import CoverAnime from "$lib/components/CoverAnime.svelte";
+  import EpisodeProgress from "$lib/components/EpisodeProgress.svelte";
   import { formatTime } from "$lib/utils";
   import type { Anime } from "@prisma/client";
   import { onMount } from "svelte";
@@ -75,12 +76,9 @@
                     )}</span
                   >
                 </div>
-                <progress
-                  style="accent-color: var(--accent-color); height: 1rem;"
-                  class="rounded-lg"
-                  max={ep.length}
-                  value={ep.watchTime}
-                />
+                <div class="w-full px-4">
+                  <EpisodeProgress length={ep.length ?? 0} watched={ep.watchTime} />
+                </div>
               </div>
             </a>
           {/each}
@@ -106,15 +104,3 @@
     {/await}
   </section>
 </main>
-
-<style lang="postcss">
-  ::-webkit-progress-bar {
-    @apply rounded-md h-2 w-full;
-  }
-
-  ::-webkit-progress-value {
-    -webkit-appearance: none;
-    background: var(--accent-color);
-    @apply rounded-md;
-  }
-</style>
