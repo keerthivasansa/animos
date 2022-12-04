@@ -59,7 +59,7 @@
         </h2>
         <div class="flex gap-12 my-8 flex-wrap justify-center sm:justify-start">
           {#each episodes as ep}
-            <a href="/episode?animeId={ep.anime.kitsuId}&episodeId={ep.number}">
+            <a href="/episode?animeId={ep.anime.kitsuId}&episodeId={ep.number}&totalEpisode={ep.anime.episodes}&zeroEp={ep.anime.zeroEpisode}">
               <div class="flex flex-col gap-2 items-center">
                 <CoverAnime
                   anime={ep.anime}
