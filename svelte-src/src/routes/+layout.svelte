@@ -10,6 +10,9 @@
   import { addKeyBoardShortcuts, capitalize, lightOrDark } from "$lib/utils";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
+  import FaArrowLeft from "svelte-icons/fa/FaArrowLeft.svelte";
+  import FaArrowRight from "svelte-icons/fa/FaArrowRight.svelte";
+  import FaRedo from "svelte-icons/fa/FaRedo.svelte";
 
   let searchQuery = $page.url.searchParams.get("q") ?? "";
 
@@ -56,6 +59,18 @@
 </script>
 
 <Settings />
+
+<div class="flex gap-5 px-5 bg-black text-white">
+  <button class="w-5 py-2 px-1" on:click={_ => history.back()}>
+    <FaArrowLeft/>
+  </button>
+  <button class="w-5 py-2 px-1" on:click={_ => location.reload()}>
+    <FaRedo/>
+  </button>
+  <button class="w-5 py-2 px-1" on:click={_ => history.forward()}>
+    <FaArrowRight/>
+  </button>
+</div>
 <nav
   class="flex text-white justify-between items-center px-10 py-6"
   on:mouseleave={(_) => (marginLeft = -4.25)}
