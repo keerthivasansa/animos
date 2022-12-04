@@ -6,12 +6,4 @@ let appPath = app.getPath("userData");
 
 console.log({ appPath });
 
-export const db = app.isPackaged
-  ? new PrismaClient({
-      datasources: {
-        db: {
-          url: join(appPath, "Animos", "cache.db"),
-        },
-      },
-    })
-  : new PrismaClient();
+export const db =  new PrismaClient();
