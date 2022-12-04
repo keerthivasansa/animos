@@ -102,6 +102,7 @@
           <input
             type="text"
             name="q"
+            id="search-input"
             bind:value={searchQuery}
             on:input={autoCapWords}
             class="rounded-md {searchQuery == ''

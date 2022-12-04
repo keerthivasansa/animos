@@ -101,6 +101,9 @@ export function addKeyBoardShortcuts() {
           showSettings.set(!settings);
           break;
       }
+    } else if (ev.key == "/") {
+      document.getElementById("search-input")?.focus();
+      ev.preventDefault();
     }
   };
 }
