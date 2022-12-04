@@ -43,8 +43,10 @@ autoUpdater.on("update-downloaded", () => {
 });
 
 ipcMain.handle("system:get-updates", async (event) => {
+  console.log(app.getVersion());
   let update = await autoUpdater.checkForUpdates();
   return {
+    available: update.updateInfo.version != app.getVersion(),
     version: update.updateInfo.version,
     releaseNotes: update.updateInfo.releaseNotes,
   };

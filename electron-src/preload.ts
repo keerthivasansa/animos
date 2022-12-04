@@ -69,6 +69,7 @@ const endpoints = {
     getUpdates: () =>
       ipcRenderer.invoke("system:get-updates") as Promise<{
         version: string;
+        available: boolean;
         releaseNotes: string;
       }>,
     downloadUpdate: () => ipcRenderer.invoke("system:download-update"),

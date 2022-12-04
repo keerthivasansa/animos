@@ -19,7 +19,7 @@
     }
     sessionStorage.setItem("update-show", "true");
     let update = await window.api.system.getUpdates();
-    if (!update.version) {
+    if (!update.available) {
       console.log("No update found");
       return;
     }
@@ -59,7 +59,11 @@
         </h2>
         <div class="flex gap-12 my-8 flex-wrap justify-center sm:justify-start">
           {#each episodes as ep}
-            <a href="/episode?animeId={ep.anime.kitsuId}&episodeId={ep.number}&totalEpisode={ep.anime.episodes}&zeroEp={ep.anime.zeroEpisode}">
+            <a
+              href="/episode?animeId={ep.anime
+                .kitsuId}&episodeId={ep.number}&totalEpisode={ep.anime
+                .episodes}&zeroEp={ep.anime.zeroEpisode}"
+            >
               <div class="flex flex-col gap-2 items-center">
                 <CoverAnime
                   anime={ep.anime}
@@ -77,7 +81,10 @@
                   >
                 </div>
                 <div class="w-full px-4">
-                  <EpisodeProgress length={ep.length ?? 0} watched={ep.watchTime} />
+                  <EpisodeProgress
+                    length={ep.length ?? 0}
+                    watched={ep.watchTime}
+                  />
                 </div>
               </div>
             </a>
