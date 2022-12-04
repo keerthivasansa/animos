@@ -154,20 +154,38 @@
       );
     }, 5000);
 
+    const btn = document.getElementById("skip-btn") as HTMLButtonElement;
+
     setInterval(() => {
       currentSkip = null;
+      let show = false;
       episode.skipTimes.forEach((skip, index) => {
         if (
           player.currentTime > skip.start - 5 &&
           player.currentTime < skip.end - 5
         ) {
-          currentSkip = skip;
+          show = true;
+          btn.innerText = skip.type == "op" ? "Skip intro" : "Skip outro";
+          btn.onclick = () => {
+            player.currentTime = skip.end - 5;
+          };
         }
       });
+      if (show) {
+        btn.style.display = "block";
+      } else {
+        btn.style.display = "none";
+      }
     }, 1000);
 
-    player.on("enterfullscreen", () => (fullscreen = true));
-    player.on("exitfullscreen", () => (fullscreen = false));
+    player.on("enterfullscreen", () => {
+      fullscreen = true;
+      btn.style.fontSize = "1rem";
+    });
+    player.on("exitfullscreen", () => {
+      fullscreen = false;
+      btn.style.fontSize = "0.75rem";
+    });
 
     player.on("ended", () => {
       if (hasNextEp) {
@@ -176,10 +194,24 @@
         }`;
       }
     });
+
+    // btn.innerText = "Hello";
+    btn.style.position = "absolute";
+    btn.style.bottom = "4.5rem";
+    btn.style.background = "black";
+    btn.style.fontSize = "0.75rem";
+    btn.style.right = "2rem";
+    btn.style.opacity = "85%";
+    btn.style.display = "none";
+    btn.style.zIndex = "9999";
+    btn.classList.add("skip-btn");
+    player.elements.container?.append(btn);
   });
 
   onDestroy(() => clearInterval(saveProgressInterval));
 </script>
+
+<button id="skip-btn" class:hidden={false} />
 
 <div class="relative">
   <video
@@ -191,14 +223,6 @@
     <source {src} />
     <track src="" kind="captions" />
   </video>
-  {#if currentSkip}
-    <button
-      on:click={(_) =>
-        (window.player.currentTime = (currentSkip?.end ?? 0) - 5)}
-      class="absolute bottom-14 bg-black bg-opacity-95 right-5"
-      >{currentSkip.type == "op" ? "Skip Intro" : "Skip Outro"}</button
-    >
-  {/if}
 </div>
 
 <style>
