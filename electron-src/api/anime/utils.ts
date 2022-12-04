@@ -64,7 +64,8 @@ export async function getPartialInfo(
         anime.slug = slugs[0];
         anime.dubSlug = slugs[1];
       }
-    } else {
+    } 
+    if (!anime.slug) {
       console.log("Alternative method to get slug");
       anime.slug = await getAlternativeSlug(
         kitsuSlug,
@@ -237,6 +238,8 @@ async function getAlternativeSlug(kitsuSlug: string, kitsuTitle: string) {
   let resp = await axios.get(
     `https://gogoanime.tel/search.html?keyword=${kitsuSlug}`
   );
+  console.log("Fetching alternative slug for" + kitsuSlug)
+  console.log(kitsuTitle);
   const $ = load(resp.data);
   let sigTitle = stringSigPart(kitsuTitle);
   let slug = "";
