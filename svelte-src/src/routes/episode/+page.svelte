@@ -63,6 +63,10 @@
     pageState = State.Finished;
   }
 
+  function scrollToView(node: HTMLElement, value: boolean) {
+    if (value) node.scrollIntoView({ behavior: "smooth" });
+  }
+
   onMount(fetchEpisodeSrc);
 </script>
 
@@ -138,8 +142,11 @@
               data-sveltekit-reload
               href="/episode?episodeId={ep.number}&animeId={animeId}"
             >
+              <!-- currentEpNumber + 3 added to make the current episode appear in the center -->
               <div
                 id="ep-{ep.number}"
+                use:scrollToView={ep.number ==
+                  Math.min(result.currentEp.number + 3, totalEpisodes)}
                 style={ep.number == episodeNum
                   ? "border: 3px solid var(--accent-color);"
                   : ""}
