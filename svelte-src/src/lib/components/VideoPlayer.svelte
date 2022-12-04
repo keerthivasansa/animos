@@ -67,7 +67,7 @@
           }),
         },
       };
-      if (Hls.isSupported()) {
+      if (!src.endsWith(".mp4") && Hls.isSupported()) {
         const hls = new Hls();
         hls.loadSource(src);
         // From the m3u8 playlist, hls parses the manifest and returns
@@ -108,10 +108,10 @@
           res(player);
         });
         window.hls = hls;
-      } else {
-        const player = new Plyr(video);
-        res(player);
+        return;
       }
+      const player = new Plyr(video);
+      res(player);
     });
   }
   let fullscreen = false;
@@ -163,8 +163,8 @@
       });
     });
 
-    player.on("enterfullscreen", () => fullscreen = true);
-    player.on("exitfullscreen", () => fullscreen = false);
+    player.on("enterfullscreen", () => (fullscreen = true));
+    player.on("exitfullscreen", () => (fullscreen = false));
 
     player.on("ended", () => {
       if (hasNextEp) {
