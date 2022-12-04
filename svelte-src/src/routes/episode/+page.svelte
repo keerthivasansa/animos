@@ -6,6 +6,7 @@
   import { State, type EpisodeWithSkip } from "$lib/types";
   import type { Episode } from "@prisma/client";
   import EpisodeProgress from "$lib/components/EpisodeProgress.svelte";
+  import { scrollOnCondition } from "$lib/actions";
 
   let animeId: number;
   let episodeNum: number;
@@ -61,10 +62,6 @@
     };
     console.dir({ result });
     pageState = State.Finished;
-  }
-
-  function scrollToView(node: HTMLElement, value: boolean) {
-    if (value) node.scrollIntoView({ behavior: "smooth" });
   }
 
   onMount(fetchEpisodeSrc);
@@ -145,7 +142,7 @@
               <!-- currentEpNumber + 3 added to make the current episode appear in the center -->
               <div
                 id="ep-{ep.number}"
-                use:scrollToView={ep.number ==
+                use:scrollOnCondition={ep.number ==
                   Math.min(result.currentEp.number + 3, totalEpisodes)}
                 style={ep.number == episodeNum
                   ? "border: 3px solid var(--accent-color);"

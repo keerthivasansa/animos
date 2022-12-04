@@ -15,3 +15,7 @@ export function clickOutside(node:HTMLElement) {
 		}
 	};
 }
+
+export function scrollOnCondition(node: HTMLElement, value: boolean = true) {
+  if (value) node.scrollIntoView({ behavior: "smooth" });
+}

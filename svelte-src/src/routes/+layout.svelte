@@ -62,56 +62,62 @@
 
 <Settings />
 
-<div class="flex gap-5 px-5 bg-black text-white">
-  <button class="w-5 py-2 px-1" on:click={_ => history.back()}>
-    <FaArrowLeft/>
-  </button>
-  <button class="w-5 py-2 px-1" on:click={_ => location.reload()}>
-    <FaRedo/>
-  </button>
-  <button class="w-5 py-2 px-1" on:click={_ => history.forward()}>
-    <FaArrowRight/>
-  </button>
-</div>
-<nav
-  class="flex text-white justify-between items-center px-10 py-6"
-  on:mouseleave={(_) => (marginLeft = -4.25)}
->
-  <div class="flex gap-5">
-    <div
-      class="transition-all ease-linear duration-200"
-      style="margin-left: {marginLeft}rem;"
-      on:click={(_) => showSettings.set(true)}
-      on:keydown={(e) => {
-        if (e.code === "13") showSettings.set(true);
-      }}
-      on:mouseenter={(_) => (marginLeft = -2)}
-    >
-      <IconBtn>
-        <FaGear />
-      </IconBtn>
-    </div>
-    <a href="/">
-      <Logo />
-    </a>
-  </div>
-  <div class="flex gap-2">
-    <form action="/search">
-      <input
-        type="text"
-        name="q"
-        bind:value={searchQuery}
-        on:input={autoCapWords}
-        class="rounded-md {searchQuery == ''
-          ? 'w-32'
-          : 'w-60'} font-semibold px-4 py-2 focus:w-60 transition-all ease-in-out duration-200"
-      />
-      <button type="submit">
-        <IconBtn>
-          <FaSearch />
-        </IconBtn>
+<div class="flex flex-col gap-0">
+  <div class="sticky top-0 left-0" style="z-index: 50;">
+    <div class="flex gap-5 px-5 bg-black text-white">
+      <button class="w-5 py-2 px-1" on:click={(_) => history.back()}>
+        <FaArrowLeft />
       </button>
-    </form>
+      <button class="w-5 py-2 px-1" on:click={(_) => location.reload()}>
+        <FaRedo />
+      </button>
+      <button class="w-5 py-2 px-1" on:click={(_) => history.forward()}>
+        <FaArrowRight />
+      </button>
+    </div>
+    <nav
+      class="flex w-full text-white justify-between items-center px-10 py-6"
+      on:mouseleave={(_) => (marginLeft = -4.25)}
+    >
+      <div class="flex gap-5">
+        <div
+          class="transition-all ease-linear duration-200"
+          style="margin-left: {marginLeft}rem;"
+          on:click={(_) => showSettings.set(true)}
+          on:keydown={(e) => {
+            if (e.code === "13") showSettings.set(true);
+          }}
+          on:mouseenter={(_) => (marginLeft = -2)}
+        >
+          <IconBtn>
+            <FaGear />
+          </IconBtn>
+        </div>
+        <a href="/">
+          <Logo />
+        </a>
+      </div>
+      <div class="flex gap-2">
+        <form action="/search">
+          <input
+            type="text"
+            name="q"
+            bind:value={searchQuery}
+            on:input={autoCapWords}
+            class="rounded-md {searchQuery == ''
+              ? 'w-32'
+              : 'w-60'} font-semibold px-4 py-2 focus:w-60 transition-all ease-in-out duration-200"
+          />
+          <button type="submit">
+            <IconBtn>
+              <FaSearch />
+            </IconBtn>
+          </button>
+        </form>
+      </div>
+    </nav>
   </div>
-</nav>
-<slot />
+  <main class="">
+    <slot />
+  </main>
+</div>
