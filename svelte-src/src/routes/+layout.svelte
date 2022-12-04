@@ -7,7 +7,7 @@
   import Settings from "$lib/components/Settings.svelte";
   import { accentClr, lockBody, showSettings } from "$lib/stores";
   import { onMount } from "svelte";
-  import { capitalize, lightOrDark } from "$lib/utils";
+  import { addKeyBoardShortcuts, capitalize, lightOrDark } from "$lib/utils";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
 
@@ -26,6 +26,7 @@
     window.api.system.onGoto((link) => {
       goto(link);
     });
+    addKeyBoardShortcuts();
     console.time("Running +layout");
     let preferences = await window.api.system.getPreferences();
     console.log("Preferences:");

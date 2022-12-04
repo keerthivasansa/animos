@@ -1,4 +1,5 @@
 import type { Anime } from "@prisma/client";
+import { showSettings } from "./stores";
 
 export function getColorType(color: string) {
   let c = color.substring(1);
@@ -81,4 +82,25 @@ export function formatTime(seconds: number) {
   let secs = Math.floor(seconds % 60);
 
   return `${minutes}:${secs < 10 ? 0 : ""}${secs}`;
+}
+
+export function addKeyBoardShortcuts() {
+  let settings = false;
+  showSettings.subscribe((val) => (settings = val));
+  document.onkeydown = (ev) => {
+    if (ev.altKey) {
+      // Alt Key combinations
+      switch (ev.key) {
+        case "ArrowLeft":
+          history.back();
+          break;
+        case "ArrowRight":
+          history.forward();
+          break;
+        case "s":
+          showSettings.set(!settings);
+          break;
+      }
+    }
+  };
 }
