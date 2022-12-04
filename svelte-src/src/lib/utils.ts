@@ -40,7 +40,6 @@ export function lightOrDark(colorHex: string) {
   };
   let hsp = red * 0.299 + green * 0.587 + blue * 0.114;
   // Using the HSP value, determine whether the color is light or dark
-  console.log({ red, green, blue });
   if (hsp > 150) {
     return "light";
   } else {
@@ -65,7 +64,6 @@ export function capitalize(word: string) {
 
 export function getNumberOfLines(elementId: string) {
   let element = document.getElementById(elementId);
-  console.log(element, elementId);
   if (!element) return 0;
   let lineHeight = getComputedStyle(element).getPropertyValue("line-height");
   let elementHeight = element.clientHeight;
@@ -77,7 +75,6 @@ export function convertRemToPixels(rem: number) {
 }
 
 export function formatTime(seconds: number) {
-  console.log({ seconds });
   let minutes = Math.floor(seconds / 60);
   let secs = Math.floor(seconds % 60);
 

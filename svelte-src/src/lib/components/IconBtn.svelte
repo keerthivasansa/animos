@@ -12,7 +12,6 @@
     if (!bgAccent) return;
     let clrType = lightOrDark(val);
     fontColor = clrType == "dark" ? "text-white" : "text-black";
-    console.log({ fontColor, clrType, val });
   });
 </script>
 

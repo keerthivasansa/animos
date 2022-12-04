@@ -37,6 +37,7 @@
   }
 
   async function initVideoPlayer(): Promise<Plyr> {
+    console.log("AnimeID:", episode.animeKitsuId);
     let linkExpired = await isSourceExpired(src);
     if (linkExpired) {
       console.log("Link expired, fetching new link . . .");
@@ -93,7 +94,7 @@
 
           player.on("loadedmetadata", () => {
             console.log("getting skip times");
-            if (episode.skipTimes) return;
+            if (episode.skipTimes.length) return;
             window.api.episode
               .getSkipTimes(
                 episode.animeKitsuId,
@@ -102,7 +103,6 @@
               )
               .then((result) => {
                 episode.skipTimes = result;
-                console.log(result);
               });
           });
           res(player);
@@ -142,9 +142,9 @@
     console.log(episode.skipTimes);
 
     console.log("Waiting for canplay event");
-    player.once("ready", async () => {
-      console.log("Loading skip times");
-    });
+
+    console.log("Skip times:");
+    console.log(episode.skipTimes);
 
     saveProgressInterval = setInterval(() => {
       window.api.episode.setWatchTime(
@@ -154,14 +154,17 @@
       );
     }, 5000);
 
-    player.on("progress", (event) => {
+    setInterval(() => {
       currentSkip = null;
       episode.skipTimes.forEach((skip, index) => {
-        if (player.currentTime > skip.start && player.currentTime < skip.end) {
+        if (
+          player.currentTime > skip.start - 5 &&
+          player.currentTime < skip.end - 5
+        ) {
           currentSkip = skip;
         }
       });
-    });
+    }, 1000);
 
     player.on("enterfullscreen", () => (fullscreen = true));
     player.on("exitfullscreen", () => (fullscreen = false));
@@ -190,7 +193,8 @@
   </video>
   {#if currentSkip}
     <button
-      on:click={(_) => (window.player.currentTime = currentSkip?.end ?? 0)}
+      on:click={(_) =>
+        (window.player.currentTime = (currentSkip?.end ?? 0) - 5)}
       class="absolute bottom-14 bg-black bg-opacity-95 right-5"
       >{currentSkip.type == "op" ? "Skip Intro" : "Skip Outro"}</button
     >

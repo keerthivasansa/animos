@@ -21,11 +21,9 @@
   let animeTitle = getTitle(anime);
   onMount(() => {
     let contentDiv = document.getElementById(`content-${anime.kitsuId}`);
-    console.log(contentDiv);
     contentSize = `${
       document.getElementById(`content-${anime.kitsuId}`)?.clientHeight
     }px`;
-    console.log({ contentSize });
   });
 
   let direction = "left";
