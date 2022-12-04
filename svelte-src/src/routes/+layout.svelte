@@ -47,6 +47,8 @@
     accentClr.subscribe(async (val) => {
       console.log("setting accent to ", val);
       document.body.style.setProperty("--plyr-color-main", val);
+      document.body.style.setProperty("--range-handle-focus", val);
+      document.body.style.setProperty("--range-handle", val);
       document.body.style.setProperty("--accent-color", val);
       document.body.style.setProperty(
         "--accent-font",

@@ -9,7 +9,6 @@
   import type { Anime } from "@prisma/client";
   import { onMount } from "svelte";
   import { DarkPaginationNav } from "svelte-paginate";
-  import BackBtn from "$lib/components/BackBtn.svelte";
 
   let query = $page.url.searchParams.get("q");
   let showFilters = false;
@@ -53,12 +52,9 @@
 
 <section class="mx-16 my-10 flex justify-center items-center">
   <div class="w-full h-full">
-    <div class="w-full flex justify-between">
-      <h1 class="text-xl font-semibold dark:text-white">
-        Search: {query}
-      </h1>
-      <BackBtn />
-    </div>
+    <h1 class="text-xl font-semibold dark:text-white">
+      Search: {query}
+    </h1>
     <div class="mt-5 relative">
       <button on:click={(_) => (showFilters = !showFilters)}>
         <IconTxtBtn text={"Filters"}>
