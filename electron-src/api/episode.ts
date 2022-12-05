@@ -1,4 +1,3 @@
-import log from "electron-log";
 import { httpGet } from "./utils";
 import { AxiosError } from "axios";
 import { fetchAnimixEpisodeSource } from "./scraper";
@@ -17,7 +16,7 @@ async function getSource(kitsuId: number, episodeNum: number) {
   let { slug } = anime;
 
   let episodeSlug = `${slug}-episode-${episodeNum}`;
-  log.info(
+  console.info(
     `Fetching source and skip times for ${kitsuId} - EP${episodeNum} with slug: ${episodeSlug}`
   );
   let source = await fetchAnimixEpisodeSource({
@@ -60,7 +59,7 @@ export async function episodes(kitsuId: number, page: number) {
 
   let recursions = 0;
   for (let i = 0; i < 5; i++) {
-    log.debug(
+    console.debug(
       `Fetching episode information for anime. Kitsu Id: ${kitsuId}, page: ${recursions}`
     );
     let res = await httpGet(

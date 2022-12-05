@@ -23,10 +23,7 @@
     "electron:dev": "nodemon",
     "build": "npm run prepublish && tsc && electron-builder",
     "prepare": "npx prisma migrate deploy && npx prisma generate && npm run svelte:install && npm run svelte:build && npx prisma generate && tsc",
-    "publish": "electron-builder -p always",
-    "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version major && git push origin && git push origin --tags",
-    "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version minor && git push origin && git push origin --tags",
-    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version patch && git push origin && git push origin --tags"
+    "publish": "electron-builder -p always"
   },
   "build": {
     "appId": "com.keerthivasan.animos",
@@ -76,9 +73,9 @@
     "cheerio": "^1.0.0-rc.12",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.3",
-    "electron-log": "^4.4.8",
     "electron-serve": "^1.1.0",
     "electron-updater": "^5.3.0",
-    "fast-xml-parser": "^4.0.11"
+    "fast-xml-parser": "^4.0.11",
+    "winston": "^3.8.2"
   }
 }

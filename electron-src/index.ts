@@ -5,6 +5,7 @@ import {
   Menu,
   nativeImage,
   Notification,
+  protocol,
   session,
   Tray,
 } from "electron";
@@ -23,13 +24,16 @@ process.env.DATABASE_URL = "file:./cache.db";
 // register all the ipc functions
 import "./ipc";
 import { db } from "./db";
+import { logger } from "./utils";
 
 // TODO add strong type support for electron files
 const loadPath = serve({ directory: "output" });
 
-console.log({ loadPath });
+logger.level = "INFO";
 
-console.log("App version:" + app.getVersion());
+logger.info("Starting app", {
+  version: app.getVersion(),
+});
 
 autoUpdater.setFeedURL({
   provider: "github",
@@ -43,7 +47,10 @@ autoUpdater.on("update-downloaded", () => {
 });
 
 ipcMain.handle("system:get-updates", async (event) => {
-  console.log(app.getVersion());
+  console.log(
+    "Checking for updates, current app version:",
+    autoUpdater.currentVersion
+  );
   let update = await autoUpdater.checkForUpdates();
   return {
     available: update.updateInfo.version != app.getVersion(),
@@ -62,6 +69,8 @@ const isDev = !app.isPackaged;
 
 let currentWindow: BrowserWindow;
 const iconPath = join(__dirname, "../build/icons/favicon.ico");
+
+let appTray: Tray;
 
 async function createWindow() {
   let preloadPath = join(__dirname, "../dist/preload.js");
@@ -170,8 +179,8 @@ async function getWindow(): Promise<BrowserWindow> {
 
 app.whenReady().then(async () => {
   app.setAppUserModelId("com.keerthivasan.animos");
-  let tray = new Tray(nativeImage.createFromPath(iconPath));
-  tray.setContextMenu(
+  appTray = new Tray(nativeImage.createFromPath(iconPath));
+  appTray.setContextMenu(
     Menu.buildFromTemplate([
       {
         label: "Open Last Watched Anime",
@@ -203,8 +212,10 @@ app.whenReady().then(async () => {
           });
           console.log("Last watched anime was:", episode.anime.title);
           let url = new URL(window.webContents.getURL());
+          console.log(url);
+          let origin = url.origin == "null" ? "app://-" : url.origin;
           let finalUrl =
-            url.origin +
+            origin +
             `/episode?animeId=${episode.anime.kitsuId}&episodeId=${episode.number}&totalEpisode=${episode.anime.episodes}&zeroEp=${episode.anime.zeroEpisode}`;
           console.log({ finalUrl });
           window.webContents.loadURL(finalUrl);
@@ -216,8 +227,7 @@ app.whenReady().then(async () => {
       },
     ])
   );
-  tray.on("double-click", () => console.log("Open last watched anime"));
-
+  appTray.on("double-click", () => console.log("Open last watched anime"));
   if (currentWindow) {
     currentWindow.show();
     currentWindow.focus();
