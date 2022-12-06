@@ -45,7 +45,8 @@
       "installerIcon": "build/icons/favicon.ico"
     },
     "linux": {
-      "target": "AppImage"
+      "target": "AppImage",
+      "icon": "build/icons/512x512.png"
     },
     "files": [
       "dist/**/*",
