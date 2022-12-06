@@ -44,6 +44,9 @@
       "license": "LICENSE.md",
       "installerIcon": "build/icons/favicon.ico"
     },
+    "linux": {
+      "target": "AppImage"
+    },
     "files": [
       "dist/**/*",
       "output/**/*"

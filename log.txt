@@ -1,7 +1,0 @@
-{"level":"info","message":"AppPath: C:\\Users\\vasan\\AppData\\Roaming\\Electron"}
-{"level":"info","message":"AppPath: C:\\Users\\vasan\\AppData\\Roaming\\Electron"}
-{"level":"info","message":"AppPath: C:\\Users\\vasan\\AppData\\Roaming\\Electron"}
-{"level":"info","message":"AppPath: C:\\Users\\vasan\\AppData\\Roaming\\Electron"}
-{"level":"info","message":"AppPath: C:\\Users\\vasan\\AppData\\Roaming\\Electron"}
-{"level":"info","message":"AppPath: C:\\Users\\vasan\\AppData\\Roaming\\Electron"}
-{"level":"info","message":"AppPath: C:\\Users\\vasan\\AppData\\Roaming\\Electron"}

@@ -9,3 +9,5 @@ dist/
 releases/
 test.js
 stash
+log.txt
+test.ts

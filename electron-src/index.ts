@@ -4,8 +4,6 @@ import {
   ipcMain,
   Menu,
   nativeImage,
-  Notification,
-  protocol,
   session,
   Tray,
 } from "electron";
@@ -118,8 +116,6 @@ async function createWindow() {
   win.focus();
   return win;
 }
-
-const appOrigin = ["http://localhost:5173", "null"];
 const currentOrigin = isDev ? "http://localhost:5173" : "null";
 
 // Checks for allow-origin header, if it is present with wildcard, returns it otherwise sets the origin of the application as the header value.
@@ -148,16 +144,16 @@ function setAllowOrigin(
 const allowedPermissions = ["notifications", "fullscreen"];
 
 app.on("web-contents-created", (event, webContent) => {
-  // webContent.session.webRequest.onHeadersReceived((details, cb) => {
-  //   let responseHeaders = setAllowOrigin(
-  //     details.responseHeaders,
-  //     currentOrigin
-  //   );
+  webContent.session.webRequest.onHeadersReceived((details, cb) => {
+    let responseHeaders = setAllowOrigin(
+      details.responseHeaders,
+      currentOrigin
+    );
 
-  //   cb({
-  //     responseHeaders,
-  //   });
-  // });
+    cb({
+      responseHeaders,
+    });
+  });
   session.defaultSession.setPermissionRequestHandler(
     (webContent, permission, cb) => {
       // deny all permissions.
