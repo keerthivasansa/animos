@@ -10,6 +10,7 @@ import {
 import serve from "electron-serve";
 import { join } from "path";
 import { config } from "dotenv";
+import { migratePrisma, needsMigration } from "./db/utils";
 import { autoUpdater } from "electron-updater";
 
 config();
@@ -72,7 +73,13 @@ let appTray: Tray;
 
 async function createWindow() {
   let preloadPath = join(__dirname, "../dist/preload.js");
-  console.log({ preloadPath, iconPath });
+
+  let needToMigrate = await needsMigration();
+  if (needToMigrate) {
+    console.log("Running migrate prisma command");
+    await migratePrisma();
+  }
+
   const win = new BrowserWindow({
     title: "animos",
     icon: iconPath,

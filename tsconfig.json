@@ -3,6 +3,6 @@
   "exclude": ["svelte-src/src/*/**"],
   "compilerOptions": {
     "outDir": "dist",
-    "esModuleInterop": true
+    "esModuleInterop": true,
   }
 }

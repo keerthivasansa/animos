@@ -1,9 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 import { app } from "electron";
-import { logger } from "./utils";
+import { join } from "node:path";
 
-let appPath = app.getPath("userData");
-console.log({ appPath });
-logger.info("AppPath: " + appPath);
+const appPath = app.getPath("userData");
+export const dbPath = join(appPath, "data.db");
+console.log("Database path:", dbPath);
+process.env.DATABASE_URL = dbPath;
 
-export const db = new PrismaClient();
+console.log({ dbPath });
+export const db = new PrismaClient({
+  datasources: {
+    db: {
+      url: "file:" + dbPath,
+    },
+  },
+});
