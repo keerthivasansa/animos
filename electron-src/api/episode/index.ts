@@ -1,8 +1,9 @@
 import { httpGet } from "../utils";
 import { AxiosError } from "axios";
 import { fetchAnimixEpisodeSource } from "../scraper/helper";
-import { Episode } from "@prisma/client";
 import { db } from "../../db";
+import { getEpisodePage } from "./utils";
+import { Episode } from "@prisma/client";
 
 async function getSource(kitsuId: number, episodeNum: number) {
   let anime = await db.anime.findUnique({
@@ -36,7 +37,7 @@ async function getSource(kitsuId: number, episodeNum: number) {
   return source;
 }
 
-export async function episodes(kitsuId: number, page: number) {
+export async function getEpisodes(kitsuId: number, page: number) {
   let anime = await db.anime.findUnique({
     where: {
       kitsuId,
@@ -55,31 +56,7 @@ export async function episodes(kitsuId: number, page: number) {
 
   let offset = (page - 1) * 100;
 
-  console.log({ page, offset });
-
-  let recursions = 0;
-  for (let i = 0; i < 5; i++) {
-    console.debug(
-      `Fetching episode information for anime. Kitsu Id: ${kitsuId}, page: ${recursions}`
-    );
-    let res = await httpGet(
-      `https://kitsu.io/api/edge/episodes?filter[mediaId]=${kitsuId}&page[limit]=20&sort=number&page[offset]=${
-        offset + i * 20
-      }`
-    );
-    res.data.forEach((episode: any) => {
-      episodes.push({
-        id: parseInt(episode.id),
-        number: episode.attributes.number,
-        animeKitsuId: kitsuId,
-        title:
-          episode.attributes.canonicalTitle ?? `EP${episode.attributes.number}`,
-      });
-    });
-    if (!res.links.next) {
-      break;
-    }
-  }
+  episodes = await getEpisodePage(kitsuId, offset);
   if (anime.zeroEpisode) {
     let firstEp = episodes[0];
     let zeroEp: any = {};

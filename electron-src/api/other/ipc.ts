@@ -1,4 +1,5 @@
 import { ipcMain } from "electron";
+import { currentWindow } from "../../app";
 import { db } from "../../db";
 
 ipcMain.handle("system:get-preferences", async (event) => {
@@ -33,4 +34,8 @@ ipcMain.handle("system:set-preferences", async (event, update) => {
 ipcMain.handle("cache:http-delete", async (event) => {
   await db.response.deleteMany({});
   return "ok";
+});
+
+ipcMain.on("fullscreen", (event, makeFullscreen: boolean) => {
+  currentWindow?.setFullScreen(makeFullscreen);
 });

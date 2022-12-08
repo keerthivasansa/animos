@@ -1,7 +1,6 @@
 import { app } from "electron";
 import winston from "winston";
 import { join } from "path";
-import { fileURLToPath } from "node:url";
 
 export const logger = winston.createLogger({
   transports: [

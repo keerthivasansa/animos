@@ -1,9 +1,9 @@
 import { ipcMain } from "electron";
 import { db } from "../../db";
-import { episodes, getSkipTimes, getEpisode, renewSource } from "./index";
+import { getEpisodes, getSkipTimes, getEpisode, renewSource } from "./index";
 
 ipcMain.handle("episode:info", async (event, kitsuId: number, page: number) => {
-  let result = await episodes(kitsuId, page);
+  let result = await getEpisodes(kitsuId, page);
   return result;
 });
 

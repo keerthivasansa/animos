@@ -1,7 +1,7 @@
 {
   "version": "0.5.5",
   "name": "animos",
-  "main": "dist/index.js",
+  "main": "dist/app/index.js",
   "license": "CC-BY-NC-ND-4.0",
   "author": {
     "name": "Keerthi Vasan S A",
