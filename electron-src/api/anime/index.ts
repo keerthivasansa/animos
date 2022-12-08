@@ -4,7 +4,6 @@ import {
   getGenresFromIncluded,
   getMalIdFromIncluded,
   getPartialInfo,
-  recurseRelations,
   transformKitsuToAnime,
 } from "./utils";
 import { db } from "../../db";
@@ -121,61 +120,6 @@ export async function search(
   });
   console.timeEnd("search");
   return { data: result, totalItems: resp.meta.count, currentPage: page };
-}
-
-export async function getAllRelatedAnime(kitsuId: string, roles: string[]) {
-  let related = {
-    character: [],
-    sequel: [],
-    other: [],
-    spinoff: [],
-    prequel: [],
-    alternative_version: [],
-  };
-  let relatedAnimes = await db.animeRelation.findMany({
-    where: {
-      sourceId: parseInt(kitsuId),
-    },
-    select: {
-      anime: true,
-      role: true,
-    },
-  });
-  if (relatedAnimes.length == 1 && relatedAnimes[0].role == "NULL") {
-    // no related anime
-    return related;
-  } else if (relatedAnimes.length > 0) {
-    relatedAnimes.forEach((relation) => {
-      related[relation.role].push(relation.anime);
-    });
-    return related;
-  }
-
-  console.log(kitsuId, roles);
-
-  related = await recurseRelations(parseInt(kitsuId), ["prequel", "sequel"]);
-
-  await db.$transaction(
-    Object.keys(related)
-      .map((key) =>
-        related[key].map((anime) => [
-          db.anime.upsert({
-            where: { kitsuId: anime.kitsuId },
-            create: anime,
-            update: {},
-          }),
-          db.animeRelation.create({
-            data: {
-              role: key,
-              sourceId: parseInt(kitsuId),
-              destinationId: anime.kitsuId,
-            },
-          }),
-        ])
-      )
-      .flat(2)
-  );
-  return related;
 }
 
 export async function getUserRecommendations() {

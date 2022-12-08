@@ -10,7 +10,7 @@ import {
 import serve from "electron-serve";
 import { join } from "path";
 import { config } from "dotenv";
-import { migratePrisma, needsMigration } from "./db/utils";
+import { migratePrisma, needsMigration } from "../db/utils";
 import { autoUpdater } from "electron-updater";
 
 config();
@@ -21,9 +21,10 @@ console.info("Starting app . . .");
 process.env.DATABASE_URL = "file:./cache.db";
 
 // register all the ipc functions
-import "./ipc";
-import { db } from "./db";
-import { logger } from "./utils";
+import "../api";
+
+import { db } from "../db";
+import { logger } from "../utils";
 
 // TODO add strong type support for electron files
 const loadPath = serve({ directory: "output" });
@@ -67,12 +68,12 @@ app.enableSandbox();
 const isDev = !app.isPackaged;
 
 let currentWindow: BrowserWindow;
-const iconPath = join(__dirname, "../build/icons/favicon.ico");
+const iconPath = join(__dirname, "../../build/icons/favicon.ico");
 
 let appTray: Tray;
 
 async function createWindow() {
-  let preloadPath = join(__dirname, "../dist/preload.js");
+  let preloadPath = join(__dirname, "./preload.js");
 
   let needToMigrate = await needsMigration();
   if (needToMigrate) {

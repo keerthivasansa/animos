@@ -1,8 +1,8 @@
-import { httpGet } from "./utils";
+import { httpGet } from "../utils";
 import { AxiosError } from "axios";
-import { fetchAnimixEpisodeSource } from "./scraper";
-import { db } from "../db";
+import { fetchAnimixEpisodeSource } from "../scraper/helper";
 import { Episode } from "@prisma/client";
+import { db } from "../../db";
 
 async function getSource(kitsuId: number, episodeNum: number) {
   let anime = await db.anime.findUnique({

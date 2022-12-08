@@ -9,7 +9,7 @@ import {
   decryptAjaxResponse,
   encodeString,
   decodeStreamingLinkAnimix,
-} from "../helper";
+} from ".";
 
 const gogoBase = "https://gogoanime.lu/";
 const gogoBase2 = "https://gogoanime.gg/";

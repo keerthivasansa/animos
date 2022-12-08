@@ -2,7 +2,7 @@ import { Anime } from "@prisma/client";
 import axios from "axios";
 import { load } from "cheerio";
 import { db } from "../../db";
-import { headerOption } from "../scraper";
+import { headerOption } from "../scraper/helper";
 import { httpGet } from "../utils";
 import { compareTwoStrings } from "string-similarity";
 

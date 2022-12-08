@@ -1,7 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
-import type { Anime, Episode, Preferences } from "@prisma/client";
-import type { EpisodeWithAnime } from "./types";
-import { UpdateCheckResult } from "electron-updater";
+import type { Anime, Preferences } from "@prisma/client";
+import type { EpisodeWithAnime } from "../types";
 
 const endpoints = {
   anime: {
