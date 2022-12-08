@@ -45,7 +45,7 @@
 {#await getPosters()}
   Loading
 {:then trendingAnime}
-  <Carousel anime={trendingAnime} />
+  <Carousel animeArr={trendingAnime} />
 {/await}
 
 <main class="sm:px-10 my-5 text-white">
