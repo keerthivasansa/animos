@@ -4,6 +4,7 @@ import { load } from "cheerio";
 import { db } from "../../db";
 import { headerOption } from "../scraper";
 import { httpGet } from "../utils";
+import { compareTwoStrings } from "string-similarity";
 
 export function transformKitsuToAnime(kitsuData: Record<string, any>): Anime {
   let anime: any = {};
@@ -64,7 +65,7 @@ export async function getPartialInfo(
         anime.slug = slugs[0];
         anime.dubSlug = slugs[1];
       }
-    } 
+    }
     if (!anime.slug) {
       console.log("Alternative method to get slug");
       anime.slug = await getAlternativeSlug(
@@ -89,7 +90,8 @@ export async function getPartialInfo(
       anime.episodes = epInfo.totalEpisodes;
     }
     return anime;
-  } catch { // either error at json conversion for anime with no episode sources / no mal id and no gogoanime slug
+  } catch {
+    // either error at json conversion for anime with no episode sources / no mal id and no gogoanime slug
     anime = await db.anime.create({
       data: {
         available: false,
@@ -105,47 +107,6 @@ export async function getPartialInfo(
     });
     return anime;
   }
-}
-
-export async function recurseRelations(kitsuId: number, roles: string[]) {
-  let related = {
-    character: [],
-    sequel: [],
-    other: [],
-    spinoff: [],
-    prequel: [],
-    alternative_version: [],
-  };
-  let resp = await httpGet(
-    `https://kitsu.io/api/edge/anime/${kitsuId}?include=mediaRelationships.destination`
-  );
-  let data = resp.included;
-  let relatedAnime = data.filter((obj) => obj.type == "anime");
-  let mediaRelationships = data.filter(
-    (obj) =>
-      obj.type == "mediaRelationships" &&
-      obj.relationships.destination.data.type == "anime"
-  );
-  await Promise.all(
-    mediaRelationships.map(async (obj) => {
-      let role = obj.attributes.role;
-      let animeId = obj.relationships.destination.data.id;
-
-      if (roles.includes(role)) {
-        let animeData = relatedAnime.filter((anime) => anime.id == animeId)[0];
-        console.log(role);
-        let anime = transformKitsuToAnime(animeData);
-        related[role].push(anime);
-        let res = await recurseRelations(animeId, [role]);
-        console.log("Result from inner node:");
-        Object.keys(res).forEach((key) => {
-          console.log(key, related[key]);
-          related[key] = related[key].concat(res[key]);
-        });
-      }
-    })
-  );
-  return related;
 }
 
 export function getGenresFromIncluded(included) {
@@ -183,7 +144,7 @@ export async function getMalId(kitsuId: number) {
   return parseInt(data.attributes.externalId);
 }
 
-function stringSigPart(word: string) {
+function significantParts(word: string) {
   if (!word) return word;
   word = word.replace(/[!@#$%^&*():-]/g, "");
   let articles = ["the", "a", "an", "in"];
@@ -194,64 +155,24 @@ function stringSigPart(word: string) {
   return nw.toLowerCase();
 }
 
-function stringSimilarity(s1: string, s2: string) {
-  var longer = s1;
-  var shorter = s2;
-  if (!s1 || !s2) return 0;
-  console.log({ longer, shorter });
-  if (s1.length < s2.length) {
-    longer = s2;
-    shorter = s1;
-  }
-  var longerLength = longer.length;
-  if (longerLength == 0) {
-    return 1.0;
-  }
-  return (longerLength - editDistance(longer, shorter)) / longerLength;
-}
-
-function editDistance(s1: string, s2: string) {
-  s1 = s1.toLowerCase();
-  s2 = s2.toLowerCase();
-
-  var costs = new Array();
-  for (var i = 0; i <= s1.length; i++) {
-    var lastValue = i;
-    for (var j = 0; j <= s2.length; j++) {
-      if (i == 0) costs[j] = j;
-      else {
-        if (j > 0) {
-          var newValue = costs[j - 1];
-          if (s1.charAt(i - 1) != s2.charAt(j - 1))
-            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
-          costs[j - 1] = lastValue;
-          lastValue = newValue;
-        }
-      }
-    }
-    if (i > 0) costs[s2.length] = lastValue;
-  }
-  return costs[s2.length];
-}
-
 async function getAlternativeSlug(kitsuSlug: string, kitsuTitle: string) {
   let resp = await axios.get(
     `https://gogoanime.tel/search.html?keyword=${kitsuSlug}`
   );
-  console.log("Fetching alternative slug for" + kitsuSlug)
+  console.log("Fetching alternative slug for" + kitsuSlug);
   console.log(kitsuTitle);
   const $ = load(resp.data);
-  let sigTitle = stringSigPart(kitsuTitle);
+  let sigTitle = significantParts(kitsuTitle);
   let slug = "";
   $("p.name > a").each((i, elem) => {
     let animeTitle = $(elem).text();
-    let sigAnime = stringSigPart(animeTitle);
+    let sigAnime = significantParts(animeTitle);
     console.log({
       sigAnime,
       sigTitle,
-      match: stringSimilarity(sigAnime, sigTitle),
+      match: compareTwoStrings(sigAnime, sigTitle),
     });
-    if (!slug && stringSimilarity(sigAnime, sigTitle) > 0.95) {
+    if (!slug && compareTwoStrings(sigAnime, sigTitle) > 0.95) {
       console.log("Found match");
       slug = $(elem).attr("href").split("/")[2];
     }

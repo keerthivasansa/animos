@@ -11,3 +11,4 @@ test.js
 stash
 log.txt
 test.ts
+test*.js

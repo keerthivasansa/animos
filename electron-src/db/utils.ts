@@ -2,7 +2,7 @@ import { app } from "electron";
 import { fork } from "node:child_process";
 import { resolve, join } from "node:path";
 import { existsSync, readdirSync } from "node:fs";
-import { db, dbPath } from "../db";
+import { db, dbPath } from ".";
 
 const platformToExecutables = {
   win32: {

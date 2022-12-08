@@ -47,16 +47,9 @@ export const decodeStreamingLinkAnimix = async (animixLiveApiLink) => {
     plyrLink = await res.request.res.responseUrl;
   }
 
-  const sourceLink = decodeString((animixLiveApiRegex.exec(plyrLink) ?? [''])[0]);
+  const sourceLink = decodeString(
+    (animixLiveApiRegex.exec(plyrLink) ?? [""])[0]
+  );
 
   return sourceLink;
-};
-
-export const firstLetterToUpperCase = (str) => {
-  var splitStr = str.toLowerCase().split(" ");
-  for (var i = 0; i < splitStr.length; i++) {
-    splitStr[i] =
-      splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-  }
-  return splitStr.join(" ");
 };
