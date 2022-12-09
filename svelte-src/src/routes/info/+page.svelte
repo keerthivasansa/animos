@@ -74,7 +74,7 @@
               <div
                 class="absolute bottom-0 left-0 w-full h-full bg-black rounded-b-lg black-gradient"
               />
-              <div
+              <button
                 class="absolute cursor-pointer"
                 style="bottom: -1rem;left: calc(50% - 2rem)"
                 on:click={(_) => (descriptionExpand = true)}
@@ -82,7 +82,7 @@
                 <IconBtn>
                   <FaDown />
                 </IconBtn>
-              </div>
+              </button>
             {/if}
           </div>
         </div>
@@ -105,7 +105,8 @@
           {/if}
         </div>
         <div
-          class="mt-10 flex gap-5 flex-wrap max-w-xl justify-center items-center"
+          style="max-width: 75%;"
+          class="my-10 flex gap-5 flex-wrap justify-center items-center"
         >
           {#each generateRange(episodePage * 100 + (anime.zeroEpisode ? 0 : 1), (episodePage + 1) * 100, anime.episodes) as epNo}
             <a
@@ -114,25 +115,25 @@
               class=" bg-gray-300 text-center rounded-sm"
               href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&zeroEp={anime.zeroEpisode}&totalEpisode={anime.episodes}"
             >
-              <span class="font-semibold text-black">{epNo}</span>
+              <span class="font-semibold text-gray-800">{epNo}</span>
             </a>
           {/each}
         </div>
       </div>
     </section>
-    <div
+    <button
       on:click={(_) => {
         anime.liked = !anime.liked;
         window.api.anime.setLike(anime.kitsuId, anime.liked);
       }}
-      class="fixed overflow-hidden active:scale-110 rounded-lg text-gray-800 {anime.liked
+      class="fixed overflow-hidden active:scale-110 w-fit rounded-lg text-gray-800 {anime.liked
         ? 'bg-accent'
-        : 'bg-gray-400'} bottom-8 right-8"
+        : 'bg-gray-400'} p-0 bottom-8 right-8"
     >
       <IconBtn bgAccent={false}>
         <FaHeart />
       </IconBtn>
-    </div>
+    </button>
   {:else}
     <div class="w-full h-full flex flex-col gap-12 justify-center items-center">
       <div class="w-32 text-white">
