@@ -30,7 +30,11 @@ app.enableSandbox();
 export const isDev = !app.isPackaged;
 
 export let currentWindow: BrowserWindow;
-const iconPath = join(__dirname, "../../build/icons/favicon.ico");
+
+export const rootPath = isDev ? "" : process.resourcesPath;
+
+console.log(__dirname);
+const iconPath = join(rootPath, "build/icons/favicon.ico");
 
 let appTray: Tray;
 
@@ -86,14 +90,16 @@ app.on("web-contents-created", (event, webContent) => {
       // deny all permissions.
       const url = webContent.getURL();
       console.log(url, "is requesting", permission);
-      if (allowedPermissions.includes(permission)) cb(true);
-      else cb(false);
+      cb(allowedPermissions.includes(permission));
     }
   );
 });
 
 export async function getWindow(): Promise<BrowserWindow> {
-  if (currentWindow) return currentWindow;
+  if (currentWindow) {
+    currentWindow.show();
+    return currentWindow;
+  }
   currentWindow = await createWindow();
   return new Promise((res, rej) => {
     currentWindow.on("ready-to-show", () => res(currentWindow));
@@ -104,31 +110,19 @@ if (!singleInstanceLock) {
   console.log("Preventing launch of another instance");
   app.quit();
 } else {
-  startApp();  
+  app.on("ready", startApp);
   app.on("second-instance", async (event, args, workingDirectory, data) => {
-    console.log("Second instance is coming");
-    if (currentWindow?.isMinimized) {
-      currentWindow.restore();
-      currentWindow.show();
-    } else {
-      startApp();
-    }
+    console.log("Second instance launch detected, restoring current window");
+    getWindow();
   });
 }
 
 async function startApp() {
+  app.setAppUserModelId("com.keerthivasan.animos");
+  appTray = new Tray(iconPath);
+  appTray.setContextMenu(trayMenu);
   currentWindow = await getWindow();
-  app.whenReady().then(async () => {
-    app.setAppUserModelId("com.keerthivasan.animos");
-    appTray = new Tray(iconPath);
-    appTray.setContextMenu(trayMenu);
-    if (currentWindow) {
-      currentWindow.show();
-      currentWindow.focus();
-    } else {
-      currentWindow = await createWindow();
-    }
-  });
+  appTray.on("double-click", getWindow);
 }
 
 // prevent quitting the app on window close
