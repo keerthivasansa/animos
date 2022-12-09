@@ -102,8 +102,8 @@
             }`}
             class="absolute flex items-end px-4 font-bold py-2 justify-end bottom-0 h-3/5 left-0 w-full"
           >
-            <span class="text-lg mx-1">#</span>
-            <span class="text-5xl">{rank + 1}</span>
+            <span class="{rank < 3 ? 'text-lg' : 'text-base'} mx-1">#</span>
+            <span class={rank < 3 ? "text-5xl" : "text-3xl"}>{rank + 1}</span>
           </div>
         {/if}
       </div>
