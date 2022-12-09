@@ -8,6 +8,9 @@ import { logger } from "../utils";
 
 config();
 
+const singleInstanceLock = app.requestSingleInstanceLock();
+console.log("First instance:", singleInstanceLock);
+
 console.info("Starting app . . .");
 
 // register all the ipc functions
@@ -97,17 +100,36 @@ export async function getWindow(): Promise<BrowserWindow> {
   });
 }
 
-app.whenReady().then(async () => {
-  app.setAppUserModelId("com.keerthivasan.animos");
-  appTray = new Tray(iconPath);
-  appTray.setContextMenu(trayMenu);
-  if (currentWindow) {
-    currentWindow.show();
-    currentWindow.focus();
-  } else {
-    currentWindow = await createWindow();
-  }
-});
+if (!singleInstanceLock) {
+  console.log("Preventing launch of another instance");
+  app.quit();
+} else {
+  startApp();  
+  app.on("second-instance", async (event, args, workingDirectory, data) => {
+    console.log("Second instance is coming");
+    if (currentWindow?.isMinimized) {
+      currentWindow.restore();
+      currentWindow.show();
+    } else {
+      startApp();
+    }
+  });
+}
+
+async function startApp() {
+  currentWindow = await getWindow();
+  app.whenReady().then(async () => {
+    app.setAppUserModelId("com.keerthivasan.animos");
+    appTray = new Tray(iconPath);
+    appTray.setContextMenu(trayMenu);
+    if (currentWindow) {
+      currentWindow.show();
+      currentWindow.focus();
+    } else {
+      currentWindow = await createWindow();
+    }
+  });
+}
 
 // prevent quitting the app on window close
 app.on("window-all-closed", (e) => {
