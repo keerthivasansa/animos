@@ -1,6 +1,12 @@
 import { ipcMain } from "electron";
 import { db } from "../../db";
-import { getEpisodes, getSkipTimes, getEpisode, renewSource } from "./index";
+import {
+  getEpisodes,
+  getSkipTimes,
+  getEpisode,
+  renewSource,
+  getHistory,
+} from "./index";
 
 ipcMain.handle("episode:info", async (event, kitsuId: number, page: number) => {
   let result = await getEpisodes(kitsuId, page);
@@ -90,3 +96,8 @@ ipcMain.handle(
     return;
   }
 );
+
+ipcMain.handle("episode:history", async (event, page: number) => {
+  let result = await getHistory(page);
+  return result;
+});

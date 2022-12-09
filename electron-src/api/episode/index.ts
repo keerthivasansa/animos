@@ -201,3 +201,42 @@ export async function renewSource(kitsuId: number, episodeNum: number) {
   });
   return source;
 }
+
+export async function getHistory(page: number) {
+  let total = await db.episode.count({
+    where: {
+      length: {
+        not: null,
+      },
+      watchTime: {
+        gt: 0,
+      },
+    },
+  });
+  let episodes = await db.episode.findMany({
+    where: {
+      length: {
+        not: null,
+      },
+      watchTime: {
+        gt: 0,
+      },
+    },
+    select: {
+      watchTime: true,
+      length: true,
+      number: true,
+      anime: true,
+    },
+    skip: (page - 1) * 20,
+    take: 20,
+    orderBy: {
+      lastUpdated: "desc",
+    },
+  });
+  return {
+    data: episodes,
+    totalItems: total,
+    currentPage: page,
+  };
+}

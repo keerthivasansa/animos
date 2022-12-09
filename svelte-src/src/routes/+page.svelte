@@ -1,4 +1,6 @@
 <script lang="ts">
+  import History from "../lib/components/History.svelte";
+
   import Carousel from "$lib/components/Carousel.svelte";
   import CoverAnime from "$lib/components/CoverAnime.svelte";
   import EpisodeProgress from "$lib/components/EpisodeProgress.svelte";
@@ -59,35 +61,7 @@
         </h2>
         <div class="flex gap-12 my-8 flex-wrap justify-center sm:justify-start">
           {#each episodes as ep}
-            <a
-              href="/episode?animeId={ep.anime
-                .kitsuId}&episodeId={ep.number}&totalEpisode={ep.anime
-                .episodes}&zeroEp={ep.anime.zeroEpisode}"
-            >
-              <div class="flex flex-col gap-2 items-center">
-                <CoverAnime
-                  anime={ep.anime}
-                  infoOnHover={false}
-                  navigate={false}
-                />
-                <div
-                  class="flex justify-between w-full text-sm my-2 text-gray-300 px-2"
-                >
-                  <span>Episode {ep.number}</span>
-                  <span
-                    >{formatTime(ep.watchTime)} / {formatTime(
-                      ep.length ?? 0
-                    )}</span
-                  >
-                </div>
-                <div class="w-full px-4">
-                  <EpisodeProgress
-                    length={ep.length ?? 0}
-                    watched={ep.watchTime}
-                  />
-                </div>
-              </div>
-            </a>
+            <History episode={ep} />
           {/each}
         </div>
       {/if}
