@@ -25,7 +25,7 @@
     <div class="flex gap-5 flex-wrap">
       {#each result.data as anime, index}
         <div class="relative">
-          {#if [0, 1, 2].includes(index)}
+          {#if pageNo == 1 && [0, 1, 2].includes(index)}
             <CoverAnime {anime} rank={index} />
           {:else}
             <CoverAnime {anime} />

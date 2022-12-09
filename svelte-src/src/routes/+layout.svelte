@@ -10,6 +10,7 @@
   import { addKeyBoardShortcuts, capitalize, lightOrDark } from "$lib/utils";
   import { page } from "$app/stores";
   import FaArrowLeft from "svelte-icons/fa/FaArrowLeft.svelte";
+  import FaHamburger from "svelte-icons/fa/FaBars.svelte";
 
   import FaArrowRight from "svelte-icons/fa/FaArrowRight.svelte";
   import FaRedo from "svelte-icons/fa/FaRedo.svelte";
@@ -116,14 +117,14 @@
         <div
           class="transition-all ease-linear duration-200"
           style="margin-left: {marginLeft}rem;"
-          on:click={(_) => showSidebar = true}
+          on:click={(_) => (showSidebar = true)}
           on:keydown={(e) => {
-            if (e.code === "13") showSettings.set(true);
+            if (e.code === "13") showSidebar = true;
           }}
           on:mouseenter={(_) => (marginLeft = -2)}
         >
           <IconBtn>
-            <FaGear />
+            <FaHamburger />
           </IconBtn>
         </div>
         <a href="/">

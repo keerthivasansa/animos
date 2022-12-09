@@ -1,8 +1,13 @@
 <script>
   import { clickOutside } from "$lib/actions";
+  import { showSettings } from "$lib/stores";
   import FaXMark from "./FaXMark.svelte";
 
   export let show = false;
+
+  function close() {
+    show = false;
+  }
 </script>
 
 <section
@@ -20,9 +25,15 @@
     </button>
   </div>
   <div class="flex flex-col gap-10 text-left items-start pl-2 pr-16 py-8">
-    <a href="/popular">Popular</a>
-    <a href="#">Genre</a>
-    <a href="#">History</a>
-    <a href="#">Settings</a>
+    <a href="/popular" on:click={close}>Popular</a>
+    <a href="#genre" on:click={close}>Genre</a>
+    <a href="#history" on:click={close}>History</a>
+    <a
+      href="#settings"
+      on:click={(_) => {
+        showSettings.set(true);
+        show = false;
+      }}>Settings</a
+    >
   </div>
 </section>
