@@ -16,9 +16,10 @@
   import FaWindowMinimize from "svelte-icons/fa/FaWindowMinimize.svelte";
   import FaWindowMaximize from "svelte-icons/fa/FaWindowMaximize.svelte";
   import FaXMark from "$lib/components/FaXMark.svelte";
+  import Sidebar from "$lib/components/Sidebar.svelte";
 
   let searchQuery = $page.url.searchParams.get("q") ?? "";
-
+  let showSidebar = false;
   let marginLeft = -4.25;
 
   function autoCapWords() {
@@ -27,8 +28,6 @@
       .map((word) => capitalize(word))
       .join(" ");
   }
-
-  function windowState() {}
 
   onMount(async () => {
     addKeyBoardShortcuts();
@@ -63,6 +62,7 @@
 </script>
 
 <Settings />
+<Sidebar bind:show={showSidebar} />
 
 <div class="flex flex-col gap-0 overflow-hidden">
   <div class="sticky top-0 left-0" style="z-index: 50;">
@@ -116,7 +116,7 @@
         <div
           class="transition-all ease-linear duration-200"
           style="margin-left: {marginLeft}rem;"
-          on:click={(_) => showSettings.set(true)}
+          on:click={(_) => showSidebar = true}
           on:keydown={(e) => {
             if (e.code === "13") showSettings.set(true);
           }}
@@ -151,7 +151,7 @@
       </div>
     </nav>
   </div>
-  <main class="scrollable">
+  <main class="scrollable relative">
     <slot />
   </main>
 </div>

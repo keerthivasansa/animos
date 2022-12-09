@@ -148,3 +148,9 @@ export async function getUserRecommendations() {
     }
   );
 }
+
+export function getPopular(page: number) {
+  return search({}, page, {
+    sort: "popularityRank",
+  });
+}

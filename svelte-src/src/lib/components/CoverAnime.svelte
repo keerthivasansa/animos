@@ -9,9 +9,11 @@
   export let anime: Anime;
   export let infoOnHover = true;
   export let navigate = true;
+  export let rank = -1;
 
   let currentCoverAnime: number;
   let element: HTMLElement;
+  const topIndexColors = ["#FFE145", "#E6E6E6", "#FFAD61"];
 
   coverAnimeFocus.subscribe((val) => (currentCoverAnime = val));
   $: focused = infoOnHover && currentCoverAnime == anime.kitsuId;
@@ -20,7 +22,6 @@
 
   let animeTitle = getTitle(anime);
   onMount(() => {
-    let contentDiv = document.getElementById(`content-${anime.kitsuId}`);
     contentSize = `${
       document.getElementById(`content-${anime.kitsuId}`)?.clientHeight
     }px`;
@@ -90,11 +91,27 @@
       style={focused ? "z-index:10" : " z-index: 2;"}
     >
       <div
-        class="w-48"
+        class="w-48 relative"
         style="background-image: url('{anime.posterImg}'); aspect-ratio: 7 / 9;background-size:cover;"
-      />
+      >
+        {#if rank >= 0}
+          <div
+            style={`z-index: ${
+              focused ? "50" : "5"
+            }; background: linear-gradient(to bottom, rgb(0, 0, 0, 10%), rgb(0, 0, 0, 100%)); color: ${
+              topIndexColors[rank]
+            }`}
+            class="absolute flex items-end px-4 font-bold py-2 justify-end bottom-0 h-3/5 left-0 w-full"
+          >
+            <span class="text-lg mx-1">#</span>
+            <span class="text-5xl">{rank + 1}</span>
+          </div>
+        {/if}
+      </div>
 
-      <div class="bg-black text-white bg-opacity-30 flex items-center justify-center opacity-1 text-center py-3">
+      <div
+        class="bg-black text-white bg-opacity-30 flex items-center justify-center opacity-1 text-center py-3"
+      >
         <h2 class="text-sm limit-lines">
           {animeTitle}
         </h2>

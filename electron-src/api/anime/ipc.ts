@@ -1,5 +1,11 @@
 import { ipcMain } from "electron";
-import { getUserRecommendations, getInfo, getPosters, search } from "./index";
+import {
+  getUserRecommendations,
+  getInfo,
+  getPosters,
+  search,
+  getPopular,
+} from "./index";
 import { Anime } from "@prisma/client";
 import { db } from "../../db";
 
@@ -47,5 +53,10 @@ ipcMain.handle(
 
 ipcMain.handle("anime:genre", async (event, genre: string) => {
   let result = [];
+  return result;
+});
+
+ipcMain.handle("anime:popular", async (event, page: number) => {
+  let result = await getPopular(page);
   return result;
 });

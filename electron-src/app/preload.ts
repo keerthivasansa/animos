@@ -22,6 +22,7 @@ const endpoints = {
       ipcRenderer.invoke("anime:like", kitsuId, liked),
     getUserRecommendations: () =>
       ipcRenderer.invoke("anime:user-recommendations"),
+    getPopular: (page: number) => ipcRenderer.invoke("anime:popular", page),
   },
   episode: {
     info: (kitsuId: number, page: number) =>

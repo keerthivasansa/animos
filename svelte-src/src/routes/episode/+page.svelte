@@ -6,7 +6,6 @@
   import { State, type EpisodeWithSkip } from "$lib/types";
   import type { Episode } from "@prisma/client";
   import EpisodeProgress from "$lib/components/EpisodeProgress.svelte";
-  import { scrollOnCondition } from "$lib/actions";
 
   let animeId: number;
   let episodeNum: number;
@@ -116,7 +115,7 @@
       </div>
     {/if}
   </div>
-  <div class="episodes-container overflow-y-auto pr-10 py-20">
+  <div class="episodes-container pr-10 py-20">
     <div>
       <span class="text-2xl font-semibold">Episodes</span>
       {#if totalEpisodes > 100}
@@ -134,7 +133,7 @@
         </select>
       {/if}
     </div>
-    <div class="flex gap-4 my-5 flex-col episode-wrapper">
+    <div class="flex gap-4 my-5 flex-col episode-wrapper overflow-y-auto">
       {#if pageState != State.Loading}
         {#each result.allEpisodes as ep (ep.number)}
           <a
