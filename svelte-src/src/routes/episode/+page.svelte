@@ -76,8 +76,11 @@
   }}
 />
 
-<section class="flex px-4 relative justify-evenly overflow-hidden text-white" style="height: 100%;">
-  <div class="rounded-lg my-10 overflow-hidden">
+<section
+  class="flex px-4 main-wrapper relative justify-evenly items-center overflow-hidden text-white"
+  style="height: 100%;"
+>
+  <div class="rounded-lg my-10 video-container">
     {#if pageState == State.Loading}
       <div
         style="width: 60rem;"
@@ -113,60 +116,58 @@
       </div>
     {/if}
   </div>
-  <div class="episodes-container overflow-y-auto pr-10 my-10">
-    <div class="my-14" style="width: 23rem;">
-      <div>
-        <span class="text-2xl font-semibold">Episodes</span>
-        {#if totalEpisodes > 100}
-          <select
-            on:input={(e) => changeEpisodePage(parseInt(e.currentTarget.value))}
-            name="episode-page"
-            class="bg-gray-200 h-fit w-fit text-sm ml-5 rounded-md"
-            bind:value={episodePage}
-          >
-            {#each Array.from( { length: Math.ceil(totalEpisodes / 100) } ) as _, index}
-              <option value={index}
-                >{index * 100 + (zeroEp ? 0 : 1)} - {(index + 1) * 100}</option
-              >
-            {/each}
-          </select>
-        {/if}
-      </div>
-      <div class="flex gap-4 my-5 flex-col episode-wrapper">
-        {#if pageState != State.Loading}
-          {#each result.allEpisodes as ep (ep.number)}
-            <a
-              data-sveltekit-reload
-              href="/episode?episodeId={ep.number}&animeId={animeId}"
+  <div class="episodes-container overflow-y-auto pr-10 py-20">
+    <div>
+      <span class="text-2xl font-semibold">Episodes</span>
+      {#if totalEpisodes > 100}
+        <select
+          on:input={(e) => changeEpisodePage(parseInt(e.currentTarget.value))}
+          name="episode-page"
+          class="bg-gray-200 h-fit w-fit text-sm ml-5 rounded-md"
+          bind:value={episodePage}
+        >
+          {#each Array.from( { length: Math.ceil(totalEpisodes / 100) } ) as _, index}
+            <option value={index}
+              >{index * 100 + (zeroEp ? 0 : 1)} - {(index + 1) * 100}</option
             >
-              <!-- currentEpNumber + 3 added to make the current episode appear in the center -->
-              <div
-                id="ep-{ep.number}"
-                style={ep.number == episodeNum
-                  ? "border: 3px solid var(--accent-color);"
-                  : ""}
-                class="{ep.watchTime / (ep.length ?? 1) > 0.9
-                  ? 'opacity-50'
-                  : 'opacity-100'} cursor-pointer font-semibold flex gap-2 flex-col text-sm w-full text-left border-slate-400 border-2 rounded-md my-2 px-4 py-2"
-              >
-                <span class="my-4">{ep.number}. {ep.title}</span>
-                {#if ep.length}
-                  <EpisodeProgress
-                    length={ep.length ?? 0}
-                    watched={ep.watchTime}
-                  />
-                {/if}
-              </div>
-            </a>
           {/each}
-        {:else}
-          {#each Array.from({ length: 10 }) as _}
+        </select>
+      {/if}
+    </div>
+    <div class="flex gap-4 my-5 flex-col episode-wrapper">
+      {#if pageState != State.Loading}
+        {#each result.allEpisodes as ep (ep.number)}
+          <a
+            data-sveltekit-reload
+            class="flex-grow "
+            href="/episode?episodeId={ep.number}&animeId={animeId}"
+          >
             <div
-              class="bg-slate-700 h-8 w-full rounded-md animate-pulse my-2 px-3 py-2"
-            />
-          {/each}
-        {/if}
-      </div>
+              id="ep-{ep.number}"
+              style={ep.number == episodeNum
+                ? "border: 3px solid var(--accent-color);"
+                : ""}
+              class="{ep.watchTime / (ep.length ?? 1) > 0.9
+                ? 'opacity-50'
+                : 'opacity-100'} cursor-pointer font-semibold flex gap-2 flex-col text-sm w-full text-left border-slate-400 border-2 rounded-md my-2 px-4 py-2"
+            >
+              <span class="my-4">{ep.number}. {ep.title}</span>
+              {#if ep.length}
+                <EpisodeProgress
+                  length={ep.length ?? 0}
+                  watched={ep.watchTime}
+                />
+              {/if}
+            </div>
+          </a>
+        {/each}
+      {:else}
+        {#each Array.from({ length: 10 }) as _}
+          <div
+            class="bg-slate-700 h-8 w-full rounded-md animate-pulse my-2 px-3 py-2"
+          />
+        {/each}
+      {/if}
     </div>
   </div>
 </section>
@@ -175,5 +176,22 @@
   .episodes-container {
     height: 100%;
     overflow-y: auto;
+    width: 23rem;
+  }
+
+  @media (min-height: 1400px), (max-width: 750px) {
+    .video-container {
+      width: fit-content;
+    }
+    .episodes-container {
+      width: 100%;
+      @apply px-20 my-0 py-0 w-fit;
+    }
+    .main-wrapper {
+      @apply flex-col;
+    }
+    .episode-wrapper {
+      @apply flex-row flex-wrap;
+    }
   }
 </style>

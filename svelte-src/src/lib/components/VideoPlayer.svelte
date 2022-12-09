@@ -229,4 +229,24 @@
   .limit-size {
     height: 32vw;
   }
+
+  @media (min-width: 1400px) {
+    .limit-size {
+      width: 100%;
+      height: calc(width * 9 / 16);
+    }
+  }
+
+  @media (max-height: 750px) {
+    .limit-size {
+      height: 50vh;
+    }
+  }
+
+  @media (max-width: 750px) {
+    .limit-size {
+      width: 100%;
+      height: 55vw;
+    }
+  }
 </style>
