@@ -23,6 +23,9 @@ const endpoints = {
     getUserRecommendations: () =>
       ipcRenderer.invoke("anime:user-recommendations"),
     getPopular: (page: number) => ipcRenderer.invoke("anime:popular", page),
+    getGenre: (genre: string, page: number) =>
+      ipcRenderer.invoke("anime:genre", genre, page),
+    getGenreNames: () => ipcRenderer.invoke("anime:genre-names"),
   },
   episode: {
     info: (kitsuId: number, page: number) =>

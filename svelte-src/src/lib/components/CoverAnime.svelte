@@ -42,11 +42,7 @@
   });
 </script>
 
-<svelte:element
-  this={navigate ? "a" : "div"}
-  href="/info?animeId={anime.kitsuId}&title={animeTitle}"
-  data-sveltekit-reload
->
+<div>
   <div
     style="height: {contentSize};"
     bind:this={element}
@@ -83,7 +79,10 @@
       </div>
       <span class="text-sm">Episodes: {anime.episodes}</span>
     </div>
-    <div
+    <svelte:element
+      this={navigate ? "a" : "div"}
+      href="/info?animeId={anime.kitsuId}&title={animeTitle}"
+      data-sveltekit-reload
       id="content-{anime.kitsuId}"
       class="opacity-1 absolute top-0 left-0 {focused
         ? 'rounded-l-md'
@@ -116,9 +115,9 @@
           {animeTitle}
         </h2>
       </div>
-    </div>
+    </svelte:element>
   </div>
-</svelte:element>
+</div>
 
 <style>
   .limit-lines {

@@ -104,3 +104,15 @@ export function addKeyBoardShortcuts() {
     }
   };
 }
+
+export function replaceStateWithQuery(values: Record<string, string>) {
+  const url = new URL(window.location.toString());
+  for (let [key, val] of Object.entries(values)) {
+    if (!!val) {
+      url.searchParams.set(encodeURIComponent(key), encodeURIComponent(val));
+    } else {
+      url.searchParams.delete(key);
+    }
+  }
+  history.replaceState({}, "", url);
+}

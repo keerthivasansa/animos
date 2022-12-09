@@ -5,6 +5,8 @@ import {
   getPosters,
   search,
   getPopular,
+  getGenre,
+  getGenreNames,
 } from "./index";
 import { Anime } from "@prisma/client";
 import { db } from "../../db";
@@ -51,8 +53,13 @@ ipcMain.handle(
   }
 );
 
-ipcMain.handle("anime:genre", async (event, genre: string) => {
-  let result = [];
+ipcMain.handle("anime:genre-names", async (event) => {
+  let genreNames = await getGenreNames();
+  return genreNames;
+})
+
+ipcMain.handle("anime:genre", async (event, genre: string, page: number) => {
+  let result = getGenre(genre, page);
   return result;
 });
 

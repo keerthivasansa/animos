@@ -154,3 +154,17 @@ export function getPopular(page: number) {
     sort: "popularityRank",
   });
 }
+
+export function getGenre(genre: string, page: number) {
+  return search({ categories: genre }, page, {
+    sort: "popularityRank",
+  });
+}
+
+export async function getGenreNames() {
+  let resp = await httpGet(
+    "https://kitsu.io/api/edge/categories?sort=-totalMediaCount&page[limit]=20&page[offset]=0&filter[nsfw]=false&fields[categories]=title"
+  );
+  let names = resp.data.map((obj) => obj.attributes.title);
+  return names;
+}
