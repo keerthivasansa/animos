@@ -7,7 +7,7 @@
   import { convertRemToPixels, getTitle } from "$lib/utils";
   import { onMount } from "svelte";
   import type { Anime } from "@prisma/client";
-  import FaCircleXMark from "$lib/components/FaCircleXMark.svelte";
+  import FaCircleXMark from "$lib/components/FaXMark.svelte";
 
   let descriptionExpand = false;
   let episodePage = 0;

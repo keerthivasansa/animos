@@ -23,7 +23,7 @@ export async function getEpisodePage(
         skip + i * 20
       }`
     );
-    episodes.push(...res.data.map((ep) => transformKitsuToEp(ep, kitsuId)));
+    episodes.push(...res.data.data.map((ep) => transformKitsuToEp(ep, kitsuId)));
   }
   return episodes;
 }

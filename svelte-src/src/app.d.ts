@@ -16,7 +16,7 @@ declare module "svelte-plyr" {
 declare interface Window {
   player: import("plyr");
   hls: import("hls.js");
-  api: import("../../electron-src/preload").EndpointType;
+  api: import("../../electron-src/app/preload").EndpointType;
 }
 
 declare namespace svelte.JSX {

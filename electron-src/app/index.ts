@@ -53,7 +53,7 @@ async function createWindow() {
       preload: preloadPath,
     },
     show: false,
-    frame: true,
+    frame: false,
     autoHideMenuBar: true,
   });
 

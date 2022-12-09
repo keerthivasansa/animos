@@ -1,6 +1,7 @@
 import { ipcMain } from "electron";
 import { currentWindow } from "../../app";
 import { db } from "../../db";
+import { WindowState } from "../../types";
 
 ipcMain.handle("system:get-preferences", async (event) => {
   let preferences = await db.preferences.findUnique({
@@ -38,4 +39,18 @@ ipcMain.handle("cache:http-delete", async (event) => {
 
 ipcMain.on("fullscreen", (event, makeFullscreen: boolean) => {
   currentWindow?.setFullScreen(makeFullscreen);
+});
+
+ipcMain.on("system:window", (event, type: WindowState) => {
+  switch (type) {
+    case "maximize":
+      currentWindow.maximize();
+      break;
+    case "minimize":
+      currentWindow.minimize();
+      break;
+    case "close":
+      currentWindow.close();
+      break;
+  }
 });

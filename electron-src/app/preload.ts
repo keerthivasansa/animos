@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 import type { Anime, Preferences } from "@prisma/client";
-import type { EpisodeWithAnime } from "../types";
+import type { EpisodeWithAnime, WindowState } from "../types";
 
 const endpoints = {
   anime: {
@@ -61,6 +61,7 @@ const endpoints = {
         cb(link);
       });
     },
+    window: (type: WindowState) => ipcRenderer.send("system:window", type),
     getPreferences: () =>
       ipcRenderer.invoke("system:get-preferences") as Promise<Preferences>,
     setPreferences: (update: Record<string, any>) =>
