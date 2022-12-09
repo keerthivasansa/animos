@@ -76,8 +76,8 @@
   }}
 />
 
-<section class="flex justify-between px-4 text-white">
-  <div class="rounded-lg overflow-hidden my-10 fixed w-240">
+<section class="flex px-4 relative justify-evenly overflow-hidden text-white" style="height: 100%;">
+  <div class="rounded-lg my-10 overflow-hidden">
     {#if pageState == State.Loading}
       <div
         style="width: 60rem;"
@@ -113,7 +113,7 @@
       </div>
     {/if}
   </div>
-  <div class="episodes-container" style="margin-left: 65rem;">
+  <div class="episodes-container overflow-y-auto pr-10 my-10">
     <div class="my-14" style="width: 23rem;">
       <div>
         <span class="text-2xl font-semibold">Episodes</span>
@@ -142,7 +142,6 @@
               <!-- currentEpNumber + 3 added to make the current episode appear in the center -->
               <div
                 id="ep-{ep.number}"
-                
                 style={ep.number == episodeNum
                   ? "border: 3px solid var(--accent-color);"
                   : ""}
@@ -176,9 +175,5 @@
   .episodes-container {
     height: 100%;
     overflow-y: auto;
-  }
-
-  .w-240 {
-    max-width: 60rem;
   }
 </style>

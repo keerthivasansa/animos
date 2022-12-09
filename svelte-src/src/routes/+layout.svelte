@@ -162,7 +162,7 @@
   }
 
   .scrollable {
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     height: 85vh;
   }

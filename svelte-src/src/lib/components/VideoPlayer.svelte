@@ -227,6 +227,6 @@
 
 <style>
   .limit-size {
-    height: 32rem;
+    height: 32vw;
   }
 </style>
