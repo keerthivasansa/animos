@@ -12,9 +12,9 @@ const platformToExecutables = {
   },
   linux: {
     migrationEngine:
-      "node_modules/@prisma/engines/migration-engine-debian-openssl-1.1.x",
+      "node_modules/@prisma/engines/migration-engine-debian-openssl-3.0.x",
     queryEngine:
-      "node_modules/@prisma/engines/libquery_engine-debian-openssl-1.1.x.so.node",
+      "node_modules/@prisma/engines/libquery_engine-debian-openssl-3.0.x.so.node",
   },
   darwin: {
     migrationEngine: "node_modules/@prisma/engines/migration-engine-darwin",
@@ -44,7 +44,7 @@ function getPath(path: string) {
   return resolve(__dirname, "..", "..", path).replace(
     "app.asar",
     "app.asar.unpacked"
-  );
+  ).replace("@prisma", "prisma");
 }
 
 export const migrationEnginePath = getPath(
@@ -62,11 +62,11 @@ export async function migratePrisma() {
   console.log("Prisma path:", prismaPath);
   const commands = app.isPackaged
     ? [
-        "migrate",
-        "deploy",
-        "--schema",
-        resolve("resources/prisma/schema.prisma"),
-      ]
+      "migrate",
+      "deploy",
+      "--schema",
+      resolve("resources/prisma/schema.prisma"),
+    ]
     : ["migrate", "dev"];
   const child = fork(prismaPath, commands, {
     stdio: "pipe",
@@ -106,9 +106,11 @@ export async function needsMigration() {
   return true;
 }
 
+console.log({ resourcePath: process.resourcesPath });
+
 function getLatestMigration() {
   let files = readdirSync(
-    app.isPackaged ? "resources/prisma/migrations" : "./prisma/migrations"
+    app.isPackaged ? join(process.resourcesPath, "/prisma/migrations") : "./prisma/migrations"
   );
   files.pop();
   return files.pop();

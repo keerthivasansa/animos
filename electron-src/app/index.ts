@@ -34,7 +34,7 @@ export let currentWindow: BrowserWindow;
 export const rootPath = isDev ? "" : process.resourcesPath;
 
 console.log(__dirname);
-const iconPath = join(rootPath, "build/icons/favicon.ico");
+const iconPath = join(rootPath, "build/icons/windows.png");
 
 let appTray: Tray;
 
