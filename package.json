@@ -23,7 +23,7 @@
     "electron:dev": "nodemon",
     "build": "npm run out:prepare && tsc && electron-builder",
     "dev:prepare": "npm install && npm run svelte:install && prisma generate",
-    "out:prepare": "npm run svelte:build && prisma generate && tsc",
+    "out:prepare": "npm run dev:prepare && npm run svelte:build && tsc",
     "publish": "electron-builder -p always"
   },
   "build": {
