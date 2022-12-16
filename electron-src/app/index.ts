@@ -71,7 +71,7 @@ async function createWindow() {
     webContents.setZoomFactor(1);
   });
 
-  updateRPC("Starting...", "");
+  updateRPC("Starting Animos", "...");
 
   if (isDev) {
     await window.loadURL("http://localhost:5173/");
