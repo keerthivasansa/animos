@@ -2,6 +2,7 @@ import { ipcMain } from "electron";
 import { currentWindow } from "../../app";
 import { db } from "../../db";
 import { WindowState } from "../../types";
+import { updateRPC } from "../../app/discord"
 
 ipcMain.handle("system:get-preferences", async (event) => {
   let preferences = await db.preferences.findUnique({
@@ -54,3 +55,7 @@ ipcMain.on("system:window", (event, type: WindowState) => {
       break;
   }
 });
+
+ipcMain.on("system:rpc", (event, sub1: string, sub2:string) => {
+  updateRPC(sub1, sub2)
+})

@@ -77,6 +77,9 @@ const endpoints = {
         available: boolean;
         releaseNotes: string;
       }>,
+    rpc: (sub1, sub2) => {
+      ipcRenderer.invoke("system:rpc", sub1, sub2)
+    },
     downloadUpdate: () => ipcRenderer.invoke("system:download-update"),
     onProgress: (cb: (val: number) => void) => {
       ipcRenderer.on("download-progress", (event, val) => cb(val));
