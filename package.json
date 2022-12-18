@@ -38,8 +38,7 @@
     ],
     "asar": true,
     "asarUnpack": [
-      "node_modules/@prisma/engines",
-      "node_modules/prisma/"
+      "node_modules/@prisma/engines"
     ],
     "directories": {
       "output": "out"
@@ -47,7 +46,13 @@
     "nsis": {
       "oneClick": false,
       "license": "LICENSE.md",
-      "installerIcon": "build/icons/windows.png"
+      "installerIcon": "build/icons/win/icon.ico"
+    },
+    "mac": {
+      "icon": "build/icons/mac/icon.icns"
+    },
+    "win": {
+      "icon": "build/icons/win/icon.ico"
     },
     "linux": {
       "target": "AppImage",
@@ -59,7 +64,7 @@
     ],
     "extraResources": [
       "prisma/**/*",
-      "build/icons/*",
+      "build/icons/**/*",
       "node_modules/.prisma/**/*",
       "node_modules/@prisma/client/**/*"
     ]
