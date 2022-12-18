@@ -124,7 +124,6 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
 export async function getSkipTimes(
   kitsuId: number,
   episodeNum: number,
-  episodeLength: number
 ) {
   if (episodeNum == 0) return [];
 
@@ -139,7 +138,7 @@ export async function getSkipTimes(
   let { malId } = anime;
   try {
     let aniSkip = await httpGet(
-      `https://api.aniskip.com/v2/skip-times/${malId}/${episodeNum}?types[]=op&types[]=ed&episodeLength=${episodeLength}`
+      `https://api.aniskip.com/v2/skip-times/${malId}/${episodeNum}?types[]=op&types[]=ed&episodeLength=0`
     );
     let skip = aniSkip.results.map((data) => {
       return {

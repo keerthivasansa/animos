@@ -15,8 +15,8 @@ ipcMain.handle("episode:info", async (event, kitsuId: number, page: number) => {
 
 ipcMain.handle(
   "episode:skip-times",
-  async (event, kitsuId: number, episodeNum: number, episodeLength: number) => {
-    let result = await getSkipTimes(kitsuId, episodeNum, episodeLength);
+  async (event, kitsuId: number, episodeNum: number) => {
+    let result = await getSkipTimes(kitsuId, episodeNum);
     return result;
   }
 );

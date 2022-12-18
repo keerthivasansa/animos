@@ -5,6 +5,7 @@
   import { onDestroy, onMount } from "svelte";
   import type { EpisodeWithSkip } from "$lib/types";
   import type { SkipTime } from "@prisma/client";
+  import { addShortcut } from "$lib/utils";
 
   export let episode: EpisodeWithSkip;
   export let hasNextEp: boolean;
@@ -96,11 +97,7 @@
             console.log("getting skip times");
             if (episode.skipTimes.length) return;
             window.api.episode
-              .getSkipTimes(
-                episode.animeKitsuId,
-                episode.number,
-                Math.ceil(player.duration)
-              )
+              .getSkipTimes(episode.animeKitsuId, episode.number)
               .then((result) => {
                 episode.skipTimes = result;
               });
@@ -160,14 +157,11 @@
       currentSkip = null;
       let show = false;
       episode.skipTimes.forEach((skip, index) => {
-        if (
-          player.currentTime > skip.start - 5 &&
-          player.currentTime < skip.end - 5
-        ) {
+        if (player.currentTime > skip.start && player.currentTime < skip.end) {
           show = true;
           btn.innerText = skip.type == "op" ? "Skip intro" : "Skip outro";
           btn.onclick = () => {
-            player.currentTime = skip.end - 5;
+            player.currentTime = skip.end;
           };
         }
       });
@@ -195,20 +189,16 @@
       }
     });
 
-    // btn.innerText = "Hello";
-    btn.style.position = "absolute";
-    btn.style.bottom = "4.5rem";
-    btn.style.background = "black";
-    btn.style.fontSize = "0.75rem";
-    btn.style.right = "2rem";
-    btn.style.opacity = "85%";
-    btn.style.display = "none";
-    btn.style.zIndex = "9999";
+    addShortcut("i", () => (player.currentTime = player.currentTime + 90));
+
     btn.classList.add("skip-btn");
     player.elements.container?.append(btn);
-  });
 
-  onDestroy(() => clearInterval(saveProgressInterval));
+    onDestroy(() => {
+      clearInterval(saveProgressInterval);
+      player.destroy();
+    });
+  });
 </script>
 
 <button id="skip-btn" class:hidden={false} />
@@ -235,6 +225,17 @@
       width: 100%;
       height: calc(width * 9 / 16);
     }
+  }
+
+  :global(.skip-btn) {
+    bottom: 4.5rem;
+    background-color: black;
+    font-size: 1.25rem;
+    position: absolute;
+    right: 2rem;
+    opacity: 85%;
+    display: none;
+    z-index: 99;
   }
 
   @media (max-height: 750px) {

@@ -35,13 +35,11 @@ const endpoints = {
     getSkipTimes: (
       kitsuId: number,
       episodeNum: number,
-      episodeLength: number
     ) =>
       ipcRenderer.invoke(
         "episode:skip-times",
         kitsuId,
         episodeNum,
-        episodeLength
       ),
     setWatchTime: (kitsuId: number, episodeNum: number, watchTime: number) =>
       ipcRenderer.invoke(

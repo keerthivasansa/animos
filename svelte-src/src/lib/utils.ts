@@ -81,6 +81,12 @@ export function formatTime(seconds: number) {
   return `${minutes}:${secs < 10 ? 0 : ""}${secs}`;
 }
 
+export function addShortcut(key: string, cb: Function) {
+  document.addEventListener("keypress", (ev) => {
+    if (ev.key == key) cb();
+  });
+}
+
 export function addKeyBoardShortcuts() {
   let settings = false;
   showSettings.subscribe((val) => (settings = val));
