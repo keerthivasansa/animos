@@ -45,9 +45,6 @@
     episodeNum = parseInt(episodeTempId);
 
     episodePage = Math.floor(episodeNum / 100);
-
-    console.log({ episodeId: episodeNum, animeId, episodePage });
-    console.time("new anime");
     let allEpisodes = (await window.api.episode.info(
       animeId,
       episodePage + 1
@@ -59,6 +56,9 @@
       currentEp,
       allEpisodes,
     };
+    console.log("Current episode:")
+    console.log(currentEp);
+    window.api.system.rpc(currentEp.anime.title, `EP${currentEp.number}`);
     console.dir({ result });
     pageState = State.Finished;
   }

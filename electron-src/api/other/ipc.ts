@@ -56,6 +56,6 @@ ipcMain.on("system:window", (event, type: WindowState) => {
   }
 });
 
-ipcMain.on("system:rpc", (event, sub1: string, sub2:string) => {
-  updateRPC(sub1, sub2)
+ipcMain.on("system:rpc", (event, title: string, subtitle:string) => {
+  updateRPC(title, subtitle)
 })

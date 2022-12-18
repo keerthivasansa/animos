@@ -84,9 +84,15 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
     select: {
       source: true,
       id: true,
-      skipTimes: true,
+      anime: {
+        select: {
+          title: true,
+          kitsuId: true,
+        }
+      },
       title: true,
       animeKitsuId: true,
+      skipTimes: true,
       watchTime: true,
       number: true,
     },
@@ -110,6 +116,12 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
     select: {
       id: true,
       number: true,
+      anime: {
+        select: {
+          kitsuId: true,
+          title: true,
+        }
+      },
       source: true,
       title: true,
       animeKitsuId: true,

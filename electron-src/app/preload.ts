@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import type { Anime, Preferences } from "@prisma/client";
+import type { Anime, Episode, Preferences } from "@prisma/client";
 import type { EpisodeWithAnime, WindowState } from "../types";
 
 const endpoints = {
@@ -32,15 +32,8 @@ const endpoints = {
       ipcRenderer.invoke("episode:info", kitsuId, page),
     get: (kitsuId: number, episodeNum: number) =>
       ipcRenderer.invoke("episode:get", kitsuId, episodeNum),
-    getSkipTimes: (
-      kitsuId: number,
-      episodeNum: number,
-    ) =>
-      ipcRenderer.invoke(
-        "episode:skip-times",
-        kitsuId,
-        episodeNum,
-      ),
+    getSkipTimes: (kitsuId: number, episodeNum: number) =>
+      ipcRenderer.invoke("episode:skip-times", kitsuId, episodeNum),
     setWatchTime: (kitsuId: number, episodeNum: number, watchTime: number) =>
       ipcRenderer.invoke(
         "episode:set-watchtime",
@@ -75,8 +68,8 @@ const endpoints = {
         available: boolean;
         releaseNotes: string;
       }>,
-    rpc: (sub1, sub2) => {
-      ipcRenderer.invoke("system:rpc", sub1, sub2)
+    rpc: (title: string, subtitle: string) => {
+      ipcRenderer.send("system:rpc", title, subtitle);
     },
     downloadUpdate: () => ipcRenderer.invoke("system:download-update"),
     onProgress: (cb: (val: number) => void) => {

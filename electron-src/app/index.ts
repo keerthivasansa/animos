@@ -4,7 +4,7 @@ import { join } from "path";
 import { config } from "dotenv";
 import { migratePrisma, needsMigration } from "../db/utils";
 import { trayMenu } from "./tray";
-import { updateRPC } from "./discord"
+import { updateRPC } from "./discord";
 import { logger } from "../utils";
 
 config();
@@ -70,8 +70,6 @@ async function createWindow() {
   webContents.on("did-finish-load", () => {
     webContents.setZoomFactor(1);
   });
-
-  updateRPC("Starting Animos", "...");
 
   if (isDev) {
     await window.loadURL("http://localhost:5173/");

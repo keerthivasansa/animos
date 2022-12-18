@@ -1,12 +1,27 @@
-const client = require("discord-rich-presence")("1053147880296296458");
+import { Client } from "discord-rpc";
 
-// NEITHER OF THESE CAN BE NULL OR EMPTY OR IT WILL NOT WORK
-export function updateRPC(sub1: string, sub2: string) {
-  client.updatePresence({
-    details: sub1,
-    state: sub2,
-    instance: true,
-    largeImageKey: "centered",
+const client = new Client({
+  transport: "ipc",
+});
+
+client.login({
+  clientId: "1054012091356430386",
+});
+
+client.on("connected", () => console.log("Discord RPC connected"));
+
+export function updateRPC(title: string, subtitle: string) {
+  client.setActivity({
+    largeImageText: "Animos",
+    buttons: [
+      {
+        label: "Download",
+        url: "https://github.com/Nectres/animos",
+      },
+    ],
+    details: title.padEnd(2),
+    state: subtitle.padEnd(2),
+    largeImageKey: "logo",
     startTimestamp: Date.now(),
   });
 }
