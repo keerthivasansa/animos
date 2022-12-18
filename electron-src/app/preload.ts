@@ -26,6 +26,7 @@ const endpoints = {
     getGenre: (genre: string, page: number) =>
       ipcRenderer.invoke("anime:genre", genre, page),
     getGenreNames: () => ipcRenderer.invoke("anime:genre-names"),
+    liked: () => ipcRenderer.invoke("anime:liked") as Promise<Anime[]>,
   },
   episode: {
     info: (kitsuId: number, page: number) =>

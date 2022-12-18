@@ -45,7 +45,7 @@
 
 {#if anime}
   {#if anime.available}
-    <section>
+    <section class="my-10 text-white">
       <div
         class="flex flex-col md:flex-row justify-center items-center my-5 gap-36"
       >

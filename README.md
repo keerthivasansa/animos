@@ -1,6 +1,6 @@
 <p align="center" style="text-align:center">
     <img src="https://ik.imagekit.io/u8heu9jhq/Header_Banner.png" width="100%" alt="Animos"/>
-    <img src="https://img.shields.io/github/workflow/status/Nectres/animos/build"/>
+    <img src="https://img.shields.io/github/actions/workflow/status/Nectres/animos/build.yml?branch=master"/>
     <img src="https://img.shields.io/github/v/tag/Nectres/animos?color=red&sort=semver"/>
     <img src="https://img.shields.io/github/downloads/Nectres/animos/total" alt=Downloads />
     <a href="https://www.github.com/Nectres/animos#details-user-list-562216545">

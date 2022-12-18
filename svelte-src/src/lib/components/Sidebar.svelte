@@ -28,6 +28,7 @@
     <a href="/popular" on:click={close}>Popular</a>
     <a href="/genre" on:click={close}>Genre</a>
     <a href="/history" on:click={close}>History</a>
+    <a href="/liked" on:click={close}>Liked</a>
     <a
       href="#settings"
       on:click={(_) => {

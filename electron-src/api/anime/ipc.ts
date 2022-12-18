@@ -29,6 +29,18 @@ ipcMain.handle("anime:user-recommendations", async (event) => {
   return result;
 });
 
+ipcMain.handle("anime:liked", async () => {
+  let result = await db.anime.findMany({
+    where: {
+      liked: true,
+    },
+    orderBy: {
+      lastUpdated: "desc",
+    },
+  });
+  return result;
+});
+
 ipcMain.handle("anime:info", async (event, kitsuId: number) => {
   console.info("Cache fail, fetching info for", kitsuId);
   try {
@@ -56,7 +68,7 @@ ipcMain.handle(
 ipcMain.handle("anime:genre-names", async (event) => {
   let genreNames = await getGenreNames();
   return genreNames;
-})
+});
 
 ipcMain.handle("anime:genre", async (event, genre: string, page: number) => {
   let result = getGenre(genre, page);

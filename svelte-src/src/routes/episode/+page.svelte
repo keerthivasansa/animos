@@ -171,7 +171,7 @@
   </div>
 </section>
 
-<style>
+<style>  
   .episodes-container {
     height: 100%;
     overflow-y: auto;
