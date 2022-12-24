@@ -7,65 +7,31 @@ import { load } from "cheerio";
 import {
   getAjaxParams,
   decryptAjaxResponse,
-  encodeString,
-  decodeStreamingLinkAnimix,
 } from ".";
 
 const gogoBase = "https://gogoanime.lu/";
 const gogoBase2 = "https://gogoanime.gg/";
 const episodeListPage = "https://ajax.gogo-load.com/ajax/load-list-episode";
 const goloadStreaming = "https://goload.pro/streaming.php";
-const animixBase = "https://animixplay.to/";
+const gogoApiBase = "https://gogoanime.consumet.org/";
 
 const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36";
 export const headerOption = { headers: { "User-Agent": USER_AGENT } };
 
 export const fetchAnimixEpisodeSource = async ({ episodeId }) => {
-  let episodeGogoLink;
-
   if (!episodeId) throw new Error("No episode id was provided");
   const animeId = episodeId.split("-").reverse().splice(2).reverse().join("-");
-  console.log({ animeId });
   const episodeNum = episodeId.split("-").splice(-1).join("");
   try {
-    const res = await axios.get(animixBase + `v1/${animeId}`, headerOption);
-    const $ = load(res.data);
-    const epList = JSON.parse($("#epslistplace").text());
-    console.log("Starting episode:", $("button.playbutton").first().text());
-    console.log({ epList });
-
-    if (episodeNum == "0") {
-      console.log("Zero episode detected");
-      episodeGogoLink = new URL("https:" + epList["ep0"]);
-    } else if (epList.extra) {
-      if (episodeNum in epList.extra) {
-        episodeGogoLink = new URL("https:" + epList.extra[episodeNum]);
-      } else {
-        episodeGogoLink = new URL("https:" + epList[episodeNum - 1]);
-      }
-    } else {
-      episodeGogoLink = new URL("https:" + epList[episodeNum - 1]);
-    }
-    console.log(episodeGogoLink);
-
-    let liveApiLink;
-
-    //Checking if the episode source link is already a Plyr link or not
-    if (episodeGogoLink.href.includes("player.html")) {
-      liveApiLink = episodeGogoLink.href;
-    } else {
-      const content_id = episodeGogoLink.searchParams.get("id");
-      liveApiLink =
-        "https://animixplay.to/api/cW9" +
-        encodeString(`${content_id}LTXs3GrU8we9O${encodeString(content_id)}`);
-    }
-
-    const src = await decodeStreamingLinkAnimix(liveApiLink);
-
-    return src;
-  } catch {
-    console.log("Episode source not found");
+    const res = await axios.get(
+      gogoApiBase + `vidcdn/watch/${animeId}-episode-${episodeNum}`,
+      headerOption
+    )
+    return res.data.sources[0].file
+  } catch (e) {
+    console.error("Episode source not found");
+    console.error(e)
     return "";
   }
 };
