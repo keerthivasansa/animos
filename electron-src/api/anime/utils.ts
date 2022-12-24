@@ -25,11 +25,12 @@ export function transformKitsuToAnime(kitsuData: Record<string, any>): Anime {
 }
 
 export async function getEpInfo(slug: string) {
-  const res = await axios.get(`https://animixplay.to/v1/${slug}`, headerOption);
-  const $ = load(res.data);
-  const epList = JSON.parse($("#epslistplace").text());
-  let zeroEpisode = Object.keys(epList).includes("ep0");
-  let totalEpisodes = epList.eptotal;
+  const res = await axios.get(
+    `https://gogoanime.consumet.org/anime-details/${slug}`,
+    headerOption
+  );
+  let zeroEpisode = parseInt(res.data.episodesList.reverse()[0].episodeNum) === 0;
+  let totalEpisodes = parseInt(res.data.totalEpisodes);
   return {
     zeroEpisode,
     totalEpisodes,
@@ -57,6 +58,8 @@ export async function getPartialInfo(
   if (anime.genres == "") anime.genres = await getGenres(anime.kitsuId);
   anime.available = true;
   try {
+    // This part actually is still active in the animixplay api, but i suspect it won't be for soon, so
+    // it should quickly be removed and replaced with something else.
     if (!anime.slug && anime.malId && anime.malId > 0) {
       let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
       let result = await httpGet(animix);
@@ -67,13 +70,12 @@ export async function getPartialInfo(
       }
     }
     if (!anime.slug) {
-      console.log("Alternative method to get slug");
       anime.slug = await getAlternativeSlug(
         kitsuSlug,
         anime.title || anime.title_en || anime.title_jp
       );
-      console.log({ slug: anime.slug });
     }
+    console.log({ slug: anime.slug });
     console.log(
       "Fetching episodes for ",
       anime.kitsuId,
@@ -159,7 +161,7 @@ async function getAlternativeSlug(kitsuSlug: string, kitsuTitle: string) {
   let resp = await axios.get(
     `https://gogoanime.tel/search.html?keyword=${kitsuSlug}`
   );
-  console.log("Fetching alternative slug for" + kitsuSlug);
+  console.log(`Fetching slug for ${kitsuSlug}`);
   console.log(kitsuTitle);
   const $ = load(resp.data);
   let sigTitle = significantParts(kitsuTitle);
@@ -167,15 +169,10 @@ async function getAlternativeSlug(kitsuSlug: string, kitsuTitle: string) {
   $("p.name > a").each((i, elem) => {
     let animeTitle = $(elem).text();
     let sigAnime = significantParts(animeTitle);
-    console.log({
-      sigAnime,
-      sigTitle,
-      match: compareTwoStrings(sigAnime, sigTitle),
-    });
-    if (!slug && compareTwoStrings(sigAnime, sigTitle) > 0.95) {
-      console.log("Found match");
+    if (!slug && compareTwoStrings(sigAnime, sigTitle) > 0.65) {
       slug = $(elem).attr("href").split("/")[2];
     }
   });
+  console.log(`best match for ${kitsuTitle}: ${slug}`);
   return slug;
 }
