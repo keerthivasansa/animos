@@ -7,6 +7,7 @@ import {
   renewSource,
   getHistory,
 } from "./index";
+import { downloadEpisode, checkEpisodeResolutions } from "./utils";
 
 ipcMain.handle("episode:info", async (event, kitsuId: number, page: number) => {
   let result = await getEpisodes(kitsuId, page);
@@ -100,4 +101,21 @@ ipcMain.handle(
 ipcMain.handle("episode:history", async (event, page: number) => {
   let result = await getHistory(page);
   return result;
+});
+
+ipcMain.handle(
+  "episode:download",
+  (
+    event,
+    episodeURL: string,
+    outputDir: string,
+    outputFileName: string,
+    resolution: string
+  ) => {
+    return downloadEpisode(episodeURL, outputDir, outputFileName, resolution);
+  }
+);
+
+ipcMain.handle("episode:getResolutions", (event, url: string) => {
+  return checkEpisodeResolutions(url);
 });
