@@ -1,6 +1,6 @@
 import { httpGet } from "../utils";
 import { AxiosError } from "axios";
-import { fetchAnimixEpisodeSource } from "../scraper/helper";
+import { fetchGogoEpisodeSource } from "../scraper/helper";
 import { db } from "../../db";
 import { getEpisodePage } from "./utils";
 import { Episode } from "@prisma/client";
@@ -20,7 +20,7 @@ async function getSource(kitsuId: number, episodeNum: number) {
   console.info(
     `Fetching source and skip times for ${kitsuId} - EP${episodeNum} with slug: ${episodeSlug}`
   );
-  let source = await fetchAnimixEpisodeSource({
+  let source = await fetchGogoEpisodeSource({
     episodeId: episodeSlug,
   });
   if (source == "") {

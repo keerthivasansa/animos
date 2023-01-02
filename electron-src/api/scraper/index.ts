@@ -16,7 +16,7 @@ export const getAjaxParams = async ($, id) => {
 
 export const decryptAjaxResponse = async (fetchedRes) => {
   const decryptedString = CryptoJS.enc.Utf8.stringify(
-    CryptoJS.AES.decrypt(fetchedRes.data, second_key, { iv: iv })
+    CryptoJS.AES.decrypt(fetchedRes.data, second_key, { iv })
   );
 
   return JSON.parse(decryptedString);
