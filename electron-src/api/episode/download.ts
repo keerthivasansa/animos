@@ -4,38 +4,33 @@ import axios from "axios";
 import request from "request";
 import { headerOption } from "../scraper/helper";
 import { EventEmitter } from "events";
+import { homedir } from "node:os";
 let eventEmitter = new EventEmitter();
 
 let m3u8Url: string,
   outputDir: fs.PathLike,
   outputFileName: string,
-  threadCount: number,
-  videoSuffix: string,
+  videoSuffix = ".ts",
   videoUrlDirPath: string,
   retryOnError: any,
   resolution: string;
 
-async function loadM3u8(onLoad) {
+async function loadM3u8(onLoad: { (list: any): void; (arg0: never[]): void }) {
   let resp = await axios.get(m3u8Url, headerOption);
   if (resp.status != 200) {
     eventEmitter.emit("error", "error loading master m3u8");
   }
-  console.log(resp.data);
   let lines = resp.data.split("\n");
   let maxResFileURL: string;
-  // there'll be a way to set selected resolution later
   for (let i = 0; i < lines.length; i++) {
-    if (lines[i].length > 2) {
-      if (lines[i].includes("RESOLUTION=" + resolution)) {
-        maxResFileURL = lines[i + 1];
-      }
+    if (lines[i].includes("RESOLUTION=" + resolution)) {
+      maxResFileURL = lines[i + 1];
+      resp = await axios.get(
+        m3u8Url.split("/").slice(0, -1).join("/") + "/" + maxResFileURL,
+        headerOption
+      );
     }
   }
-  resp = await axios.get(
-    m3u8Url.split("/").slice(0, -1).join("/") + "/" + maxResFileURL,
-    headerOption
-  );
-  console.log(resp.data);
   lines = resp.data.split("\n");
   console.log(maxResFileURL);
   let files = [];
@@ -79,11 +74,7 @@ function downloadVideoFile(url) {
   });
 }
 
-let startTasks = (
-  taskList: string | any[],
-  taskHandlePromise: { (url: any): Promise<void>; (arg0: any): Promise<any> },
-  limit = 5
-) => {
+let startTasks = (taskList, taskHandlePromise, limit = 5) => {
   let _runTask = (arr: any[]) => {
     // console.debug('Progress: ' + ((taskList.length - arr.length) / taskList.length * 100).toFixed(2) + '%')
     eventEmitter.emit(
@@ -105,7 +96,7 @@ let startTasks = (
   };
 
   let listCopy = [].concat(taskList);
-  let asyncTaskList = [];
+  let asyncTaskList: any[] = [];
   while (limit > 0 && listCopy.length > 0) {
     asyncTaskList.push(_runTask(listCopy) as never);
     limit--;
@@ -126,27 +117,28 @@ function mergeFiles(list: any[]) {
     let result = fs.readFileSync(outputDir + "/" + fileName);
     fs.unlinkSync(outputDir + "/" + fileName);
 
-    setTimeout(() => {
-      fs.appendFileSync(outFile, result);
-      console.log("Merged: " + fileName);
-    }, 100);
+    fs.appendFileSync(outFile, result);
+    console.log("Merged: " + fileName);
   });
 
   eventEmitter.emit("complete", outFile);
 }
 
-export function download(options) {
+export async function downloadEpisode(
+  tempURL: string,
+  tempOutDir: fs.PathLike,
+  tempFileName: string,
+  tempRes: string
+) {
   setImmediate(() => {
-    ({
-      url: m3u8Url = "",
-      outputDir = "",
-      outputFileName = new Date().getTime() + ".ts",
-      threadCount = 5,
-      videoSuffix = ".ts",
-      videoUrlDirPath = "",
-      retryOnError = true,
-      resolution = "",
-    } = options);
+    m3u8Url = tempURL;
+    outputDir = tempOutDir;
+    outputFileName = tempFileName;
+    resolution = tempRes;
+
+    if (outputDir === "") {
+      outputDir = homedir() + "/animosDownload";
+    }
 
     if (!videoUrlDirPath) {
       videoUrlDirPath = m3u8Url.substr(0, m3u8Url.lastIndexOf("/")) + "/";
@@ -159,14 +151,14 @@ export function download(options) {
     loadM3u8((list: any) => {
       eventEmitter.emit("progress", 0);
       // mergeFiles(list)
-      startTasks(list, downloadVideoFile, threadCount).then(() => {
+      startTasks(list, downloadVideoFile, 7).then(() => {
         eventEmitter.emit("downloaded", list);
 
         mergeFiles(list);
       });
     });
 
-    eventEmitter.emit("start", options);
+    eventEmitter.emit("start");
   });
   return eventEmitter;
 }
