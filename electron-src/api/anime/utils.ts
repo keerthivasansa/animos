@@ -1,10 +1,7 @@
 import { Anime } from "@prisma/client";
 import axios from "axios";
-import { load } from "cheerio";
-import { db } from "../../db";
 import { headerOption } from "../scraper/helper";
 import { httpGet } from "../utils";
-import { compareTwoStrings } from "string-similarity";
 
 export function transformKitsuToAnime(kitsuData: Record<string, any>): Anime {
   let anime: any = {};
@@ -29,7 +26,8 @@ export async function getEpInfo(slug: string) {
     `https://gogoanime.consumet.org/anime-details/${slug}`,
     headerOption
   );
-  let zeroEpisode = parseInt(res.data.episodesList.reverse()[0].episodeNum) === 0;
+  let zeroEpisode =
+    parseInt(res.data.episodesList.reverse()[0].episodeNum) === 0;
   let totalEpisodes = parseInt(res.data.totalEpisodes);
   return {
     zeroEpisode,
@@ -48,32 +46,17 @@ export async function getGenres(kitsuId: number) {
   return genreArr.join(",");
 }
 
-export async function getPartialInfo(
-  anime: Anime,
-  kitsuSlug: string
-): Promise<Anime> {
-  console.log("Slug:", kitsuSlug);
+export async function getPartialInfo(anime: Anime): Promise<Anime> {
   if (!anime.malId) anime.malId = await getMalId(anime.kitsuId);
 
   if (anime.genres == "") anime.genres = await getGenres(anime.kitsuId);
   anime.available = true;
   try {
-    // This part actually is still active in the animixplay api, but i suspect it won't be for soon, so
-    // it should quickly be removed and replaced with something else.
-    if (!anime.slug && anime.malId && anime.malId > 0) {
-      let animix = `https://animixplay.to/assets/rec/${anime.malId}.json`;
-      let result = await httpGet(animix);
-      if (result["Gogoanime"]) {
-        let slugs = result["Gogoanime"].map((obj) => obj.url.split("/").pop());
-        anime.slug = slugs[0];
-        anime.dubSlug = slugs[1];
-      }
-    }
-    if (!anime.slug) {
-      anime.slug = await getAlternativeSlug(
-        kitsuSlug,
-        anime.title || anime.title_en || anime.title_jp
-      );
+    if (!anime.slug && anime.malId) {
+      let { slug, dubSlug } = await getAnimeGogoSlug(anime.malId);
+      console.log("Fetched slug from mal-sync")
+      anime.slug = slug;
+      anime.dubSlug = dubSlug;
     }
     console.log({ slug: anime.slug });
     console.log(
@@ -92,21 +75,8 @@ export async function getPartialInfo(
       anime.episodes = epInfo.totalEpisodes;
     }
     return anime;
-  } catch {
+  } catch (err) {
     // either error at json conversion for anime with no episode sources / no mal id and no gogoanime slug
-    anime = await db.anime.create({
-      data: {
-        available: false,
-        ageRating: "G",
-        genres: "",
-        episodes: 0,
-        kitsuId: anime.kitsuId,
-        posterImg: "",
-        title: "",
-        score: 0,
-        synopsis: "",
-      },
-    });
     return anime;
   }
 }
@@ -146,33 +116,16 @@ export async function getMalId(kitsuId: number) {
   return parseInt(data.attributes.externalId);
 }
 
-function significantParts(word: string) {
-  if (!word) return word;
-  word = word.replace(/[!@#$%^&*():-]/g, "");
-  let articles = ["the", "a", "an", "in"];
-  let nw = word
-    .split(" ")
-    .filter((o) => !articles.includes(o.toLowerCase()))
-    .join(" ");
-  return nw.toLowerCase();
-}
-
-async function getAlternativeSlug(kitsuSlug: string, kitsuTitle: string) {
-  let resp = await axios.get(
-    `https://gogoanime.tel/search.html?keyword=${kitsuSlug}`
-  );
-  console.log(`Fetching slug for ${kitsuSlug}`);
-  console.log(kitsuTitle);
-  const $ = load(resp.data);
-  let sigTitle = significantParts(kitsuTitle);
-  let slug = "";
-  $("p.name > a").each((i, elem) => {
-    let animeTitle = $(elem).text();
-    let sigAnime = significantParts(animeTitle);
-    if (!slug && compareTwoStrings(sigAnime, sigTitle) > 0.65) {
-      slug = $(elem).attr("href").split("/")[2];
-    }
-  });
-  console.log(`best match for ${kitsuTitle}: ${slug}`);
-  return slug;
+export async function getAnimeGogoSlug(malId: number) {
+  let resp = await axios.get("https://api.malsync.moe/mal/anime/" + malId);
+  let animes = Object.keys(resp.data["Sites"]["Gogoanime"]);
+  console.log(animes);
+  let parts = animes[0].split("/");
+  let slug = parts[parts.length - 1];
+  let dubSlug = "";
+  if (animes.length > 1 && animes[1].endsWith("-dub")) {
+    let dubUrlParts = animes[1].split("/");
+    dubSlug = dubUrlParts[dubUrlParts.length - 1];
+  }
+  return { slug, dubSlug };
 }

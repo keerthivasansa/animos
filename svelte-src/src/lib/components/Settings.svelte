@@ -5,6 +5,10 @@
   import IconBtn from "./IconBtn.svelte";
 
   let accentColor = $accentClr;
+
+  const headers = ["Appearance", "About"];
+
+  let currentActiveTab = "Appearance";
 </script>
 
 <div
@@ -24,24 +28,57 @@
       <span />
       <span>Settings</span>
       <div class="bg-red-600 text-white rounded-tr-md">
-        <IconBtn bgAccent={false} background="red" click={() => showSettings.set(false)}>
+        <IconBtn
+          bgAccent={false}
+          background="red"
+          click={() => showSettings.set(false)}
+        >
           <div class="w-3">
             <FaClose />
           </div>
         </IconBtn>
       </div>
     </div>
-    <div id="content" class="py-10 px-5 bg-dark-1 rounded-b-md bg-opacity-75">
-      <div class="flex gap-2 items-center">
-        <span>Accent Color: </span>
-        <input
-          type="color"
-          class="w-5 h-5 rounded-sm"
-          style="background-color: {accentColor};"
-          bind:value={accentColor}
-          on:input={(_) => accentClr.set(accentColor)}
-        />
+    <div class="flex flex-row bg-dark-1 gap-10" style="min-height: 15rem;">
+      <div class="flex flex-col border-r-2 border-gray-400 text-gray-400 font-semibold">
+        {#each headers as head}
+          <button
+            style="border-radius:0"
+            on:click={(_) => (currentActiveTab = head)}
+            class="w-full header {currentActiveTab == head ? 'active' : ''}"
+            >{head}</button
+          >
+        {/each}
+      </div>
+      <div id="content" class="w-full rounded-b-md py-6 text-sm bg-opacity-75">
+        {#if currentActiveTab == "Appearance"}
+          <div class="flex gap-2 items-center">
+            <span>Accent Color: </span>
+            <input
+              type="color"
+              class="w-5 h-5 rounded-sm"
+              style="background-color: {accentColor};"
+              bind:value={accentColor}
+              on:input={(_) => accentClr.set(accentColor)}
+            />
+          </div>
+        {:else if currentActiveTab == "About"}
+          <div class="flex flex-col gap-3">
+            <p>Version: v0.5.4</p>
+            <button class="btn bg-accent accent-font">Check for updates</button>
+          </div>
+        {/if}
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  .header {
+    @apply h-10 px-10 py-2;
+  }
+
+  .header.active {
+    @apply bg-slate-200 text-black;
+  }
+</style>

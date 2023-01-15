@@ -10,7 +10,7 @@ autoUpdater.setFeedURL({
 
 autoUpdater.forceDevUpdateConfig = true;
 
-autoUpdater.on("update-downloaded", () => {
+ipcMain.handle("system:install-update", async (event) => {
   autoUpdater.quitAndInstall();
 });
 

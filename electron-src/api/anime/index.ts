@@ -67,7 +67,7 @@ export async function getInfo(kitsuId: number): Promise<Anime> {
 
   console.log({ genres: anime.genres });
   anime.malId = getMalIdFromIncluded(result.included);
-  anime = await getPartialInfo(anime, result.data.attributes.slug);
+  anime = await getPartialInfo(anime);
   await db.anime.upsert({
     create: anime,
     update: anime,
