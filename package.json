@@ -98,6 +98,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "prisma": "^4.6.1",
     "string-similarity": "^4.0.4",
+    "svelte-toasts": "^1.1.2",
     "winston": "^3.8.2"
   }
 }

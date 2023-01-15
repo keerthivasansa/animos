@@ -7,6 +7,7 @@
   import type { EpisodeWithSkip } from "$lib/types";
   import type { SkipTime } from "@prisma/client";
   import { addShortcut } from "$lib/utils";
+  import { toasts, FlatToast, ToastContainer } from "svelte-toasts";
 
   export let episode: EpisodeWithSkip;
   export let hasNextEp: boolean;
@@ -53,7 +54,17 @@
     let linkExpired = await isSourceExpired(src);
     if (linkExpired) {
       console.log("Link expired, fetching new link . . .");
-      alert("Renewing video source, please wait for a few seconds . . ."); // alert() is blocking, replace this
+
+      toasts.add({
+        description: "",
+        uid: 1,
+        type: "info",
+        placement: "bottom-left",
+        duration: 7000,
+        showProgress: true,
+        title: "Renewing video source",
+      });
+
       src = await window.api.episode.renewSource(
         episode.animeKitsuId,
         episode.number
@@ -214,6 +225,9 @@
 
 <button id="skip-btn" class:hidden={false} />
 
+<ToastContainer placement="bottom-right" let:data>
+  <FlatToast {data} />
+</ToastContainer>
 <div class="relative">
   <video
     id="player"
