@@ -23,11 +23,11 @@ export function transformKitsuToAnime(kitsuData: Record<string, any>): Anime {
 
 export async function getEpInfo(slug: string) {
   const res = await axios.get(
-    `https://gogoanime.consumet.org/anime-details/${slug}`,
+    `https://api.consumet.org/anime/gogoanime/info/${slug}`,
     headerOption
   );
   let zeroEpisode =
-    parseInt(res.data.episodesList.reverse()[0].episodeNum) === 0;
+    parseInt(res.data.episodes[0].number) === 0;
   let totalEpisodes = parseInt(res.data.totalEpisodes);
   return {
     zeroEpisode,

@@ -49,15 +49,18 @@ export async function getPosters() {
   return result;
 }
 
-export async function getInfo(kitsuId: number): Promise<Anime> {
-  let anime = await db.anime.findUnique({
-    where: {
-      kitsuId,
-    },
-  });
-  if (anime) {
-    console.log("Found anime in cache", anime.kitsuId);
-    return anime;
+export async function getInfo(kitsuId: number, refresh?: boolean): Promise<Anime> {
+  let anime: Anime;
+  if (!refresh) {
+    let anime = await db.anime.findUnique({
+      where: {
+        kitsuId,
+      },
+    });
+    if (anime) {
+      console.log("Found anime in cache", anime.kitsuId);
+      return anime;
+    }
   }
   let info = `https://kitsu.io/api/edge/anime/${kitsuId}?include=categories,mappings&fields[categories]=title,totalMediaCount`;
   let result = await httpGet(info);

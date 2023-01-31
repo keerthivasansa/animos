@@ -4,6 +4,7 @@
   import IconBtn from "$lib/components/IconBtn.svelte";
   import FaDown from "svelte-icons/fa/FaArrowDown.svelte";
   import FaHeart from "svelte-icons/fa/FaHeart.svelte";
+  import FaRedo from "svelte-icons/fa/FaRedo.svelte";
   import { convertRemToPixels, getTitle } from "$lib/utils";
   import { onMount } from "svelte";
   import type { Anime } from "@prisma/client";
@@ -15,6 +16,7 @@
   let maxDescription: number;
   let showExpand = false;
   let synopsisElem: HTMLElement;
+  let loaded = false;
 
   function generateRange(start: number, end: number, max: number) {
     if (end > max) end = max;
@@ -23,27 +25,36 @@
     return arr;
   }
 
-  async function get(): Promise<Anime> {
+  async function get(refresh?: boolean): Promise<Anime> {
     let idParam = $page.url.searchParams.get("animeId");
     if (!idParam) {
       location.href = "/";
     }
     let kitsuId = parseInt(idParam ?? "");
-    let anime = await window.api.anime.info(kitsuId);
+    let anime = await window.api.anime.info(kitsuId, refresh);
     console.log("anime fetched");
     console.log(anime.episodes);
     return anime;
   }
 
+  async function refresh() {
+    loaded = false;
+    anime = await get(true);
+    maxDescription = convertRemToPixels(10);
+    showExpand = anime.synopsis.length > maxDescription * 3; // 45 rem width * 2 characters * 3 lines
+    loaded = true;
+  }
+
   onMount(async () => {
-    anime = await get();
+    anime = await get(false);
     maxDescription = convertRemToPixels(10);
     console.log(maxDescription);
     showExpand = anime.synopsis.length > maxDescription * 3; // 45 rem width * 2 characters * 3 lines
+    loaded = true;
   });
 </script>
 
-{#if anime}
+{#if loaded}
   {#if anime.available}
     <section class="my-10 text-white">
       <div
@@ -121,6 +132,14 @@
         </div>
       </div>
     </section>
+    <button
+      on:click={(_) => refresh()}
+      class="fixed overflow-hidden active:scale-110 w-fit rounded-lg text-gray-800 bg-gray-400 p-0 bottom-8 right-20"
+    >
+      <IconBtn bgAccent={false}>
+        <FaRedo />
+      </IconBtn>
+    </button>
     <button
       on:click={(_) => {
         anime.liked = !anime.liked;

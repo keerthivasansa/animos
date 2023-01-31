@@ -4,8 +4,8 @@ import type { EpisodeWithAnime, WindowState } from "../types";
 
 const endpoints = {
   anime: {
-    info: (kitsuId: number) =>
-      ipcRenderer.invoke("anime:info", kitsuId) as Promise<Anime>,
+    info: (kitsuId: number, refresh?: boolean) =>
+      ipcRenderer.invoke("anime:info", kitsuId, refresh) as Promise<Anime>,
     search: (filters: Record<string, string>, page: number) =>
       ipcRenderer.invoke("anime:search", filters, page) as Promise<{
         data: Anime[];

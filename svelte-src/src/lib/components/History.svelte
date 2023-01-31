@@ -2,16 +2,12 @@
   import type { EpisodeWithAnime } from "$electron-src/types";
   import CoverAnime from "$lib/components/CoverAnime.svelte";
   import EpisodeProgress from "$lib/components/EpisodeProgress.svelte";
-  import { formatTime } from "$lib/utils";
+  import { formatTime, getTitle } from "$lib/utils";
 
   export let episode: EpisodeWithAnime;
 </script>
 
-<a
-  href="/episode?animeId={episode.anime
-    .kitsuId}&episodeId={episode.number}&totalEpisode={episode.anime
-    .episodes}&zeroEp={episode.anime.zeroEpisode}"
->
+<a href="/info?animeId={episode.anime.kitsuId}&title={getTitle(episode.anime)}">
   <div class="flex flex-col gap-2 items-center">
     <CoverAnime anime={episode.anime} infoOnHover={false} navigate={false} />
     <div class="flex justify-between w-full text-sm my-2 text-gray-300 px-2">

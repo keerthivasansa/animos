@@ -41,10 +41,10 @@ ipcMain.handle("anime:liked", async () => {
   return result;
 });
 
-ipcMain.handle("anime:info", async (event, kitsuId: number) => {
+ipcMain.handle("anime:info", async (event, kitsuId: number, refresh?: boolean) => {
   console.info("Cache fail, fetching info for", kitsuId);
   try {
-    let info = await getInfo(kitsuId);
+    let info = await getInfo(kitsuId, refresh);
     return info;
   } catch (err) {
     console.log(err);
