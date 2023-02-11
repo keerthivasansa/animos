@@ -25,7 +25,12 @@ export async function fetchAnimepaheInfo({ animeId, page = 1 }: { animeId: strin
 }> {
   if (!animeId)
     throw new Error("No animeId was provided");
-  const res = await axios.get(`${animepaheBase}/a/${animeId}`);
+  const res = await axios.get(`${animepaheBase}/a/${animeId}`, {
+    xsrfCookieName: "XSRF-TOKEN",
+    headers: {
+      "User-Agent": USER_AGENT
+    }
+  });
   let originalId = res.request.path.split("/")[2];
   console.log({ originalId });
 
@@ -36,6 +41,10 @@ export async function fetchAnimepaheInfo({ animeId, page = 1 }: { animeId: strin
       sort: "episode_asc",
       page,
     },
+    xsrfCookieName: "XSRF-TOKEN",
+    headers: {
+      "User-Agent": USER_AGENT
+    }
   });
   console.log("Fetched episode list from animepahe: ", epList.status)
   let episodes: any[] = [];
@@ -71,7 +80,9 @@ export const writeEpisodeSource = async (episode: { animePaheId: string | null, 
   const { data } = await axios.get(`${baseUrl}/api?m=links&id=${episodeId}`, {
     headers: {
       Referer: baseUrl,
+      "User-Agent": USER_AGENT
     },
+    xsrfCookieName: "XSRF-TOKEN",
   });
   console.log(data.data);
   const links = data.data.map((item) => ({
