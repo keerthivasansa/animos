@@ -2,13 +2,13 @@ import { TRPCError, type inferAsyncReturnType, initTRPC } from "@trpc/server";
 import SuperJSON from "superjson";
 import type { RequestEvent } from "@sveltejs/kit";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "$env/static/private";
+import env from "$lib/env";
 import { db } from "$lib/db";
 
 export async function createContext(event: RequestEvent) {
     const jwtCookie = event.cookies.get("jwt");
     try {
-        let { id } = jwt.verify(jwtCookie || '', JWT_SECRET) as { id: string };
+        let { id } = jwt.verify(jwtCookie || '', env.JWT_SECRET) as { id: string };
         return {
             user: {
                 id, get: () => db.user.findUnique({
