@@ -72,10 +72,16 @@ export async function getInfo(kitsuId: number): Promise<Anime> {
   anime = await getPartialInfo(anime);
   let episodes = await fetchAnimepaheInfo({ animeId: anime.slug, page: 1 });
   anime.episodeStart = episodes.episodes[0].epNum;
-  await db.anime.create({
-    data: anime
-  });
-  return anime;
+  try {
+    await db.anime.create({
+      data: anime
+    });
+    console.log("Created anime");
+    return anime;
+  } catch {
+    console.log("Failed to create anime");
+    return anime;
+  }
 }
 
 

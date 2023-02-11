@@ -5,6 +5,7 @@ import { z } from "zod"
 export const animeRouter = t.router({
     get: t.procedure.input(z.number()).query(async ({ input }) => {
         let anime = await getInfo(input);
+        console.log("Sending", anime.title, "to client");
         return anime;
     }),
     trendingPosters: t.procedure.query(async () => {
