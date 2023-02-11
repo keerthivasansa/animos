@@ -11,15 +11,13 @@
   let kitsuId: number;
   let episodeNum: number;
   let episodePage: number;
-  let setSourceFn: (episodeId: string | null) => Promise<void>;
+  let setSourceFn: (episode: EpisodeWithSkip) => Promise<void>;
 
   let totalEpisodes = parseInt(
     $page.url.searchParams.get("totalEpisode") ?? "0"
   );
 
-  let currentEp: inferAsyncReturnType<
-    TrpcClient["episode"]["get"]["query"]
-  >;
+  let currentEp: inferAsyncReturnType<TrpcClient["episode"]["get"]["query"]>;
   let result: {
     allEpisodes: inferAsyncReturnType<
       TrpcClient["episode"]["getEpisodePage"]["query"]
@@ -45,11 +43,12 @@
 
   async function changeCurrentEpisode(epNum: number) {
     // result.currentEp = null;
-    currentEp = await trpcClient.episode.get.query({
+    const newEp = await trpcClient.episode.get.query({
       episodeNumber: epNum,
       kitsuId,
     });
-    setSourceFn(currentEp.animePaheId);
+    setSourceFn(newEp);
+    currentEp = newEp;
     console.log("Changed episode source");
   }
 
@@ -134,7 +133,7 @@
         <div>
           {#if currentEp}
             <VideoPlayer
-              episode={currentEp}
+              {currentEp}
               hasNextEp={result.allEpisodes.some(
                 (ep) => ep.number > currentEp.number
               )}

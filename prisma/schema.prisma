@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Response {
@@ -29,6 +30,7 @@ model SkipTime {
   episodeNumber       Int
 
   @@id([episodeAnimeKitsuId, episodeNumber, type])
+  @@index([episodeAnimeKitsuId, episodeNumber])
 }
 
 model Source {
@@ -40,6 +42,7 @@ model Source {
   audio       String   @db.VarChar(3)
 
   @@id([episodeId, quality, audio])
+  @@index([episodeId])
 }
 
 model Episode {
@@ -59,6 +62,7 @@ model Episode {
 
   @@id([animeKitsuId, number])
   @@unique([animePaheNum, animeKitsuId])
+  @@index([animeKitsuId])
 }
 
 model AnimeRelation {
@@ -68,6 +72,7 @@ model AnimeRelation {
   destinationId Int
 
   @@id([sourceId, destinationId])
+  @@index([destinationId])
 }
 
 model Preferences {
@@ -79,7 +84,7 @@ model Preferences {
 model Anime {
   kitsuId      Int     @id
   malId        Int?    @unique
-  synopsis     String
+  synopsis     String  @db.LongText
   ageRating    String
   episodeStart Int
   available    Boolean @default(true)
@@ -123,4 +128,6 @@ model History {
   lastUpdated   DateTime @updatedAt
 
   @@id([episodeNumber, animeKitsuId, userId])
+  @@index([animeKitsuId, episodeNumber])
+  @@index([userId])
 }

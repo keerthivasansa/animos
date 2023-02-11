@@ -11,7 +11,7 @@
 
   export let totalEpisodes: number;
   export let hasNextEp: boolean;
-  export let episode: EpisodeWithSkip;
+  export let currentEp: EpisodeWithSkip;
   export const setSourceFn = setSource;
 
   // Important: Changes the source of player every time
@@ -35,7 +35,10 @@
     });
   }
 
-  async function initVideoPlayer(): Promise<Plyr> {
+  async function initVideoPlayer(episode: EpisodeWithSkip): Promise<Plyr> {
+    if (!episode) {
+      throw new Error("Missing episode id");
+    }
     let linkExpired = false;
     if (linkExpired) {
       console.log("Link expired, fetching new link . . .");
@@ -116,13 +119,13 @@
 
   let fullscreen = false;
 
-  async function setSource(episodeId: string | null) {
-    console.log("Setting the source for episode: " + episodeId);
-    // if (player) {
-    //   console.log("Destroying player");
-    //   player.destroy(() => console.log("Player destroyed"), false);
-    // }
-    player = await initVideoPlayer();
+  async function setSource(episode: EpisodeWithSkip) {
+    console.log("Setting the source for episode: " + episode.animePaheId);
+    if (player) {
+      console.log("Destroying player");
+      player.destroy(() => console.log("Player destroyed"), false);
+    }
+    player = await initVideoPlayer(episode);
     console.log(player);
 
     window.hls = Hls;
@@ -200,7 +203,7 @@
   }
 
   onMount(() => {
-    setSource(episode.animePaheId);
+    setSource(currentEp);
   });
 
   onDestroy(() => {
