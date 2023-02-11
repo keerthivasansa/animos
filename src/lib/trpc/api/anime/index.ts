@@ -52,35 +52,35 @@ export async function getPosters() {
 }
 
 export async function getInfo(kitsuId: number): Promise<Anime> {
-  let anime = await db.anime.findUnique({
-    where: {
-      kitsuId,
-    },
-  });
-  if (anime) {
-    console.log("Found anime in cache", anime.kitsuId);
-    return anime;
-  }
-  let info = `https://kitsu.io/api/edge/anime/${kitsuId}?include=categories,mappings&fields[categories]=title,totalMediaCount`;
-  let result = (await axios.get(info)).data;
-  anime = transformKitsuToAnime(result.data);
-  console.debug("Included for kitsuId: " + kitsuId);
-  anime.genres = getGenresFromIncluded(result.included).join(",");
-
-  console.log({ genres: anime.genres });
-  anime.malId = getMalIdFromIncluded(result.included);
-  anime = await getPartialInfo(anime);
-  let episodes = await fetchAnimepaheInfo({ animeId: anime.slug, page: 1 });
-  anime.episodeStart = episodes.episodes[0].epNum;
   try {
+    let anime = await db.anime.findUnique({
+      where: {
+        kitsuId,
+      },
+    });
+    if (anime) {
+      console.log("Found anime in cache", anime.kitsuId);
+      return anime;
+    }
+    let info = `https://kitsu.io/api/edge/anime/${kitsuId}?include=categories,mappings&fields[categories]=title,totalMediaCount`;
+    let result = (await axios.get(info)).data;
+    anime = transformKitsuToAnime(result.data);
+    console.debug("Included for kitsuId: " + kitsuId);
+    anime.genres = getGenresFromIncluded(result.included).join(",");
+
+    console.log({ genres: anime.genres });
+    anime.malId = getMalIdFromIncluded(result.included);
+    anime = await getPartialInfo(anime);
+    let episodes = await fetchAnimepaheInfo({ animeId: anime.slug, page: 1 });
+    anime.episodeStart = episodes.episodes[0].epNum;
     await db.anime.create({
       data: anime
     });
     console.log("Created anime");
     return anime;
-  } catch {
-    console.log("Failed to create anime");
-    return anime;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to create anime");
   }
 }
 
