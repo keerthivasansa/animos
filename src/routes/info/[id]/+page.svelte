@@ -24,7 +24,10 @@
     return arr;
   }
 
-  const metaDescription = anime.synopsis.slice(0, Math.min(anime.synopsis.length - 1, 127));
+  const metaDescription = anime.synopsis.slice(
+    0,
+    Math.min(anime.synopsis.length - 1, 127)
+  );
 
   onMount(async () => {
     maxDescription = convertRemToPixels(10);
@@ -34,28 +37,29 @@
 </script>
 
 <svelte:head>
-  
   <!-- HTML Meta Tags -->
   <title>Watch {anime.title} HD in animos</title>
-  <meta name="description" content={metaDescription}>
+  <meta name="description" content={metaDescription} />
 
   <!-- Facebook Meta Tags -->
-  <meta property="og:url" content="https://animos.cf/info/{anime.kitsuId}">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Watch {anime.title} HD in animos">
-  <meta property="og:description" content={metaDescription}>
-  <meta property="og:image" content={anime.coverImg}>
+  <meta property="og:url" content="https://animos.cf/info/{anime.kitsuId}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Watch {anime.title} HD in animos" />
+  <meta property="og:description" content={metaDescription} />
+  <meta property="og:image" content={anime.coverImg} />
 
   <!-- Twitter Meta Tags -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta property="twitter:domain" content="animos.cf">
-  <meta property="twitter:url" content="https://animos.cf/info/{anime.kitsuId}">
-  <meta name="twitter:title" content="Watch {anime.title} HD in animos">
-  <meta name="twitter:description" content={metaDescription}>
-  <meta name="twitter:image" content={anime.coverImg}>
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta property="twitter:domain" content="animos.cf" />
+  <meta
+    property="twitter:url"
+    content="https://animos.cf/info/{anime.kitsuId}"
+  />
+  <meta name="twitter:title" content="Watch {anime.title} HD in animos" />
+  <meta name="twitter:description" content={metaDescription} />
+  <meta name="twitter:image" content={anime.coverImg} />
 
   <!-- Meta Tags Generated via https://www.opengraph.xyz -->
-        
 </svelte:head>
 
 {#if anime.available}
@@ -67,7 +71,6 @@
         src={anime.posterImg}
         alt={getTitle(anime)}
         class="w-80 rounded-lg"
-        style="height: 30rem;"
       />
       <div class="flex flex-col gap-6">
         <h1 class="font-semibold text-3xl">{getTitle(anime)}</h1>
@@ -122,7 +125,8 @@
       <div
         style="max-width: 75%;"
         class="my-10 flex gap-5 flex-wrap justify-center items-center"
-      > {anime.episodes}
+      >
+        {anime.episodes}
         {#each generateRange(episodePage * 100 + (anime.zeroEpisode ? 0 : 1), (episodePage + 1) * 100, anime.episodes) as epNo}
           <a
             style="width: {(anime.episodes.toString().length ?? 0) + 1.25}rem;"

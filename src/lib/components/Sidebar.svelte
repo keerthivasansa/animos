@@ -18,6 +18,7 @@
 >
   <div class="flex px-2 w-full justify-end">
     <button
+      aria-label="sidebar-expand"
       on:click={(_) => (show = false)}
       class="w-7 bg-accent px-2 right-0 py-1 text-right rounded-full"
     >

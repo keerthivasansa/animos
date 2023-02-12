@@ -33,7 +33,7 @@
   onMount(() => {
     addKeyBoardShortcuts();
     console.time("Running +layout");
-    let accent = "#f09c2e"
+    let accent = "#f09c2e";
     if (data && data.user && data.user.accentColor) {
       accent = data.user.accentColor;
     }
@@ -91,6 +91,7 @@
       </div>
       <div class="flex gap-2">
         <form action="/search">
+          <label for="search-input" style="font-size: 0;"> Keyword </label>
           <input
             type="text"
             name="q"

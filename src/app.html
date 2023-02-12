@@ -5,12 +5,13 @@
 	<meta charset="utf-8" />
 	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="stylesheet" href="https://cdn.plyr.io/3.7.2/plyr.css" />
+	<link rel="preload" href="https://cdn.plyr.io/3.7.2/plyr.css" as="style"
+		onload="this.onload=null;this.rel='stylesheet'">
+	<link rel="preload"
+		href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=PT+Sans+Narrow:wght@400;700&family=Poppins:wght@300;400;600;800&display=swap"
+		as="style" onload="this.onload=null;this.rel='stylesheet'">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link
-		href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=PT+Sans+Narrow:wght@400;700&family=Poppins:wght@300;400;600;800&display=swap"
-		rel="stylesheet">
 	%sveltekit.head%
 </head>
 
