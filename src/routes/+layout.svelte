@@ -81,7 +81,7 @@
           }}
           on:mouseenter={(_) => (marginLeft = -2)}
         >
-          <IconBtn>
+          <IconBtn ariaLabel="sidebar">
             <FaHamburger />
           </IconBtn>
         </div>
@@ -102,7 +102,7 @@
               : 'w-60'} font-semibold px-4 py-2 focus:w-60 transition-all ease-in-out duration-200"
           />
           <button type="submit">
-            <IconBtn>
+            <IconBtn ariaLabel="search">
               <FaSearch />
             </IconBtn>
           </button>

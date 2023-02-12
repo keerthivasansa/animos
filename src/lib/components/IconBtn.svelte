@@ -5,6 +5,7 @@
   export let bgAccent = true;
   export let click: Function = () => null;
   export let background = "";
+  export let ariaLabel: string;
 
   let fontColor = "";
 
@@ -17,6 +18,7 @@
 
 <button
   on:click={(_) => click()}
+  aria-label={ariaLabel}
   class:bg-accent={bgAccent}
   style={!bgAccent ? `background-color:${background}` : ""}
   class="w-10 h-10 p-3 justify-center items-center flex rounded-md {fontColor}"

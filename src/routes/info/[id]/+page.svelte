@@ -90,10 +90,11 @@
             />
             <button
               class="absolute cursor-pointer"
+              aria-label="expand description"
               style="bottom: -1rem;left: calc(50% - 2rem)"
               on:click={(_) => (descriptionExpand = true)}
             >
-              <IconBtn>
+              <IconBtn ariaLabel="expand description icon">
                 <FaDown />
               </IconBtn>
             </button>
@@ -135,6 +136,7 @@
     </div>
   </section>
   <button
+    aria-label="like"
     on:click={(_) => {
       anime.liked = !anime.liked;
       // TODO window.api.anime.setLike(anime.kitsuId, anime.liked);
@@ -143,7 +145,7 @@
       ? 'bg-accent'
       : 'bg-gray-400'} p-0 bottom-8 right-8"
   >
-    <IconBtn bgAccent={false}>
+    <IconBtn ariaLabel="heart icon" bgAccent={false}>
       <FaHeart />
     </IconBtn>
   </button>

@@ -38,7 +38,7 @@
 </script>
 
 <div class="relative mt-10">
-  <button class="nav-btn left-0 top-0 swiper-prev">
+  <button class="nav-btn left-0 top-0 swiper-prev" aria-label="previous slide">
     <div class="w-8">
       <FaPrev />
     </div>
@@ -114,7 +114,7 @@
       </SwiperSlide>
     {/each}
   </SvelteSwiper>
-  <button class="nav-btn right-0 top-0 swiper-next">
+  <button class="nav-btn right-0 top-0 swiper-next" aria-label="next slide">
     <div class="w-8">
       <FaNext />
     </div>

@@ -44,6 +44,7 @@
     <div class="px-10 mt-8 relative h-auto w-full">
       <button
         class:hidden={parseInt(sliderLeft) == maxSlideRight}
+        aria-label="previous page in continue"
         on:click={prevSlide}
         class="nav-btn -left-16 top-0"
       >
@@ -79,6 +80,8 @@
         {/each}
       </div>
       <button
+        aria-label="next page in continue"
+
         class:hidden={parseInt(sliderLeft) == maxSlideLeft}
         on:click={nextSlide}
         class="nav-btn right-16 top-0"

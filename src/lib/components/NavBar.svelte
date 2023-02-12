@@ -9,31 +9,34 @@
 
 <div class="flex justify-between px-5 py-2 bg-black title-bar text-white">
   <div class="flex gap-5">
-    <button class="w-5 py-2 px-1 title-btn" on:click={(_) => history.back()}>
+    <button class="w-5 py-2 px-1 title-btn" on:click={(_) => history.back()} aria-label="previous page">
       <FaArrowLeft />
     </button>
-    <button class="w-5 py-2 px-1 title-btn" on:click={(_) => location.reload()}>
+    <button class="w-5 py-2 px-1 title-btn" on:click={(_) => location.reload()} aria-label="reload">
       <FaRedo />
     </button>
-    <button class="w-5 py-2 px-1 title-btn" on:click={(_) => history.forward()}>
+    <button class="w-5 py-2 px-1 title-btn" on:click={(_) => history.forward()} aria-label="next page">
       <FaArrowRight />
     </button>
   </div>
   <div class="flex gap-5">
     <button
       class="w-5 p-1 title-btn"
+      aria-label="minimize"
       on:click={(_) => window.api.system.window("minimize")}
     >
       <FaWindowMinimize />
     </button>
     <button
       class="w-5 p-1 title-btn"
+      aria-label="maximize"
       on:click={(_) => window.api.system.window("maximize")}
     >
       <FaWindowMaximize />
     </button>
     <button
       class="w-5 p-1 title-btn"
+      aria-label="close"
       on:click={(_) => window.api.system.window("close")}
     >
       <FaXMark />
