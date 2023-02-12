@@ -36,7 +36,20 @@
         ? "right"
         : "left";
   }
+
+  let imageLoaded = false;
+
+  function cacheImage() {
+    const img = document.createElement("img");
+    img.src = anime.posterImg;
+    img.onload = () => {
+      imageLoaded = true;
+      img.remove();
+    };
+  }
+
   onMount(() => {
+    cacheImage();
     setCoverOpenDirection();
     window.addEventListener("resize", setCoverOpenDirection);
   });
@@ -91,7 +104,10 @@
     >
       <div
         class="w-48 relative"
-        style="background-image: url('{anime.posterImg}'); aspect-ratio: 7 / 9;background-size:cover;"
+        class:animate-pulse={!imageLoaded}
+        style="aspect-ratio: 7 / 9; background-size: cover; {imageLoaded
+          ? `background-image: url('${anime.posterImg}');`
+          : 'background: darkgray'}"
       >
         {#if rank >= 0}
           <div

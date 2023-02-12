@@ -19,13 +19,18 @@
     return anime.title_en ?? anime.title ?? anime.title_jp;
   }
 
+  const backgroundImageCache = Array.from({ length: animeArr.length }).fill(
+    false
+  );
+
   // caches all the images together so they dont load when it comes to focus
   function cacheImages() {
-    animeArr.forEach((an) => {
+    animeArr.forEach((an, index) => {
       const img = document.createElement("img");
       img.src = an.posterImg;
       img.onload = () => {
-        document.removeChild(img);
+        backgroundImageCache[index] = true;
+        img.remove();
       };
     });
   }
@@ -52,16 +57,21 @@
     }}
     modules={[Navigation, Pagination]}
   >
-    {#each animeArr as anime}
+    {#each animeArr as anime, index}
       <SwiperSlide onoutclick={() => null}>
-        <a
-          href="/info/{anime.kitsuId}"
-          class="mt-10"
-        >
+        <a href="/info/{anime.kitsuId}" class="mt-10">
           <div
             on:mouseenter={(_) => (focus = true)}
-            class="md:px-2 lg:mx-5 rounded-lg relative carousel"
-            style="background-image: url('{anime.coverImg}'); background-size: cover; aspect-ratio: 21 / 5;transition: background-image 500ms ease-in-out"
+            class="md:px-2 lg:mx-5 rounded-lg relative carousel {backgroundImageCache[
+              index
+            ]
+              ? ''
+              : 'bg-slate-500 animate-pulse'}"
+            style={`${
+              backgroundImageCache[index]
+                ? `background-image: url('${anime.coverImg}')`
+                : ""
+            };background-size: cover; aspect-ratio: 21 / 5; transition: background-image 500ms ease-in-out`}
           >
             <div
               class:opacity-100={focus}

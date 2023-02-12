@@ -27,6 +27,44 @@
   <Carousel animeArr={trendingAnime} />
 {/await}
 
+<svelte:head>
+  <!-- HTML Meta Tags -->
+  <title>animos | Free High Quality Streaming</title>
+  <meta
+    name="description"
+    content="animos is a free and open source platform to stream HD streams for anime"
+  />
+
+  <!-- Facebook Meta Tags -->
+  <meta property="og:url" content="https://animos.cf" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="animos | Free High Quality Streaming" />
+  <meta
+    property="og:description"
+    content="animos is a free and open source platform to stream HD streams for anime"
+  />
+  <meta
+    property="og:image"
+    content="https://camo.githubusercontent.com/822fd9fbe141157c88c4109d26430a152feac656f0de08b12bf80364ac25390f/68747470733a2f2f696b2e696d6167656b69742e696f2f7538686575396a68712f4865616465725f42616e6e65722e706e67"
+  />
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta property="twitter:domain" content="animos.cf" />
+  <meta property="twitter:url" content="https://animos.cf" />
+  <meta name="twitter:title" content="animos | Free High Quality Streaming" />
+  <meta
+    name="twitter:description"
+    content="animos is a free and open source platform to stream HD streams for anime"
+  />
+  <meta
+    name="twitter:image"
+    content="https://camo.githubusercontent.com/822fd9fbe141157c88c4109d26430a152feac656f0de08b12bf80364ac25390f/68747470733a2f2f696b2e696d6167656b69742e696f2f7538686575396a68712f4865616465725f42616e6e65722e706e67"
+  />
+
+  <!-- Meta Tags Generated via https://www.opengraph.xyz -->
+</svelte:head>
+
 <main class="sm:px-10 my-5 text-white">
   <section class="my-10">
     {#await getContinueWatching()}
