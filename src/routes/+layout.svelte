@@ -64,10 +64,6 @@
 <Settings />
 <Sidebar bind:show={showSidebar} />
 
-<svelte:head>
-  <title>animos | Redefining free streaming</title>
-</svelte:head>
-
 <div class="flex flex-col gap-0 overflow-hidden">
   <div class="sticky top-0 left-0" style="z-index: 50;">
     <svelte:component this={isElectron ? NavBar : null} />

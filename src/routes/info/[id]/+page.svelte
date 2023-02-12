@@ -24,6 +24,8 @@
     return arr;
   }
 
+  const metaDescription = anime.synopsis.slice(0, Math.min(anime.synopsis.length - 1, 127));
+
   onMount(async () => {
     maxDescription = convertRemToPixels(10);
     console.log(maxDescription);
@@ -32,7 +34,28 @@
 </script>
 
 <svelte:head>
-    <title>{anime.title} | animos </title>
+  
+  <!-- HTML Meta Tags -->
+  <title>Watch {anime.title} HD in animos</title>
+  <meta name="description" content={metaDescription}>
+
+  <!-- Facebook Meta Tags -->
+  <meta property="og:url" content="https://animos.cf/info/{anime.kitsuId}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Watch {anime.title} HD in animos">
+  <meta property="og:description" content={metaDescription}>
+  <meta property="og:image" content={anime.coverImg}>
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="twitter:domain" content="animos.cf">
+  <meta property="twitter:url" content="https://animos.cf/info/{anime.kitsuId}">
+  <meta name="twitter:title" content="Watch {anime.title} HD in animos">
+  <meta name="twitter:description" content={metaDescription}>
+  <meta name="twitter:image" content={anime.coverImg}>
+
+  <!-- Meta Tags Generated via https://www.opengraph.xyz -->
+        
 </svelte:head>
 
 {#if anime.available}
@@ -114,7 +137,7 @@
   <button
     on:click={(_) => {
       anime.liked = !anime.liked;
-      window.api.anime.setLike(anime.kitsuId, anime.liked);
+      // TODO window.api.anime.setLike(anime.kitsuId, anime.liked);
     }}
     class="fixed overflow-hidden active:scale-110 w-fit rounded-lg text-gray-800 {anime.liked
       ? 'bg-accent'
