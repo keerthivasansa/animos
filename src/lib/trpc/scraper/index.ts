@@ -1,15 +1,12 @@
-import axios from "axios";
 import HLS from "hls-parser";
 import Kwik from './kwik';
 import { TRPCError } from "@trpc/server";
 import { supabase } from "$lib/supabase/index";
 import { db } from "$lib/db";
+import { USER_AGENT, proxyAxios } from "./helper";
 
 const animepaheBase = `https://animepahe.com`;
 const animepaheApi = `https://animepahe.com/api`;
-const USER_AGENT = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36`;
-
-export const headerOption = { headers: { "User-Agent": USER_AGENT } };
 
 export async function fetchAnimepaheInfo({ animeId, page = 1 }: { animeId: string | null, page: number }): Promise<{
   episodes: {
@@ -25,16 +22,11 @@ export async function fetchAnimepaheInfo({ animeId, page = 1 }: { animeId: strin
 }> {
   if (!animeId)
     throw new Error("No animeId was provided");
-  const res = await axios.get(`${animepaheBase}/a/${animeId}`, {
-    xsrfCookieName: "XSRF-TOKEN",
-    headers: {
-      "User-Agent": USER_AGENT
-    }
+  const res = await proxyAxios.get(`${animepaheBase}/a/${animeId}`, {
   });
   let originalId = res.request.path.split("/")[2];
   console.log({ originalId });
-
-  const epList = await axios.get(animepaheApi, {
+  const epList = await proxyAxios.get(animepaheApi, {
     params: {
       m: "release",
       id: originalId,
@@ -77,7 +69,7 @@ export const writeEpisodeSource = async (episode: { animePaheId: string | null, 
     throw new TRPCError({ code: "PRECONDITION_FAILED" })
   console.log("Writing source file for episode: " + episodeId);
   const epLength = episode.length;
-  const { data } = await axios.get(`${baseUrl}/api?m=links&id=${episodeId}`, {
+  const { data } = await proxyAxios.get(`${baseUrl}/api?m=links&id=${episodeId}`, {
     headers: {
       Referer: baseUrl,
       "User-Agent": USER_AGENT

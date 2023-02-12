@@ -1,5 +1,5 @@
-import axios from "axios";
 import { load } from "cheerio";
+import { proxyAxios } from "./helper";
 
 class Kwik {
     serverName = 'kwik';
@@ -9,7 +9,7 @@ class Kwik {
     sgProxy = 'https://cors.consumet.stream';
 
     extract = async (videoUrl: URL) => {
-        const { data } = await axios.get(videoUrl.href, {
+        const { data } = await proxyAxios.get(videoUrl.href, {
             headers: { Referer: this.host },
         });
 

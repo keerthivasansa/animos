@@ -96,7 +96,7 @@ model Anime {
   title        String
   posterImg    String
   coverImg     String?
-  genres       String // comma seperated values
+  genres       String  @db.Text // comma seperated values
   score        Float
   episodes     Int
   slug         String?
