@@ -84,6 +84,7 @@ model Preferences {
 model Anime {
   kitsuId      Int     @id
   malId        Int?    @unique
+  animePaheId  String?
   synopsis     String  @db.LongText
   ageRating    String
   episodeStart Int

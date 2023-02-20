@@ -16,7 +16,12 @@ export async function getSource(kitsuId: number, episodeNum: number) {
     select: {
       sourceTaken: true,
       animePaheId: true,
-      length: true
+      length: true,
+      anime: {
+        select: {
+          animePaheId: true
+        }
+      }
     }
   });
   let anime = await db.anime.findUnique({
@@ -44,6 +49,11 @@ export async function getSource(kitsuId: number, episodeNum: number) {
         sourceTaken: true,
         animePaheId: true,
         animePaheNum: true,
+        anime: {
+          select: {
+            animePaheId: true,
+          }
+        },
         length: true,
       }
     })
@@ -292,6 +302,15 @@ export async function renewSource(kitsuId: number, episodeNum: number) {
       animeKitsuId_number: {
         animeKitsuId: kitsuId,
         number: episodeNum
+      }
+    },
+    select: {
+      animePaheId: true,
+      length: true,
+      anime: {
+        select: {
+          animePaheId: true
+        }
       }
     }
   });
