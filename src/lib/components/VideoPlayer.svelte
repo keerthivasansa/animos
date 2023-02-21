@@ -74,26 +74,25 @@
         // From the m3u8 playlist, hls parses the manifest and returns
         // all available video qualities. This is important, in this approach,
         // we will have one source on the Plyr player.
-        const src = getSourceUrl(episode.animePaheId ?? "");
+        const src = "https://eu-012.files.nextcdn.org/stream/01/07/5028a1bf50cd33865d7fc8628f1100568a83040d3e0ba44ce5970af363e87684/uwu.m3u8";
         console.log("Selected last source:");
         console.log(src);
         hls.loadSource(src);
         hls.on(Hls.Events.MANIFEST_PARSED, function () {
-          console.log("Levels:");
-          console.log("Automatic level switchting: ", hls.autoLevelEnabled);
-          hls.currentLevel = -1;
-          const availableQualities = hls.levels.map((l) => l.width);
-          console.log(hls.levels);
-          availableQualities.unshift(0);
-          console.log(availableQualities);
+          // console.log("Automatic level switchting: ", hls.autoLevelEnabled);
+          // hls.currentLevel = -1;
+          // const availableQualities = hls.levels.map((l) => l.width);
+          // console.log(hls.levels);
+          // availableQualities.unshift(0);
+          // console.log(availableQualities);
           // Add new qualities to option
-          defaultOptions.quality = {
-            default: 0,
-            options: availableQualities,
-            // this ensures Plyr to use Hls to update quality level
-            forced: true,
-            onChange: (e) => hls.currentLevel = e == 0 ? -1 : hls.levels.findIndex(level => level.width == e),
-          };
+          // defaultOptions.quality = {
+          //   default: 0,
+          //   options: availableQualities,
+          //   // this ensures Plyr to use Hls to update quality level
+          //   forced: true,
+          //   onChange: (e) => hls.currentLevel = e == 0 ? -1 : hls.levels.findIndex(level => level.width == e),
+          // };
           hls.attachMedia(video);
           const player = new Plyr(video, defaultOptions);
           res(player);
