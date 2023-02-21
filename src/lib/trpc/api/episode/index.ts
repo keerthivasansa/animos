@@ -86,7 +86,8 @@ export async function getSource(kitsuId: number, episodeNum: number) {
       })
     }))
   }
-  await writeEpisodeSource(episode);
+  const sources = await writeEpisodeSource(episode);
+  return sources;
 }
 
 export async function getEpisodeHistory(episodeNum: number, userId: string, kitsuId: number) {
@@ -216,18 +217,25 @@ export async function getEpisode(kitsuId: number, episodeNum: number) {
       length: true,
       skipTimes: true,
       number: true,
-      sourceTaken: true
+      sources: {
+        select: {
+          audio: true,
+          quality: true,
+          url: true,
+        }
+      }
     },
   });
   if (!episode)
     throw new TRPCError({ code: "NOT_FOUND", message: "Missing episode" });
   console.log(episode);
-  if (episode && episode.sourceTaken) {
+  if (episode && episode.sources.length) {
     console.log("Cache hit");
     return episode;
   } else {
     // get source
-    await getSource(kitsuId, episodeNum);
+    const sources = await getSource(kitsuId, episodeNum);
+    episode.sources = sources;
   }
   return episode;
 }

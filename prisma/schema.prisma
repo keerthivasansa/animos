@@ -39,7 +39,7 @@ model Source {
   url         String
   quality     Int
   lastUpdated DateTime @default(now()) @updatedAt
-  audio       String   @db.VarChar(3)
+  audio       String   @db.VarChar(3) // eng | jpn
 
   @@id([episodeId, quality, audio])
   @@index([episodeId])
@@ -58,7 +58,7 @@ model Episode {
   lastUpdated  DateTime   @default(now()) @updatedAt
   length       Float?
   History      History[]
-  Source       Source[]
+  sources       Source[]
 
   @@id([animeKitsuId, number])
   @@unique([animePaheNum, animeKitsuId])

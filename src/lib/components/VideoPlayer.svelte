@@ -22,7 +22,7 @@
     // saveProgress: NodeJS.Timer,
     bandwith: NodeJS.Timer;
   };
-  
+
   async function initVideoPlayer(episode: EpisodeWithSkip): Promise<Plyr> {
     if (!episode) {
       throw new Error("Missing episode id");
@@ -74,7 +74,9 @@
         // From the m3u8 playlist, hls parses the manifest and returns
         // all available video qualities. This is important, in this approach,
         // we will have one source on the Plyr player.
-        const src = "https://eu-012.files.nextcdn.org/stream/01/07/5028a1bf50cd33865d7fc8628f1100568a83040d3e0ba44ce5970af363e87684/uwu.m3u8";
+        const lastSource = episode.sources.pop()!;
+        console.log({ lastSource });
+        const src = lastSource.url;
         console.log("Selected last source:");
         console.log(src);
         hls.loadSource(src);

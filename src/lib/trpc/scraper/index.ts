@@ -68,7 +68,7 @@ const baseUrl = "https://animepahe.com";
 
 export const writeEpisodeSource = async (episode: { animePaheId: string | null, length: number | null, anime: { animePaheId: string | null } }) => {
   const episodeId = episode.animePaheId;
-  if (!episode.length)
+  if (!episode.length || !episodeId)
     throw new TRPCError({ code: "PRECONDITION_FAILED" })
   console.log("Writing source file for episode: " + episodeId);
   const resp = await proxyAxios.get(`https://animepahe.com/play/${episode.anime.animePaheId}/${episode.animePaheId}`);
@@ -88,40 +88,17 @@ export const writeEpisodeSource = async (episode: { animePaheId: string | null, 
       quality: link.resolution,
       audio: link.audio,
       url: res[0].url,
-      isM3U8: res[0].isM3U8,
+      episodeId
     }
   }))
-  console.log(res);
-  let variants = res.map(src => {
-    return new HLS.types.Variant({
-      uri: src.url.replace("cache", "files"), // convert all URLs into NA file URL 
-      resolution: {
-        width: src.quality,
-        height: src.quality * 16 / 9
-      },
-      bandwidth: (src.quality * 0.227 * 1024 * 1024 * 8) / (episode.length ?? 24 * 60)
-    })
-  }
-  );
-  let master = new HLS.types.MasterPlaylist({ variants });
-  let uploadResult = await supabase.storage.from("sources").upload(`${episodeId}.m3u8`, HLS.stringify(master))
-  console.log("uploaded file successfully");
-  console.log(uploadResult.data);
-  if (uploadResult.error) {
-    console.error("Error uploading the file");
-    console.error(uploadResult.error);
-    const err = uploadResult.error as unknown as { statusCode: string };
-    if (err.statusCode != '409')
-      return;
-  }
-  await db.episode.update({
-    where: {
-      animePaheId: episode.animePaheId ?? ""
-    },
-    data: {
-      sourceTaken: true
-    }
-  })
 
-  return;
+  const insert = await db.$transaction(res.map(link => db.source.create({
+    data: link,
+    select: {
+      audio: true,
+      url: true,
+      quality: true
+    }
+  })));
+  return insert;
 };
