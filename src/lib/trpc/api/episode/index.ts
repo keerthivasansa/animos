@@ -119,7 +119,7 @@ export async function setWatchTime(episodeNumber: number, animeKitsuId: number, 
   return "ok";
 }
 
-export async function getEpisodes(kitsuId: number, page: number): Promise<Episode[]> {
+export async function getEpisodes(kitsuId: number, currentEp: number): Promise<Episode[]> {
   let anime = await db.anime.findUnique({
     where: {
       kitsuId,
@@ -129,41 +129,48 @@ export async function getEpisodes(kitsuId: number, page: number): Promise<Episod
     throw new TRPCError({
       code: "NOT_FOUND"
     })
+  };
+  let epNumberFilter: {
+    gt: number,
+    lte: number
+  };
+  let page: number;
+  if (!isNaN(anime.rangedEpisodes) && anime.rangedEpisodes > -1) {
+    page = Math.ceil(currentEp / anime.rangedEpisodes / 20);
+    const start = (page - 1) * 20 * anime.rangedEpisodes;
+    const end = (page * 20 * anime.rangedEpisodes);
+    console.log(anime.rangedEpisodes);
+    epNumberFilter = {
+      gt: start,
+      lte: end
+    }
+
+  } else {
+    page = Math.ceil(currentEp / 20);
+    epNumberFilter = {
+      gt: (page - 1) * 20,
+      lte: page * 20,
+    }
   }
   let episodes = await db.episode.findMany({
     where: {
       animeKitsuId: kitsuId,
-      number: {
-        gt: (page - 1) * 20,
-        lte: page * 20,
-      },
+      number: epNumberFilter,
     },
+    take: 20,
     orderBy: {
       number: "asc"
     }
   });
-  let offset = (page - 1) * 20;
   if (episodes.length) {
-    if (episodes[0].title != "")
-      return episodes
-    // the episodes were generated when fetching info for anime fill the title
-    let newEpisodes = await getEpisodePage(kitsuId, offset);
-    await db.$transaction(newEpisodes.map((ep, index) => {
-      episodes[index].title = ep.title;
-      return db.episode.update({
-        data: {
-          title: ep.title,
-        },
-        where: {
-          animeKitsuId_number: {
-            animeKitsuId: kitsuId,
-            number: ep.number
-          }
-        }
-      })
-    }))
-    return getEpisodes(kitsuId, page);
-  };
+    return episodes;
+  }
+  if (anime.rangedEpisodes > -1) {
+    let paheInfo = fetchAnimepaheInfo({
+      animeId: anime.slug, page: 1
+    });
+  }
+  let offset = (page - 1) * 20;
   let animePahePage = Math.ceil(offset / 30);
   let [newEpisodes, animePaheInfo] = await Promise.all([getEpisodePage(kitsuId, offset), fetchAnimepaheInfo({
     animeId: anime.slug, page: animePahePage
@@ -172,31 +179,45 @@ export async function getEpisodes(kitsuId: number, page: number): Promise<Episod
   const animeEpStart = anime.episodeStart;
   console.log(paheEpisodes)
   console.log({ pahe: paheEpisodes.length, kitsu: newEpisodes.length });
-  await db.$transaction(
-    newEpisodes.map((ep, index) => {
-      const paheEp = paheEpisodes.find(pep => pep.epNum == (ep.number + animeEpStart - 1));
-      if (!paheEp) {
-        throw new TRPCError({ code: "NOT_FOUND" })
-      }
-      console.log(ep.number, "ep -> pahe#", paheEp.epNum);
-      console.log(paheEp);
-      return db.episode.create({
-        data: {
+  debugger;
+  try {
+
+    await db.$transaction(
+      newEpisodes.map((ep, index) => {
+        let paheEp;
+        console.log(ep.number);
+        console.log("Match with", ep.number + animeEpStart - 1);
+        paheEp = paheEpisodes.find(pep => pep.epNum == (ep.number + animeEpStart - 1));
+        console.log(paheEp);
+        if (!paheEp) {
+          throw new TRPCError({ code: "NOT_FOUND" })
+        }
+        console.log(ep.number, "ep -> pahe#", paheEp.epNum);
+        console.log(paheEp);
+        let epData = {
           animePaheNum: paheEp.epNum,
           number: ep.number,
           thumbnail: paheEp.thumbnail,
           title: ep.title,
           length: extractTime(paheEp.duration),
-          animeKitsuId: ep.animeKitsuId,
+          animeKitsuId: kitsuId,
           animePaheId: paheEp.episodeId
         }
+        console.log(epData);
+        return db.episode.create({
+          data: epData
+        })
       })
-    })
-  );
-  console.log("Inserted", newEpisodes.length, "records");
-  return getEpisodes(kitsuId, page);
-}
-export async function getEpisode(kitsuId: number, episodeNum: number) {
+    );
+    console.log("Inserted", newEpisodes.length, "records");
+    return getEpisodes(kitsuId, page);
+
+  }
+  catch (err) {
+    console.log(err);
+    return [];
+  }
+} export async function getEpisode(kitsuId: number, episodeNum: number) {
   let episode = await db.episode.findUnique({
     where: {
       animeKitsuId_number: {

@@ -33,10 +33,9 @@ export async function getPartialInfo(anime: Anime): Promise<Anime> {
   anime.available = true;
   try {
     if (!anime.slug && anime.malId) {
-      let { slug, dubSlug } = await getProviderId(anime.malId, "animepahe");
+      let { slug } = await getProviderId(anime.malId, "animepahe");
       console.log("Fetched slug from mal-sync")
       anime.slug = slug;
-      anime.dubSlug = dubSlug;
     }
     console.log({ slug: anime.slug });
     console.log(

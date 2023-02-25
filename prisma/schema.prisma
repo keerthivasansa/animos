@@ -11,11 +11,6 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Response {
-  url      String @id
-  response String
-}
-
 model Genre {
   malId Int    @id
   name  String @unique
@@ -58,7 +53,7 @@ model Episode {
   lastUpdated  DateTime   @default(now()) @updatedAt
   length       Float?
   History      History[]
-  sources       Source[]
+  sources      Source[]
 
   @@id([animeKitsuId, number])
   @@unique([animePaheNum, animeKitsuId])
@@ -75,34 +70,27 @@ model AnimeRelation {
   @@index([destinationId])
 }
 
-model Preferences {
-  id          Int     @id
-  accentColor String?
-  genres      String?
-}
-
 model Anime {
-  kitsuId      Int     @id
-  malId        Int?    @unique
-  animePaheId  String?
-  synopsis     String  @db.LongText
-  ageRating    String
-  episodeStart Int
-  available    Boolean @default(true)
-  type         String  @default("")
-  title_en     String?
-  liked        Boolean @default(false)
-  title_jp     String?
-  zeroEpisode  Boolean @default(false)
-  title        String
-  posterImg    String
-  coverImg     String?
-  genres       String  @db.Text // comma seperated values
-  score        Float
-  episodes     Int
-  slug         String?
-  dubSlug      String?
-  poster       Int?
+  kitsuId        Int     @id
+  malId          Int?    @unique
+  animePaheId    String?
+  synopsis       String  @db.LongText
+  ageRating      String
+  episodeStart   Int
+  available      Boolean @default(true)
+  type           String  @default("")
+  title_en       String?
+  liked          Boolean @default(false)
+  title_jp       String?
+  rangedEpisodes Int     @default(-1)
+  title          String
+  posterImg      String
+  coverImg       String?
+  genres         String  @db.Text // comma seperated values
+  score          Float
+  episodes       Int
+  slug           String?
+  poster         Int?
 
   lastUpdated DateTime        @default(now()) @updatedAt
   relation    AnimeRelation[]

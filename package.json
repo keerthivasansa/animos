@@ -22,6 +22,7 @@
     "@types/svelte-range-slider-pips": "^2.0.0",
     "autoprefixer": "^10.4.7",
     "classnames": "^2.3.2",
+    "cross-env": "^7.0.3",
     "hls-parser": "^0.10.6",
     "postcss": "^8.4.14",
     "postcss-load-config": "^4.0.1",

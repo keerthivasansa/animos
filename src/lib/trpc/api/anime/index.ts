@@ -67,13 +67,12 @@ export async function getInfo(kitsuId: number): Promise<Anime> {
     anime = transformKitsuToAnime(result.data);
     console.debug("Included for kitsuId: " + kitsuId);
     anime.genres = getGenresFromIncluded(result.included).join(",");
-
-    console.log({ genres: anime.genres });
     anime.malId = getMalIdFromIncluded(result.included);
     anime = await getPartialInfo(anime);
-    let episodes = await fetchAnimepaheInfo({ animeId: anime.slug, page: 1 });
-    anime.episodeStart = episodes.episodes[0].epNum;
-    anime.animePaheId = episodes.originalId;
+    let paheInfo = await fetchAnimepaheInfo({ animeId: anime.slug, page: 1 });
+    anime.episodeStart = paheInfo.episodes[0].epNum;  
+    anime.animePaheId = paheInfo.originalId;
+    anime.rangedEpisodes = paheInfo.rangedEpisodes;
     console.log("Creating anime with data:");
     console.log(anime);
     await db.anime.create({

@@ -1,28 +1,19 @@
-import type { Episode } from "@prisma/client";
 import axios from "axios";
-
-function transformKitsuToEp(data: { attributes: any; id: string; }, kitsuId: number) {
-  let attr = data.attributes;
-  return {
-    id: parseInt(data.id),
-    number: attr.number,
-    watchTime: 0,
-    animeKitsuId: kitsuId,
-    title: attr.canonicalTitle ?? `EP${attr.number}`,
-    length: undefined
-  };
-}
 
 export async function getEpisodePage(
   kitsuId: number,
   skip: number,
 ) {
-  let episodes: { id: number, number: number, watchTime: number, animeKitsuId: number, title: string, length: number | null }[] = [];
   let res = await axios.get(
-    `https://kitsu.io/api/edge/episodes?filter[mediaId]=${kitsuId}&page[limit]=20&sort=number&page[offset]=${skip}`
+    `https://kitsu.io/api/edge/episodes?filter[mediaId]=${kitsuId}&page[limit]=20&sort=number&page[offset]=${skip}&fields[episodes]=titles,number`
   );
-  episodes.push(...res.data.data.map((ep: any) => transformKitsuToEp(ep, kitsuId)));
-  return episodes;
+  console.log("Kitsu episode")
+  console.log(res.data.data[0]);
+
+  const arr = (res.data.data as { attributes: { titles: { en_us: string, en_jp: string, ja_jp: string }, number: string } }[]).map((ep) => {
+    return { title: ep.attributes.titles.en_us ?? ep.attributes.titles.en_jp ?? ep.attributes.titles.ja_jp ?? `EP ${ep.attributes.number}`, number: Number(ep.attributes.number) }
+  });
+  return arr;
 }
 
 export function extractTime(hhMmSs: string) {
