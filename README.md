@@ -1,4 +1,8 @@
+animos project has taken a different direction temporarily, it's being worked on as a web application. Hosted in https://animos.cf, you can join the discord server to be posted about the changes, timelines, etc.
+
 # create-svelte
+
+
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
