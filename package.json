@@ -14,7 +14,7 @@
   "devDependencies": {
     "@popperjs/core": "^2.11.6",
     "@sveltejs/adapter-vercel": "^2.0.1",
-    "@sveltejs/kit": "^1.0.0-next.589",
+    "@sveltejs/kit": "^1.15.1",
     "@types/bcrypt": "^5.0.0",
     "@types/hls-parser": "^0.8.3",
     "@types/jsonwebtoken": "^9.0.1",
