@@ -256,7 +256,8 @@ export async function getEpisodes(kitsuId: number, currentEp: number): Promise<E
   } else {
     // get source
     const sources = await getSource(kitsuId, episodeNum);
-    episode.sources = sources;
+    if (sources)
+      episode.sources = sources;
   }
   return episode;
 }

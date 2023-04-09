@@ -74,34 +74,40 @@ export const writeEpisodeSource = async (episode: { animePaheId: string | null, 
   if (!episode.length || !episodeId)
     throw new TRPCError({ code: "PRECONDITION_FAILED" })
   console.log("Writing source file for episode: " + episodeId);
-  const resp = await proxyAxios.get(`${animepaheBase}/play/${episode.anime.animePaheId}/${episode.animePaheId}`);
-  const $ = load(resp.data);
-  const sources: { referrer: string, resolution: number, audio: "eng" | "jpn" }[] = [];
-  $("#resolutionMenu").children().each((_, elem) => {
-    let referrer = $(elem).attr("data-src")!;
-    let resolution = parseInt($(elem).attr("data-resolution")!);
-    let audio = $(elem).attr("data-audio") as "jpn" | "eng";
-    sources.push({ referrer, resolution, audio })
-  });
-  let res = await Promise.all(sources.filter(src => src.audio != "eng").map(async link => {
-    console.time("extraction: " + link.resolution)
-    const res = await (new Kwik()).extract(new URL(link.referrer));
-    console.timeEnd("extraction: " + link.resolution)
-    return {
-      quality: link.resolution,
-      audio: link.audio,
-      url: res[0].url,
-      episodeId
-    }
-  }))
+  try {
 
-  const insert = await db.$transaction(res.map(link => db.source.create({
-    data: link,
-    select: {
-      audio: true,
-      url: true,
-      quality: true
-    }
-  })));
-  return insert;
+    const resp = await proxyAxios.get(`${animepaheBase}/play/${episode.anime.animePaheId}/${episode.animePaheId}`);
+    console.log("Successfully received response from animepahe.");
+    const $ = load(resp.data);
+    const sources: { referrer: string, resolution: number, audio: "eng" | "jpn" }[] = [];
+    $("#resolutionMenu").children().each((_, elem) => {
+      let referrer = $(elem).attr("data-src")!;
+      let resolution = parseInt($(elem).attr("data-resolution")!);
+      let audio = $(elem).attr("data-audio") as "jpn" | "eng";
+      sources.push({ referrer, resolution, audio })
+    });
+    let res = await Promise.all(sources.filter(src => src.audio != "eng").map(async link => {
+      console.time("extraction: " + link.resolution)
+      const res = await (new Kwik()).extract(new URL(link.referrer));
+      console.timeEnd("extraction: " + link.resolution)
+      return {
+        quality: link.resolution,
+        audio: link.audio,
+        url: res[0].url,
+        episodeId
+      }
+    }))
+    const insert = await db.$transaction(res.map(link => db.source.create({
+      data: link,
+      select: {
+        audio: true,
+        url: true,
+        quality: true
+      }
+    })));
+    return insert;
+  } catch (err) {
+    console.log("Failed")
+    console.log(err);
+  }
 };
