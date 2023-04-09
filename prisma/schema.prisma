@@ -16,6 +16,11 @@ model Genre {
   name  String @unique
 }
 
+model Global {
+  id     Int @id
+  visits Int
+}
+
 model SkipTime {
   type                String
   start               Float
