@@ -57,14 +57,13 @@
       Search: {query}
     </h1>
     <div class="mt-5 relative">
-      <button on:click={(_) => (showFilters = !showFilters)}>
+      <button on:click={() => (showFilters = !showFilters)}>
         <IconTxtBtn text={"Filters"}>
           <FaFilter />
         </IconTxtBtn>
       </button>
       <div
-        use:clickOutside
-        on:outclick={() => (showFilters = false)}
+        use:clickOutside={() => (showFilters = false)}
         class="{showFilters
           ? 'opacity-100 z-20'
           : 'opacity-0 -z-10'} flex flex-col absolute transition-all duration-500 ease-in-out gap-3 bg-black bg-opacity-90 px-4 rounded-lg py-5 text-gray-200"

@@ -115,8 +115,7 @@
           >
             {#each Array.from( { length: Math.ceil(anime.episodes / 100) } ) as _, index}
               <option value={index}
-                >{index * 100 + (anime.zeroEpisode ? 0 : 1)} - {(index + 1) *
-                  100}</option
+                >{index * 100 + 1} - {(index + 1) * 100}</option
               >
             {/each}
           </select>
@@ -127,11 +126,11 @@
         class="my-10 flex gap-5 flex-wrap justify-center items-center"
       >
         {anime.episodes}
-        {#each generateRange(episodePage * 100 + (anime.zeroEpisode ? 0 : 1), (episodePage + 1) * 100, anime.episodes) as epNo}
+        {#each generateRange(episodePage * 100 + 1, (episodePage + 1) * 100, anime.episodes) as epNo}
           <a
             style="width: {(anime.episodes.toString().length ?? 0) + 1.25}rem;"
             class=" bg-gray-300 text-center rounded-sm"
-            href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&zeroEp={anime.zeroEpisode}&totalEpisode={anime.episodes}"
+            href="/episode?animeId={anime.kitsuId}&episodeId={epNo}&totalEpisode={anime.episodes}"
           >
             <span class="font-semibold text-gray-800">{epNo}</span>
           </a>

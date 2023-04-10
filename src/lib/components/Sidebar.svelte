@@ -11,8 +11,7 @@
 </script>
 
 <section
-  use:clickOutside
-  on:outclick={() => (show = false)}
+  use:clickOutside={() => (show = false)}
   class="absolute top-12 h-full px-5 py-4 bg-darker text-base text-white transition-all duration-500 ease-in-out"
   style={`z-index: 100; ${show ? "left:0;" : "left:-32rem;"}`}
 >

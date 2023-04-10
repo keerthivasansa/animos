@@ -2,6 +2,7 @@
   import { page } from "$app/stores";
   import CoverAnime from "$lib/components/CoverAnime.svelte";
   import type { Anime } from "@prisma/client";
+  import { trpc } from "lib/trpc";
   import { onMount } from "svelte";
   import { DarkPaginationNav } from "svelte-paginate";
 
@@ -13,7 +14,8 @@
   };
 
   async function popular() {
-    result = await window.api.anime.getPopular(pageNo);
+    // TODO Implement popular anime
+    result = { currentPage: 1, data: [], totalItems: 0 };
   }
 
   onMount(popular);

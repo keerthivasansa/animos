@@ -1,8 +1,8 @@
-export function clickOutside(node: HTMLElement) {
+export function clickOutside(node: HTMLElement, callback: () => void) {
   const handleClick = (event: MouseEvent) => {
-    if (!event.target) return;
+    if (event.target == null) return;
     if (!node.contains(event.target as Node)) {
-      node.dispatchEvent(new CustomEvent("outclick"));
+      callback();
     }
   };
 
@@ -15,6 +15,6 @@ export function clickOutside(node: HTMLElement) {
   };
 }
 
-export function scrollOnCondition(node: HTMLElement, value: boolean = true) {
+export function scrollOnCondition(node: HTMLElement, value = true) {
   if (value) node.scrollIntoView({ behavior: "smooth" });
 }

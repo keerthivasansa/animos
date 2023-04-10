@@ -5,10 +5,10 @@ import { authRouter } from "./routers/auth";
 import { t } from "./server";
 
 export const router = t.router({
-    anime: animeRouter,
-    episode: episodeRouter,
-    user: userRouter,
-    auth: authRouter
-})
+  anime: animeRouter,
+  episode: episodeRouter,
+  user: userRouter,
+  auth: authRouter,
+});
 
 export type Router = typeof router;

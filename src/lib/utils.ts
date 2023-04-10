@@ -1,20 +1,24 @@
 import type { Anime } from "@prisma/client";
 import { showSettings } from "./stores";
-import { browser } from '$app/environment';
+import { browser } from "$app/environment";
 
-export const isElectron = browser ? navigator.userAgent.toLowerCase().indexOf(' electron/') > -1 : false;
+export const isElectron = browser
+  ? navigator.userAgent.toLowerCase().includes(" electron/")
+  : false;
 
 export const isDev = process.env.NODE_ENV != "production";
 
-export const serverOrigin = isDev ? "http://localhost:5000" : "https://api.animos.cf";
+export const serverOrigin = isDev
+  ? "http://localhost:5000"
+  : "https://api.animos.cf";
 
 export function getColorType(color: string) {
-  let c = color.substring(1);
-  let rgb = parseInt(c, 16);
-  let r = (rgb >> 16) & 0xff;
-  let g = (rgb >> 8) & 0xff;
-  let b = (rgb >> 0) & 0xff;
-  let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  const c = color.substring(1);
+  const rgb = parseInt(c, 16);
+  const r = (rgb >> 16) & 0xff;
+  const g = (rgb >> 8) & 0xff;
+  const b = (rgb >> 0) & 0xff;
+  const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
   if (luma < 40) {
     return "dark";
@@ -25,9 +29,9 @@ export function getColorType(color: string) {
 
 function hexToRgb(hex: string) {
   hex = hex.replace("#", "");
-  let aRgbHex = hex.match(/.{1,2}/g);
-  if (!aRgbHex) return;
-  var aRgb = [
+  const aRgbHex = hex.match(/.{1,2}/g);
+  if (aRgbHex == null) return;
+  const aRgb = [
     parseInt(aRgbHex[0], 16),
     parseInt(aRgbHex[1], 16),
     parseInt(aRgbHex[2], 16),
@@ -40,12 +44,12 @@ function hexToRgb(hex: string) {
 }
 
 export function lightOrDark(colorHex: string) {
-  let { red, green, blue } = hexToRgb(colorHex) ?? {
+  const { red, green, blue } = hexToRgb(colorHex) ?? {
     red: 0,
     green: 0,
     blue: 0,
   };
-  let hsp = red * 0.299 + green * 0.587 + blue * 0.114;
+  const hsp = red * 0.299 + green * 0.587 + blue * 0.114;
   // Using the HSP value, determine whether the color is light or dark
   if (hsp > 150) {
     return "light";
@@ -57,7 +61,7 @@ export function lightOrDark(colorHex: string) {
 const genreColors = ["#742802", "#c14a09", "#b0306a", "#985538", "#35654d"];
 
 export function getGenreColor(name: string) {
-  let index = (name.length + name.charCodeAt(1)) % genreColors.length;
+  const index = (name.length + name.charCodeAt(1)) % genreColors.length;
   return genreColors[index];
 }
 
@@ -70,10 +74,10 @@ export function capitalize(word: string) {
 }
 
 export function getNumberOfLines(elementId: string) {
-  let element = document.getElementById(elementId);
-  if (!element) return 0;
-  let lineHeight = getComputedStyle(element).getPropertyValue("line-height");
-  let elementHeight = element.clientHeight;
+  const element = document.getElementById(elementId);
+  if (element == null) return 0;
+  const lineHeight = getComputedStyle(element).getPropertyValue("line-height");
+  const elementHeight = element.clientHeight;
   return Math.floor(elementHeight / parseInt(lineHeight));
 }
 
@@ -82,13 +86,13 @@ export function convertRemToPixels(rem: number) {
 }
 
 export function formatTime(seconds: number) {
-  let minutes = Math.floor(seconds / 60);
-  let secs = Math.floor(seconds % 60);
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
 
   return `${minutes}:${secs < 10 ? 0 : ""}${secs}`;
 }
 
-export function addShortcut(key: string, cb: Function) {
+export function addShortcut(key: string, cb: () => void) {
   document.addEventListener("keypress", (ev) => {
     if (ev.key == key) cb();
   });
@@ -120,8 +124,8 @@ export function addKeyBoardShortcuts() {
 
 export function replaceStateWithQuery(values: Record<string, string>) {
   const url = new URL(window.location.toString());
-  for (let [key, val] of Object.entries(values)) {
-    if (!!val) {
+  for (const [key, val] of Object.entries(values)) {
+    if (val) {
       url.searchParams.set(encodeURIComponent(key), encodeURIComponent(val));
     } else {
       url.searchParams.delete(key);

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import type { EpisodeWithAnime } from "$electron-src/types";
   import History from "$lib/components/History.svelte";
+  import type { EpisodeWithAnime } from "lib/types";
   import { onMount } from "svelte";
   import { DarkPaginationNav } from "svelte-paginate";
 
@@ -12,8 +12,8 @@
   };
 
   async function getHistory(pageNum: number) {
-    console.log({ pageNum });
-    result = await window.api.episode.getHistory(pageNum);
+    // TODO Implement user history
+    result = { currentPage: 1, totalItems: 0, data: [] };
   }
 
   onMount(async () => {
