@@ -10,7 +10,6 @@
   import "swiper/css";
   import "swiper/css/navigation";
   import "swiper/css/pagination";
-  import { clickOutside } from "lib/actions";
 
   export let animeArr: Anime[];
 

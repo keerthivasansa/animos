@@ -2,7 +2,7 @@
   import CoverAnime from "$lib/components/CoverAnime.svelte";
   import EpisodeProgress from "$lib/components/EpisodeProgress.svelte";
   import { formatTime } from "$lib/utils";
-  import type { EpisodeWithAnime } from "lib/types";
+  import type { EpisodeWithAnime } from "$lib/types";
 
   export let episode: EpisodeWithAnime;
 </script>

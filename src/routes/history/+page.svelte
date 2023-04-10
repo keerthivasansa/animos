@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import History from "$lib/components/History.svelte";
-  import type { EpisodeWithAnime } from "lib/types";
+  import type { EpisodeWithAnime } from "$lib/types";
   import { onMount } from "svelte";
   import { DarkPaginationNav } from "svelte-paginate";
 

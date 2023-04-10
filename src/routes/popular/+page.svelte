@@ -2,7 +2,6 @@
   import { page } from "$app/stores";
   import CoverAnime from "$lib/components/CoverAnime.svelte";
   import type { Anime } from "@prisma/client";
-  import { trpc } from "lib/trpc";
   import { onMount } from "svelte";
   import { DarkPaginationNav } from "svelte-paginate";
 
