@@ -2,7 +2,8 @@
   import CoverAnime from "$lib/components/CoverAnime.svelte";
 
   function getLikedAnime() {
-    return window.api.anime.liked();
+    // TODO Implement user liked anime system.
+    return [];
   }
 </script>
 

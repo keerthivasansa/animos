@@ -1,5 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
+// import type Plyr from "plyr";
+// import type Hls from "hls.js";
 
 // and what to do when importing types
 declare namespace App {
@@ -14,12 +16,6 @@ declare module "svelte-plyr" {
 }
 
 declare interface Window {
-  player: import("plyr");
+  player: import("plyr.js");
   hls: import("hls.js");
-}
-
-declare namespace svelte.JSX {
-  interface HTMLAttributes<T> {
-    onoutclick?: () => any;
-  }
 }

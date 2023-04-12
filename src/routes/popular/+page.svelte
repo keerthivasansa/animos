@@ -13,7 +13,8 @@
   };
 
   async function popular() {
-    result = await window.api.anime.getPopular(pageNo);
+    // TODO Implement popular anime
+    result = { currentPage: 1, data: [], totalItems: 0 };
   }
 
   onMount(popular);

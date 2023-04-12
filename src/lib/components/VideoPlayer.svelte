@@ -3,11 +3,9 @@
   import type { Options as PlyrOptions } from "plyr";
   import { onDestroy, onMount } from "svelte";
   import type { EpisodeWithSkip } from "$lib/types";
-  import type { SkipTime } from "@prisma/client";
   import { addShortcut } from "$lib/utils";
   import { toasts, FlatToast, ToastContainer } from "svelte-toasts";
-  import Hls, { Level } from "hls.js";
-  import { getSourceUrl } from "$lib/supabase/utils";
+  import Hls from "hls.js";
 
   export let totalEpisodes: number;
   export let hasNextEp: boolean;
@@ -215,9 +213,7 @@
     controls
     style="border-radius: 12px"
     class:limit-size={!fullscreen}
-  >
-    <source />
-  </video>
+  />
 </div>
 
 <style>

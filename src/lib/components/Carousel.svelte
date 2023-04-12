@@ -45,7 +45,6 @@
   </button>
   <SvelteSwiper
     slidesPerView={1}
-    onoutclick={() => null}
     autoplay
     loop
     navigation={{
@@ -58,7 +57,7 @@
     modules={[Navigation, Pagination]}
   >
     {#each animeArr as anime, index}
-      <SwiperSlide onoutclick={() => null}>
+      <SwiperSlide>
         <a href="/info/{anime.kitsuId}" class="mt-10">
           <div
             on:mouseenter={(_) => (focus = true)}

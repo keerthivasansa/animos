@@ -8,7 +8,7 @@
     } else {
       selected.push(val);
     }
-    selected = selected
+    selected = selected;
   }
 </script>
 

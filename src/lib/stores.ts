@@ -10,7 +10,7 @@ export const coverAnimeFocus = writable(-1);
 export const lockBody = writable(false);
 
 export function createModal() {
-  let store = writable(false);
+  const store = writable(false);
   return {
     set: (val: boolean) => {
       if (val) {
@@ -18,7 +18,7 @@ export function createModal() {
       } else {
         lockBody.set(false);
       }
-      return store.set(val);
+      store.set(val);
     },
     subscribe: store.subscribe,
     update: store.update,
@@ -27,12 +27,12 @@ export function createModal() {
 
 export function trpcClient() {
   const client = writable(trpc());
-  page.subscribe(pg => {
+  page.subscribe((pg) => {
     client.set(trpc(pg));
-  })
+  });
   return {
-    subscribe: client.subscribe
-  }
+    subscribe: client.subscribe,
+  };
 }
 
 export const showSettings = createModal();

@@ -81,7 +81,6 @@
       </div>
       <button
         aria-label="next page in continue"
-
         class:hidden={parseInt(sliderLeft) == maxSlideLeft}
         on:click={nextSlide}
         class="nav-btn right-16 top-0"

@@ -6,16 +6,10 @@
   import Settings from "$lib/components/Settings.svelte";
   import { accentClr, lockBody } from "$lib/stores";
   import { onMount } from "svelte";
-  import {
-    addKeyBoardShortcuts,
-    capitalize,
-    isElectron,
-    lightOrDark,
-  } from "$lib/utils";
+  import { addKeyBoardShortcuts, capitalize, lightOrDark } from "$lib/utils";
   import { page } from "$app/stores";
   import FaHamburger from "svelte-icons/fa/FaBars.svelte";
   import Sidebar from "$lib/components/Sidebar.svelte";
-  import NavBar from "$lib/components/NavBar.svelte";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -66,7 +60,6 @@
 
 <div class="flex flex-col gap-0 overflow-hidden">
   <div class="sticky top-0 left-0" style="z-index: 50;">
-    <svelte:component this={isElectron ? NavBar : null} />
     <nav
       class="flex w-full text-white justify-between items-center px-10 py-6"
       on:mouseleave={(_) => (marginLeft = -4.25)}

@@ -15,11 +15,12 @@
   };
 
   async function getGenre(genre: string) {
-    result = await window.api.anime.getGenre(genre, pageNo);
+    // TODO Implement genre wise search.
+    result = { currentPage: 1, totalItems: 0, data: [] };
   }
 
   function getGenreNames() {
-    return window.api.anime.getGenreNames();
+    return [];
   }
 
   onMount(() => {

@@ -18,8 +18,7 @@
   <div
     class="bg-opacity-90 rounded-md text-white"
     style="min-width: 45rem;"
-    use:clickOutside
-    on:outclick={() => showSettings.set(false)}
+    use:clickOutside={() => showSettings.set(false)}
   >
     <div
       id="header"
@@ -31,6 +30,7 @@
         <IconBtn
           bgAccent={false}
           background="red"
+          ariaLabel="Show settings"
           click={() => showSettings.set(false)}
         >
           <div class="w-3">
@@ -40,7 +40,9 @@
       </div>
     </div>
     <div class="flex flex-row bg-dark-1 gap-10" style="min-height: 15rem;">
-      <div class="flex flex-col border-r-2 border-gray-400 text-gray-400 font-semibold">
+      <div
+        class="flex flex-col border-r-2 border-gray-400 text-gray-400 font-semibold"
+      >
         {#each headers as head}
           <button
             style="border-radius:0"
