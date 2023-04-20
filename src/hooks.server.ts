@@ -1,26 +1,9 @@
-import { json, type Handle } from "@sveltejs/kit";
-import { router } from "$lib/trpc/index";
-import { createContext } from "$lib/trpc/server";
-import { createTRPCHandle } from "trpc-sveltekit";
-import { sequence } from "@sveltejs/kit/hooks";
-import { GlobalService } from "$lib/trpc/api/global";
+import { type Handle } from "@sveltejs/kit";
 
-const trpcHandle = createTRPCHandle({ router, createContext });
-
-const visitHook: Handle = async ({ event, resolve }) => {
-  const { url } = event;
-  if (url.pathname.startsWith("/trpc")) return await resolve(event);
-  if (url.pathname == "/badge/visits") {
-    const global = await GlobalService.getGlobal();
-    return json({
-      schemaVersion: 1,
-      label: "Visits",
-      message: global.visits.toString(),
-      color: "brightgreen",
-    });
+export const handle = (async ({ event, resolve }) => {
+  if (!event.url.pathname.startsWith('/under-construction')) {
+    return new Response("", { status: 307, headers: { location: "/under-construction" } });
   }
-  GlobalService.addVisit();
-  return await resolve(event);
-};
-
-export const handle: Handle = sequence(visitHook, trpcHandle);
+  const response = await resolve(event);
+  return response;
+}) satisfies Handle;
