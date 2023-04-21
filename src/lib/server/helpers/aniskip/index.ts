@@ -43,13 +43,13 @@ export class AnimeSkip {
 				console.log('unknown error while loading skip times:');
 				console.log(err);
 			}
+            return [
+                {
+                    start: -1,
+                    end: -1,
+                    type: 'nil'
+                }
+            ];
 		}
-		return [
-			{
-				start: -1,
-				end: -1,
-				type: 'nil'
-			}
-		];
 	}
 }
