@@ -1,5 +1,7 @@
-import GogoProvider from "./gogo";
+import Consumet from './consumet';
 
-const providers = { gogo: GogoProvider }
+const providers = { consumet: Consumet };
+
+export type AvailableProvider = keyof typeof providers;
 
 export default providers;

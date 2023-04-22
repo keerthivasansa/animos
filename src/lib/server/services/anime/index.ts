@@ -1,24 +1,33 @@
-import { Kitsu } from "$lib/server/helpers/kitsu";
-import { MAL } from "$lib/server/helpers/mal";
+import { MAL } from '$lib/server/helpers/mal';
+import providers, { type AvailableProvider } from '@server/providers';
+import type Provider from '@server/providers/generic';
 
 export class AnimeService {
-    private malId: number;
+	private malId: number;
 
-    constructor(malId: number) {
-        this.malId = malId;
-    }
+	constructor(malId: number) {
+		this.malId = malId;
+	}
 
-    static async getTrending() {
-        const trendingAnime = await MAL.getTrending();
+	static async getMostPopular() {
+		const result = await MAL.getMostPopular();
+		return result;
+	}
 
-        const promise = trendingAnime.map(async (anime) => {
-            const kitsu = new Kitsu(anime.malId);
-            const poster = await kitsu.getPoster();
-            return { ...anime, poster };
-        });
+	getProvider(providerName: AvailableProvider): Provider {
+		const provider = new providers[providerName](this.malId);
+		return provider;
+	}
 
-        const result = await Promise.all(promise);
+	async getEpisodes() {
+		const provider = this.getProvider('consumet');
+		const episodes = await provider.getEpisodes(1);
+		return episodes;
+	}
 
-        return result;
-    }
+	async getSource(episode: string | number) {
+		const provider = this.getProvider('consumet');
+		const source = await provider.getSource(episode);
+		return source;
+	}
 }

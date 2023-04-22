@@ -8,7 +8,7 @@
 <div class="w-48 flex flex-col cursor-pointer rounded-md overflow-hidden">
 	<img src={anime.image} alt="Death note" class="w-48" />
 	<div class="text-center bg-black py-3">
-		<div class="px-4 text-sm font-semibold text-clipper ">{anime.title}</div>
+		<div class="px-4 text-sm font-semibold text-clipper">{anime.title}</div>
 	</div>
 </div>
 

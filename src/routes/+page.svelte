@@ -4,4 +4,3 @@
 		title: 'Death note apefokawe faefonawefja wefjka wefjaw efjwae'
 	};
 </script>
-
