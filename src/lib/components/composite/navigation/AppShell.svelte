@@ -3,9 +3,9 @@
 	import Sidebar from './Sidebar.svelte';
 </script>
 
-<main class="flex flex-col w-screen h-screen">
+<main class="flex flex-col w-screen h-full overflow-hidden">
 	<Header />
-	<div class="flex flex-1 flex-col">
+	<div class="flex flex-1 flex-row justify-start">
 		<Sidebar />
 		<slot />
 	</div>

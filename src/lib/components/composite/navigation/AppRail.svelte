@@ -2,7 +2,7 @@
 	import { sidebarExpand, sidebarShowLabel } from '$lib/stores/sidebar';
 </script>
 
-<div class="flex-1 w-full flex z-50">
+<div class="flex z-50">
 	<div
 		class="rail flex flex-col transition-[width, transform] {$sidebarExpand &&
 			'active'} duration-300 justify-between bg-dark-800 py-2 px-3"
