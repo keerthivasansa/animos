@@ -1,3 +1,4 @@
+import { AnimeSkip } from '@server/helpers/aniskip';
 import { AnimeService } from '@server/services/anime';
 
 // Use this route to demo server servcies and controllers.
@@ -5,13 +6,8 @@ import { AnimeService } from '@server/services/anime';
 export const load = async () => {
 	// const ids = await MAL.getMostPopular();
 	// try {
-	const anime = new AnimeService(1535);
-	console.time('getting info');
-	anime.setProvider("gogo");
-	// const episodes = await anime.getSource('2');
-	const info = await anime.getSource("2");
-	console.timeEnd('getting info');
-	console.log(info);
+	const anime = await AnimeSkip.getSkipTimes(1535, 2, 1390);
+	console.log(anime)
 	// } catch (err) {
 	// 	console.log(err);
 	// }
