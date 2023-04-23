@@ -7,9 +7,10 @@ export const load = async () => {
 	// try {
 	const anime = new AnimeService(1535);
 	console.time('getting info');
-	const episodes = await anime.getEpisodes();
+	const episodes = anime.getProvider();
+	const info = await episodes.getEpisodes();
 	console.timeEnd('getting info');
-	console.log(episodes);
+	console.log(info);
 	// } catch (err) {
 	// 	console.log(err);
 	// }

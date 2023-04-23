@@ -38,84 +38,76 @@ export class AnimeService {
 
 	async getEpisodes() {
 		const provider = this.getProvider();
-		const providerId = provider.identifier;
-		const episodes = await db.episodeProvider.findMany({
+
+		const cachedEpisodes = await db.episodeProvider.findMany({
 			where: {
-				provider: providerId,
-				episodeAnimeMalId: this.malId
-			},
-			select: {
-				source: true,
-				episode: {
-					select: {
-						title: true,
-						length: true,
-						number: true
-					}
+				provider: provider.identifier,
+				animeId: this.malId
+			}
+		});
+
+		if (cachedEpisodes.length) {
+			console.log("cache hit")
+			return cachedEpisodes;
+		}
+
+		const episodes = await provider.getEpisodes();
+		console.log(episodes);
+
+		const providerEpisodes = await db.$transaction(episodes.map(ep => db.episodeProvider.create({
+			data: {
+				episodeNumber: ep.number,
+				title: ep.title,
+				episodeProviderId: ep.id,
+				provider: provider.identifier,
+				animeId: this.malId
+			}
+		})))
+		return providerEpisodes;
+	}
+
+	async getSource(episodeId: string) {
+		const provider = this.getProvider();
+		const episodeProvider = await db.episodeProvider.findUnique({
+			where: {
+				provider_episodeProviderId: {
+					episodeProviderId: episodeId,
+					provider: provider.identifier
 				}
 			}
 		});
-		if (episodes.length) {
-			console.log("cache hit");
-			return episodes;
-		}
-		const providerEpisodes = await provider.getEpisodes();
-
-		const episodeCheckPromises: Prisma.Prisma__EpisodeClient<Episode, never>[] = [];
-		const episodeProviderInserts: EpisodeProviderInsertPromise[] = [];
-
-		const infoPromise =
-			providerEpisodes.map(async (val) => {
-				const info = await provider.getSourceInfo(val.id);
-				const episodeInsert = db.episode.upsert({
-					create: {
-						animeMalId: this.malId,
-						length: info.length,
-						title: val.title,
-						number: val.number,
-					},
-					update: {},
-					where: {
-						animeMalId_number_length: {
-							length: info.length,
-							animeMalId: this.malId,
-							number: val.number
-						}
-					}
-				});
-				const epInsert = db.episodeProvider.create({
-					data: {
-						source: info.url,
-						episodeAnimeMalId: this.malId,
-						episodeLength: info.length,
-						episodeNumber: val.number,
-						provider: providerId
-					},
-					select: {
-						source: true,
-						episode: {
-							select: {
-								title: true,
-								length: true,
-								number: true
-							}
-						}
-					}
-				});
-				episodeProviderInserts.push(epInsert);
-				episodeCheckPromises.push(episodeInsert);
-			})
-		console.time("promises");
-		await Promise.all(infoPromise);
-		await db.$transaction(episodeCheckPromises);
-		const newEpisodes = await db.$transaction(episodeProviderInserts);
-		console.timeEnd("promises");
-		return newEpisodes;
-	}
-
-	async getSource(episode: string | number) {
-		const provider = this.getProvider();
-		const source = await provider.getSourceInfo(episode);
-		return source;
+		if (!episodeProvider)
+			throw new Error("No such episode"); // TODO add episodes again.
+		if (episodeProvider.source)
+			return episodeProvider;
+		const info = await provider.getSourceInfo(episodeId);
+		const episode = await db.episode.upsert({
+			create: {
+				animeMalId: this.malId,
+				length: info.length,
+				number: episodeProvider.episodeNumber,
+			},
+			where: {
+				animeMalId_number_length: {
+					animeMalId: this.malId,
+					length: info.length,
+					number: episodeProvider.episodeNumber
+				}
+			},
+			update: {}
+		});
+		const result = await db.episodeProvider.update({
+			where: {
+				provider_episodeProviderId: {
+					provider: provider.identifier,
+					episodeProviderId: episodeId
+				}
+			},
+			data: {
+				episodeId: episode.id,
+				source: info.url
+			}
+		});
+		return result;
 	}
 }

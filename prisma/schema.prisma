@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -35,33 +35,29 @@ model AnimeProvider {
   provider   String
   providerId String
 
-  anime    Anime             @relation(fields: [malId], references: [malId])
-  episodes EpisodeProvider[]
+  anime Anime @relation(fields: [malId], references: [malId])
 
   @@id([malId, provider])
 }
 
 model Episode {
+  id         String @id @default(uuid())
   number     Int
-  title      String?
   animeMalId Int
-  length     Int
+  length     Int?
 
-  episodeProvider EpisodeProvider[]
-
-  @@id([animeMalId, number, length])
+  @@unique([animeMalId, number, length])
 }
 
 model EpisodeProvider {
-  provider   String
-  source     String
-
-  episodeAnimeMalId Int
+  provider          String
+  episodeProviderId String // episodeId in provider
   episodeNumber     Int
-  episodeLength     Int
+  animeId           Int
 
-  episode       Episode        @relation(fields: [episodeAnimeMalId, episodeNumber, episodeLength], references: [animeMalId, number, length])
-  animeProvider AnimeProvider? @relation(fields: [episodeAnimeMalId, provider], references: [malId, provider])
+  source    String?
+  episodeId String?
+  title     String?
 
-  @@id([provider, episodeAnimeMalId, episodeNumber])
+  @@id([provider, episodeProviderId])
 }
