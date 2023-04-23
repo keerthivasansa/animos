@@ -5,7 +5,7 @@ import { USER_AGENT, headerOption } from '../utils';
 import { decryptAjaxResponse, getAjaxParams } from './scraper';
 
 class GogoProvider extends Provider {
-	provider: ProviderName = 'Gogoanime';
+	identifier: ProviderName = 'Gogoanime';
 	private baseUrl = 'https://gogoanime.cl';
 	private client = axios.create({ baseURL: this.baseUrl });
 

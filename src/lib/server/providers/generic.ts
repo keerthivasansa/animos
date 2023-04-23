@@ -12,7 +12,7 @@ type ProviderEpisode = {
  * External providers that provide the source and episode information.
  */
 abstract class Provider {
-	public provider: ProviderName = 'default';
+	public identifier: ProviderName = 'default';
 	public malId: number;
 
 	constructor(malId: number) {
@@ -26,8 +26,8 @@ abstract class Provider {
 	 * @returns The ID of the anime in the provider.
 	 */
 	async getProviderId() {
-		if (this.provider === 'default') throw new Error('Default provider has been called.');
-		const id = await MalSync.getProviderId(this.malId, this.provider);
+		if (this.identifier === 'default') throw new Error('Default provider has been called.');
+		const id = await MalSync.getProviderId(this.malId, this.identifier);
 		return id;
 	}
 
@@ -41,7 +41,7 @@ abstract class Provider {
 	 * @param episode The id that uniquely identifies an episode to the provider.
 	 * @returns The primary HLS source of the episode
 	 */
-	abstract getSource(episode: number | string): Promise<{ url: string; length: number }>;
+	abstract getSourceInfo(episode: number | string): Promise<{ url: string; length: number }>;
 }
 
 export default Provider;

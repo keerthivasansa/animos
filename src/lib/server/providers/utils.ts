@@ -18,7 +18,7 @@ export async function getHlsDuration(url: string) {
 	const hls = HLSParser.parse(resp.data);
 	if (!hls.isMasterPlaylist) {
 		const totalLength = hls.segments.reduce((prev, current) => prev + current.duration, 0);
-		return totalLength;
+		return Math.ceil(totalLength);
 	} else {
 		throw new Error('Playlist is Master.');
 	}

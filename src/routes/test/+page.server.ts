@@ -5,10 +5,9 @@ import { AnimeService } from '@server/services/anime';
 export const load = async () => {
 	// const ids = await MAL.getMostPopular();
 	// try {
-	const anime = new AnimeService(33255);
+	const anime = new AnimeService(1535);
 	console.time('getting info');
-	const consumet = anime.getProvider('9anime');
-	const episodes = await consumet.getSource('HjybCck=');
+	const episodes = await anime.getEpisodes();
 	console.timeEnd('getting info');
 	console.log(episodes);
 	// } catch (err) {

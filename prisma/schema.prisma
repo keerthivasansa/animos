@@ -8,6 +8,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 enum AnimeStatus {
@@ -53,7 +54,7 @@ model Episode {
 
 model EpisodeProvider {
   provider   String
-  providerId String
+  source     String
 
   episodeAnimeMalId Int
   episodeNumber     Int
