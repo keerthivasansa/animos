@@ -7,7 +7,7 @@ export const load = async () => {
 	// try {
 	const anime = new AnimeService(33255);
 	console.time('getting info');
-	const consumet = anime.getProvider('consumet');
+	const consumet = anime.getProvider('9anime');
 	const episodes = await consumet.getSource('HjybCck=');
 	console.timeEnd('getting info');
 	console.log(episodes);

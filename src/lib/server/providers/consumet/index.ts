@@ -1,15 +1,15 @@
 import axios from 'axios';
-import Provider, { type ProviderName } from './generic';
+import Provider, { type ProviderName } from '../generic';
 import type { ConsumetInfoResponse, SourceResponse } from '@server/types/consumet';
-import { getHlsDuration, getProxyUrl } from './utils';
+import { getHlsDuration, getProxyUrl } from '../utils';
 
 class Consumet extends Provider {
 	private baseUrl = 'https://api.consumet.org/anime';
 	private client = axios.create({ baseURL: this.baseUrl });
+	public provider: ProviderName = 'default';
 
 	constructor(malId: number) {
 		super(malId);
-		this.provider = '9anime';
 	}
 
 	async getEpisodes() {
