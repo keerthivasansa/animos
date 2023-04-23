@@ -41,7 +41,7 @@ abstract class Provider {
 	 * @param episode The id that uniquely identifies an episode to the provider.
 	 * @returns The primary HLS source of the episode
 	 */
-	abstract getSource(episode: number | string): Promise<string>;
+	abstract getSource(episode: number | string): Promise<{ url: string; length: number }>;
 }
 
 export default Provider;
