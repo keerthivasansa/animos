@@ -5,6 +5,12 @@
 	let progressInterval: NodeJS.Timer | null;
 	let progress = 0;
 
+	function reset() {
+		progress = 0;
+		if (delayTimer) clearInterval(delayTimer);
+		if (progressInterval) clearInterval(progressInterval);
+	}
+
 	function startTimer() {
 		if (delayTimer) {
 			clearTimeout(delayTimer);
@@ -21,15 +27,9 @@
 	}
 
 	navigating.subscribe((val) => {
-		progress = 0;
+		reset();
 		if (val) {
 			delayTimer = setTimeout(startTimer, 1000); // only show progress bar when the page takes a few seconds to load
-		} else if (delayTimer) {
-			clearTimeout(delayTimer);
-		} else if (progressInterval) {
-			clearInterval(progressInterval);
-		} else {
-			console.log(val);
 		}
 	});
 </script>
