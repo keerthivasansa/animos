@@ -55,7 +55,7 @@ model EpisodeProvider {
   episodeNumber     Int
   animeId           Int
 
-  source    String?
+  source    String? @db.VarChar(512)
   episodeId String?
   title     String?
 

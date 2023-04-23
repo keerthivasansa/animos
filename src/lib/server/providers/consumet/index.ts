@@ -14,8 +14,10 @@ class Consumet extends Provider {
 
 	async getEpisodes() {
 		// consumet does not have pagination for episodes
+		console.log("Awefwe")
 		const id = await this.getProviderId();
 		const response = await this.client.get<ConsumetInfoResponse>(`/${this.identifier}/info/${id}`);
+		console.log("awef")
 		return response.data.episodes;
 	}
 

@@ -16,7 +16,7 @@ type EpisodeProviderInsertPromise = Prisma.Prisma__EpisodeProviderClient<{
 
 export class AnimeService {
 	private malId: number;
-
+	private currentProvider: AvailableProvider = "9anime";
 	constructor(malId: number) {
 		this.malId = malId;
 	}
@@ -30,10 +30,13 @@ export class AnimeService {
 		return "9anime";
 	}
 
-	getProvider(providerName?: AvailableProvider): Provider {
-		providerName ||= this.getPreferredProvider();
-		const provider = new providers[providerName](this.malId);
+	getProvider(): Provider {
+		const provider = new providers[this.currentProvider](this.malId);
 		return provider;
+	}
+
+	setProvider(provider: AvailableProvider) {
+		this.currentProvider = provider;
 	}
 
 	async getEpisodes() {
@@ -81,16 +84,18 @@ export class AnimeService {
 		if (episodeProvider.source)
 			return episodeProvider;
 		const info = await provider.getSourceInfo(episodeId);
+		console.log(info);
+		const closestLength = info.length - (info.length % 100);
 		const episode = await db.episode.upsert({
 			create: {
 				animeMalId: this.malId,
-				length: info.length,
+				length: closestLength,
 				number: episodeProvider.episodeNumber,
 			},
 			where: {
 				animeMalId_number_length: {
 					animeMalId: this.malId,
-					length: info.length,
+					length: closestLength,
 					number: episodeProvider.episodeNumber
 				}
 			},

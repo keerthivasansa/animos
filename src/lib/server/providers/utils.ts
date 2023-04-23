@@ -13,8 +13,21 @@ export function getProxyUrl(url: string) {
 	return `${proxy_url}/${urlBase}${file_extension}`;
 }
 
-export async function getHlsDuration(url: string) {
-	const resp = await axios.get<string>(url);
+export async function getHlsDuration(url: string, master = false) {
+	let finalUrl: string;
+	if (master) {
+		const urlParts = url.split("/");
+		const fileParts = urlParts.at(-1)?.split(".");
+		if (!fileParts)
+			throw new Error("Malformed HLS URL provided.");
+		fileParts.splice(-1, 0, '720');
+		const file = fileParts.join(".");
+		urlParts.splice(-1, 1, file);
+		finalUrl = urlParts.join("/");
+	} else {
+		finalUrl = url;
+	}
+	const resp = await axios.get<string>(finalUrl);
 	const hls = HLSParser.parse(resp.data);
 	if (!hls.isMasterPlaylist) {
 		const totalLength = hls.segments.reduce((prev, current) => prev + current.duration, 0);

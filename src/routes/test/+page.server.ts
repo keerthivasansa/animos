@@ -7,8 +7,9 @@ export const load = async () => {
 	// try {
 	const anime = new AnimeService(1535);
 	console.time('getting info');
-	const episodes = anime.getProvider();
-	const info = await episodes.getEpisodes();
+	anime.setProvider("gogo");
+	// const episodes = await anime.getSource('2');
+	const info = await anime.getSource("2");
 	console.timeEnd('getting info');
 	console.log(info);
 	// } catch (err) {

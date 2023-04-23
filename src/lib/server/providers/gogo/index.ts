@@ -1,7 +1,7 @@
 import { load } from 'cheerio';
 import Provider, { type ProviderName } from '../generic';
 import axios from 'axios';
-import { USER_AGENT, headerOption } from '../utils';
+import { USER_AGENT, getHlsDuration, getProxyUrl, headerOption } from '../utils';
 import { decryptAjaxResponse, getAjaxParams } from './scraper';
 
 class GogoProvider extends Provider {
@@ -13,10 +13,9 @@ class GogoProvider extends Provider {
 		super(malId);
 	}
 
-	async getSource(episodeId: string | number) {
+	async getSourceInfo(episodeId: string) {
 		const gogoSlug = await this.getProviderId();
-		const url = `/${gogoSlug}-episode-${episodeId}`;
-		const response = await this.client.get(url);
+		const response = await this.client.get(`/${gogoSlug}-episode-${episodeId}`);
 		const $ = load(response.data);
 
 		const gogoWatch = $('div.anime_muti_link > ul > li.vidcdn > a').attr('data-video');
@@ -42,9 +41,13 @@ class GogoProvider extends Provider {
 		);
 
 		const finalSource = await decryptAjaxResponse(fetchRes.data);
-		if (!finalSource.source) return { error: 'No sources found' };
+		if (!finalSource.source.length) throw new Error("No sources found");
 
-		return finalSource;
+		const source = finalSource.source[0];
+		const url = getProxyUrl(source.file);
+		const length = await getHlsDuration(source.file, true);
+
+		return { url, length };
 	}
 
 	async getId(): Promise<string> {
@@ -73,7 +76,8 @@ class GogoProvider extends Provider {
 		const [last, first] = [lastEp, firstEp].map((val) => Number(val.replace('EP ', '')));
 		// const type = first === 0 ? "zero" : "normal";
 		return Array.from({ length: last - first + 1 }, (_, index) => {
-			return { number: first + index, id: index.toString() };
+			const number = index + 1;
+			return { number, id: number.toString() };
 		});
 	}
 }
