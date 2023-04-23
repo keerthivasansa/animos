@@ -6,6 +6,61 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+enum AnimeStatus {
+  FINISHED_AIRING
+  CURRENTLY_AIRING
+  UNKNOWN
+}
+
+model Anime {
+  malId    Int         @id
+  title    String
+  synopsis String
+  image    String
+  score    Float
+  genre    String
+  rating   String
+  status   AnimeStatus
+
+  providers AnimeProvider[]
+}
+
+model AnimeProvider {
+  malId      Int
+  provider   String
+  providerId String
+
+  anime    Anime             @relation(fields: [malId], references: [malId])
+  episodes EpisodeProvider[]
+
+  @@id([malId, provider])
+}
+
+model Episode {
+  number     Int
+  title      String?
+  animeMalId Int
+  length     Int
+
+  episodeProvider EpisodeProvider[]
+
+  @@id([animeMalId, number, length])
+}
+
+model EpisodeProvider {
+  provider   String
+  providerId String
+
+  episodeAnimeMalId Int
+  episodeNumber     Int
+  episodeLength     Int
+
+  episode       Episode        @relation(fields: [episodeAnimeMalId, episodeNumber, episodeLength], references: [animeMalId, number, length])
+  animeProvider AnimeProvider? @relation(fields: [episodeAnimeMalId, provider], references: [malId, provider])
+
+  @@id([provider, episodeAnimeMalId, episodeNumber])
 }
