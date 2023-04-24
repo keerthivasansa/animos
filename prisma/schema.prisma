@@ -14,6 +14,7 @@ datasource db {
 enum AnimeStatus {
   FINISHED_AIRING
   CURRENTLY_AIRING
+  UPCOMING
   UNKNOWN
 }
 
@@ -26,16 +27,12 @@ model Anime {
   genre    String
   rating   String
   status   AnimeStatus
-
-  providers AnimeProvider[]
 }
 
 model AnimeProvider {
   malId      Int
   provider   String
   providerId String
-
-  anime Anime @relation(fields: [malId], references: [malId])
 
   @@id([malId, provider])
 }
@@ -55,9 +52,29 @@ model EpisodeProvider {
   episodeNumber     Int
   animeId           Int
 
-  source    String? @db.VarChar(512)
-  episodeId String?
-  title     String?
+  source      String? @db.VarChar(512)
+  episodeId   String?
+  exactLength Int?
+  title       String?
+
+  skipTimes SkipTime[]
 
   @@id([provider, episodeProviderId])
+}
+
+enum SkipType {
+  OPENING
+  ENDING
+}
+
+model SkipTime {
+  provider  String
+  episodeId String
+
+  type            SkipType
+  start           Int
+  end             Int
+  EpisodeProvider EpisodeProvider? @relation(fields: [provider, episodeId], references: [provider, episodeProviderId])
+
+  @@id([provider, episodeId, type])
 }

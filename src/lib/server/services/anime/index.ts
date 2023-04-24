@@ -2,17 +2,8 @@ import { MAL } from '@server/helpers/mal';
 import db from '@server/database';
 import providers, { type AvailableProvider } from '@server/providers';
 import type Provider from '@server/providers/generic';
-import type { Prisma, Episode } from "@prisma/client"
-
-
-type EpisodeProviderInsertPromise = Prisma.Prisma__EpisodeProviderClient<{
-	source: string;
-	episode: {
-		number: number;
-		title: string | null;
-		length: number;
-	};
-}, never>;
+import { AnimeSkip } from '@server/helpers/aniskip';
+import type { EpisodeProvider, SkipTime } from '@prisma/client';
 
 export class AnimeService {
 	private malId: number;
@@ -69,7 +60,7 @@ export class AnimeService {
 		return providerEpisodes;
 	}
 
-	async getSource(episodeId: string) {
+	async getSource(episodeId: string): Promise<EpisodeProvider & { skipTimes?: SkipTime[] }> {
 		const provider = this.getProvider();
 		const episodeProvider = await db.episodeProvider.findUnique({
 			where: {
@@ -77,15 +68,19 @@ export class AnimeService {
 					episodeProviderId: episodeId,
 					provider: provider.identifier
 				}
+			},
+			include: {
+				skipTimes: true
 			}
 		});
 		if (!episodeProvider)
 			throw new Error("No such episode"); // TODO add episodes again.
-		if (episodeProvider.source)
-			return episodeProvider;
+		if (episodeProvider.source && episodeProvider.skipTimes.length) {
+			; return episodeProvider;
+		}
 		const info = await provider.getSourceInfo(episodeId);
-		console.log(info);
 		const closestLength = info.length - (info.length % 100);
+		const exactLength = info.length;
 		const episode = await db.episode.upsert({
 			create: {
 				animeMalId: this.malId,
@@ -110,9 +105,24 @@ export class AnimeService {
 			},
 			data: {
 				episodeId: episode.id,
-				source: info.url
+				source: info.url,
+				exactLength
 			}
 		});
-		return result;
+		const skipTimes = await AnimeSkip.getSkipTimes(this.malId, episodeProvider.episodeNumber, exactLength);
+		if (skipTimes) {
+			const times = await db.$transaction(skipTimes.map(skip => db.skipTime.create({
+				data: {
+					type: skip.type,
+					end: skip.end,
+					start: skip.start,
+					provider: provider.identifier,
+					episodeId
+				}
+			})));
+			return { ...result, skipTimes: times }
+		}
+		else
+			return result;
 	}
 }

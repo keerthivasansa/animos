@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import { SkipType } from "@prisma/client";
 
 export interface SkipTime {
 	type: string;
@@ -8,13 +9,10 @@ export interface SkipTime {
 
 interface AniskipResponse {
 	results: {
-		skipType: SkipType;
+		skipType: "op" | "ed";
 		interval: { startTime: number; endTime: number };
 	}[];
 }
-
-type SkipType = "op" | "ed";
-type SkipResult = Record<SkipType, { start: number, end: number }>
 
 export class AnimeSkip {
 	private static readonly baseUrl = 'https://api.aniskip.com/';
@@ -26,7 +24,7 @@ export class AnimeSkip {
 		malId: number,
 		episodeNum: number,
 		episodeLength: number
-	): Promise<SkipResult | null> {
+	) {
 		try {
 			const aniSkip = await this.client.get<AniskipResponse>(`/v2/skip-times/${malId}/${episodeNum}`, {
 				params: {
@@ -35,13 +33,13 @@ export class AnimeSkip {
 				}
 			});
 
-			const skip = aniSkip.data.results.reduce((prev, data) => {
-				prev[data.skipType] = {
-					start: data.interval.startTime,
-					end: data.interval.endTime
+			const skip = aniSkip.data.results.map((data) => {
+				return {
+					type: data.skipType === "op" ? SkipType.OPENING : SkipType.ENDING,
+					start: parseInt(data.interval.startTime.toString()),
+					end: parseInt(data.interval.endTime.toString())
 				};
-				return prev;
-			}, {} as SkipResult);
+			});
 
 			return skip;
 		} catch (err) {
