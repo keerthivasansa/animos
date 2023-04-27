@@ -16,14 +16,13 @@ export function getProxyUrl(url: string) {
 export async function getHlsDuration(url: string, master = false) {
 	let finalUrl: string;
 	if (master) {
-		const urlParts = url.split("/");
-		const fileParts = urlParts.at(-1)?.split(".");
-		if (!fileParts)
-			throw new Error("Malformed HLS URL provided.");
+		const urlParts = url.split('/');
+		const fileParts = urlParts.at(-1)?.split('.');
+		if (!fileParts) throw new Error('Malformed HLS URL provided.');
 		fileParts.splice(-1, 0, '720');
-		const file = fileParts.join(".");
+		const file = fileParts.join('.');
 		urlParts.splice(-1, 1, file);
-		finalUrl = urlParts.join("/");
+		finalUrl = urlParts.join('/');
 	} else {
 		finalUrl = url;
 	}

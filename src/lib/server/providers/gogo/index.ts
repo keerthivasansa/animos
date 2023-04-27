@@ -6,6 +6,8 @@ import { decryptAjaxResponse, getAjaxParams } from './scraper';
 
 class GogoProvider extends Provider {
 	identifier: ProviderName = 'Gogoanime';
+	malSyncId = 'Gogoanime';
+
 	private baseUrl = 'https://gogoanime.cl';
 	private client = axios.create({ baseURL: this.baseUrl });
 
@@ -41,7 +43,7 @@ class GogoProvider extends Provider {
 		);
 
 		const finalSource = await decryptAjaxResponse(fetchRes.data);
-		if (!finalSource.source.length) throw new Error("No sources found");
+		if (!finalSource.source.length) throw new Error('No sources found');
 
 		const source = finalSource.source[0];
 		const url = getProxyUrl(source.file);

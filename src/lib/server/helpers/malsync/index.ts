@@ -11,6 +11,12 @@ export class MalSync {
 		const keys = Object.keys(response.data.Sites[provider]);
 		const id = keys.shift();
 		if (!id) throw new Error('Missing atleast 1 key for provider in MALSync for malId: ' + malId);
+		// if (provider != "Zoro")
+		// 	return id;
+		// const obj = response.data.Sites[provider][id];
+		// const urlSlug = obj.url.split("/").at(-1);
+		// if (!urlSlug)
+		// 	throw new Error("Zoro slug doesn't match given specs");
 		return id;
 	}
 }

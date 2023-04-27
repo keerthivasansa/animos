@@ -14,9 +14,9 @@ export const getAjaxParams = async ($: CheerioAPI, id: string) => {
 };
 
 type GogoSource = {
-	source: { file: string, label: string }[],
-	source_bk: { file: string, label: string }[],
-}
+	source: { file: string; label: string }[];
+	source_bk: { file: string; label: string }[];
+};
 
 export const decryptAjaxResponse = async (fetchedRes: AxiosResponse): Promise<GogoSource> => {
 	const decryptedString = CryptoJS.enc.Utf8.stringify(

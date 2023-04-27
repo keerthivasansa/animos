@@ -10,7 +10,9 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"test": "vitest",
+		"coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
 		"@iconify/svelte": "^3.1.1",

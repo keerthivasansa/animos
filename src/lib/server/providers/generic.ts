@@ -1,6 +1,6 @@
 import { MalSync } from '@server/helpers/malsync';
 
-export type ProviderName = 'Gogoanime' | 'default' | '9anime';
+export type ProviderName = 'Gogoanime' | 'default' | '9anime' | 'zoro';
 
 type ProviderEpisode = {
 	id: string;
@@ -13,6 +13,7 @@ type ProviderEpisode = {
  */
 abstract class Provider {
 	public identifier: ProviderName = 'default';
+	public malSyncId = '';
 	public malId: number;
 
 	constructor(malId: number) {
@@ -27,7 +28,7 @@ abstract class Provider {
 	 */
 	async getProviderId() {
 		if (this.identifier === 'default') throw new Error('Default provider has been called.');
-		const id = await MalSync.getProviderId(this.malId, this.identifier);
+		const id = await MalSync.getProviderId(this.malId, this.malSyncId);
 		return id;
 	}
 

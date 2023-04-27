@@ -1,23 +1,22 @@
-import axios from "axios";
-import Mapping from "../mapping";
+import axios from 'axios';
+import Mapping from '../mapping';
 
 type KitsuAnimeResponse = {
 	data: {
 		attributes: {
 			coverImage: {
-				original: string
-			}
-		}
-	}
-}
+				original: string;
+			};
+		};
+	};
+};
 export class Kitsu {
-	private static baseUrl = "https://kitsu.io/api/edge";
+	private static baseUrl = 'https://kitsu.io/api/edge';
 	private static client = axios.create({ baseURL: this.baseUrl });
 
 	static async getId(malId: number) {
-		const id = await Mapping.getId(malId, "kitsu_id");
-		if (!id)
-			throw new Error("Kitsu ID is missing for anime: " + malId);
+		const id = await Mapping.getId(malId, 'kitsu_id');
+		if (!id) throw new Error('Kitsu ID is missing for anime: ' + malId);
 		return id;
 	}
 

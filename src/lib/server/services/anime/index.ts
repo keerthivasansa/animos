@@ -7,7 +7,7 @@ import type { EpisodeProvider, SkipTime } from '@prisma/client';
 
 export class AnimeService {
 	private malId: number;
-	private currentProvider: AvailableProvider = "9anime";
+	private currentProvider: AvailableProvider = '9anime';
 	constructor(malId: number) {
 		this.malId = malId;
 	}
@@ -18,7 +18,7 @@ export class AnimeService {
 	}
 
 	getPreferredProvider(): AvailableProvider {
-		return "9anime";
+		return '9anime';
 	}
 
 	getProvider(): Provider {
@@ -41,22 +41,26 @@ export class AnimeService {
 		});
 
 		if (cachedEpisodes.length) {
-			console.log("cache hit")
+			console.log('cache hit');
 			return cachedEpisodes;
 		}
 
 		const episodes = await provider.getEpisodes();
 		console.log(episodes);
 
-		const providerEpisodes = await db.$transaction(episodes.map(ep => db.episodeProvider.create({
-			data: {
-				episodeNumber: ep.number,
-				title: ep.title,
-				episodeProviderId: ep.id,
-				provider: provider.identifier,
-				animeId: this.malId
-			}
-		})))
+		const providerEpisodes = await db.$transaction(
+			episodes.map((ep) =>
+				db.episodeProvider.create({
+					data: {
+						episodeNumber: ep.number,
+						title: ep.title,
+						episodeProviderId: ep.id,
+						provider: provider.identifier,
+						animeId: this.malId
+					}
+				})
+			)
+		);
 		return providerEpisodes;
 	}
 
@@ -64,19 +68,19 @@ export class AnimeService {
 		const provider = this.getProvider();
 		const episodeProvider = await db.episodeProvider.findUnique({
 			where: {
-				provider_episodeProviderId: {
-					episodeProviderId: episodeId,
-					provider: provider.identifier
+				provider_animeId_episodeProviderId: {
+					provider: provider.identifier,
+					animeId: this.malId,
+					episodeProviderId: episodeId
 				}
 			},
 			include: {
 				skipTimes: true
 			}
 		});
-		if (!episodeProvider)
-			throw new Error("No such episode"); // TODO add episodes again.
+		if (!episodeProvider) throw new Error('No such episode'); // TODO add episodes again.
 		if (episodeProvider.source && episodeProvider.skipTimes.length) {
-			; return episodeProvider;
+			return episodeProvider;
 		}
 		const info = await provider.getSourceInfo(episodeId);
 		const closestLength = info.length - (info.length % 100);
@@ -85,7 +89,7 @@ export class AnimeService {
 			create: {
 				animeMalId: this.malId,
 				length: closestLength,
-				number: episodeProvider.episodeNumber,
+				number: episodeProvider.episodeNumber
 			},
 			where: {
 				animeMalId_number_length: {
@@ -98,8 +102,9 @@ export class AnimeService {
 		});
 		const result = await db.episodeProvider.update({
 			where: {
-				provider_episodeProviderId: {
+				provider_animeId_episodeProviderId: {
 					provider: provider.identifier,
+					animeId: this.malId,
 					episodeProviderId: episodeId
 				}
 			},
@@ -109,20 +114,25 @@ export class AnimeService {
 				exactLength
 			}
 		});
-		const skipTimes = await AnimeSkip.getSkipTimes(this.malId, episodeProvider.episodeNumber, exactLength);
+		const skipTimes = await AnimeSkip.getSkipTimes(
+			this.malId,
+			episodeProvider.episodeNumber,
+			exactLength
+		);
 		if (skipTimes) {
-			const times = await db.$transaction(skipTimes.map(skip => db.skipTime.create({
-				data: {
-					type: skip.type,
-					end: skip.end,
-					start: skip.start,
-					provider: provider.identifier,
-					episodeId
-				}
-			})));
-			return { ...result, skipTimes: times }
-		}
-		else
-			return result;
+			const times = await db.$transaction(
+				skipTimes.map((skip) =>
+					db.skipTime.create({
+						data: {
+							type: skip.type,
+							end: skip.end,
+							start: skip.start,
+							episodeProviderId: result.id
+						}
+					})
+				)
+			);
+			return { ...result, skipTimes: times };
+		} else return result;
 	}
 }
