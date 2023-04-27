@@ -32,10 +32,7 @@ export function extractTopAnimeTable(response: AxiosResponse): number[] {
 
 	const row = table.find(`tr.ranking-list`);
 
-	console.log('awef');
 	const result = row.toArray().map(extractRow);
-
-	console.log(result.slice(0, 3));
 
 	return result;
 }

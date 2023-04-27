@@ -7,7 +7,7 @@ import type { EpisodeProvider, SkipTime } from '@prisma/client';
 
 export class AnimeService {
 	private malId: number;
-	private currentProvider: AvailableProvider = '9anime';
+	private currentProvider: AvailableProvider = 'animepahe';
 	constructor(malId: number) {
 		this.malId = malId;
 	}
@@ -18,7 +18,7 @@ export class AnimeService {
 	}
 
 	getPreferredProvider(): AvailableProvider {
-		return '9anime';
+		return this.currentProvider;
 	}
 
 	getProvider(): Provider {
@@ -46,7 +46,6 @@ export class AnimeService {
 		}
 
 		const episodes = await provider.getEpisodes();
-		console.log(episodes);
 
 		const providerEpisodes = await db.$transaction(
 			episodes.map((ep) =>

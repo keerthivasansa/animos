@@ -1,6 +1,6 @@
 import { MalSync } from '@server/helpers/malsync';
 
-export type ProviderName = 'Gogoanime' | 'default' | '9anime' | 'zoro';
+export type ProviderName = 'Gogoanime' | 'default' | '9anime' | 'zoro' | 'animepahe';
 
 type ProviderEpisode = {
 	id: string;

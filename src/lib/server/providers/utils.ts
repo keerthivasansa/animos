@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { type AxiosRequestConfig } from 'axios';
 import HLSParser from 'hls-parser';
 
 export const USER_AGENT =
@@ -26,6 +26,13 @@ export async function getHlsDuration(url: string, master = false) {
 	} else {
 		finalUrl = url;
 	}
+	// const config: AxiosRequestConfig<any> = {
+	// };
+	// if (referrer) {
+	// 	config.headers = {
+	// 		"referrer": referrer
+	// 	}
+	// }
 	const resp = await axios.get<string>(finalUrl);
 	const hls = HLSParser.parse(resp.data);
 	if (!hls.isMasterPlaylist) {

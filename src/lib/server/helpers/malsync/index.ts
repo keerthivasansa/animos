@@ -8,6 +8,7 @@ export class MalSync {
 
 	static async getProviderId(malId: number, provider: string) {
 		const response = await this.client.get(`/mal/anime/${malId}`);
+		console.log(provider);
 		const keys = Object.keys(response.data.Sites[provider]);
 		const id = keys.shift();
 		if (!id) throw new Error('Missing atleast 1 key for provider in MALSync for malId: ' + malId);

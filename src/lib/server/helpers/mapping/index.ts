@@ -11,7 +11,6 @@ class Mapping {
 	static async getId(malId: number, externalService: ExternalServices) {
 		const response = await this.client.get<MappingApiResponse>(`/mal/${malId}`);
 		const map = response.data;
-		console.log(map);
 		const id = map[externalService];
 		return id;
 	}
