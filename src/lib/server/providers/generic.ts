@@ -1,3 +1,4 @@
+import db from '@server/database';
 import { MalSync } from '@server/helpers/malsync';
 
 export type ProviderName = 'Gogoanime' | 'default' | '9anime' | 'zoro' | 'animepahe';
@@ -30,6 +31,28 @@ abstract class Provider {
 	async getProviderId() {
 		if (this.identifier === 'default') throw new Error('Default provider has been called.');
 		const id = await MalSync.getProviderId(this.malId, this.malSyncId);
+		return id;
+	}
+
+	async getId() {
+		const animeProvider = await db.animeProvider.findUnique({
+			where: {
+				malId_provider: {
+					malId: this.malId,
+					provider: this.identifier
+				}
+			}
+		});
+		if (animeProvider)
+			return animeProvider.providerId;
+		const id = await this.getProviderId();
+		await db.animeProvider.create({
+			data: {
+				malId: this.malId,
+				provider: this.identifier,
+				providerId: id
+			}
+		})
 		return id;
 	}
 

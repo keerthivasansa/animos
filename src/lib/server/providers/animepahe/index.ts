@@ -34,7 +34,7 @@ export default class AnimePahe extends Provider {
 
     async getEpisodes() {
         console.time('get id');
-        const id = await this.getProviderId();
+        const id = await this.getId();
         console.log({ id });
         console.timeEnd('get id');
 
@@ -64,7 +64,7 @@ export default class AnimePahe extends Provider {
 
     async getSourceInfo(episodeId: string, getLength = true): Promise<{ url: string; length: number; }> {
         console.time('get id');
-        const animeId = await this.getProviderId();
+        const animeId = await this.getId();
         console.timeEnd('get id');
 
         const url = `/play/${animeId}/${episodeId}`;
@@ -92,7 +92,7 @@ export default class AnimePahe extends Provider {
 
         if (!getLength)
             return { url: src, length: 0 };
-            
+
         console.time('get duration');
         const length = await getHlsDuration(src, false);
         console.timeEnd('get duration');

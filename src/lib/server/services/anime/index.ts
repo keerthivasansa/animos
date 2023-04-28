@@ -82,7 +82,6 @@ export class AnimeService {
 			include: {
 				skipTimes: true
 			},
-
 		});
 		if (!episodeProvider) throw new Error('No such episode'); // TODO add episodes again.
 		if (episodeProvider.source && episodeProvider.skipTimes.length) {
@@ -94,11 +93,11 @@ export class AnimeService {
 			start: number;
 			end: number;
 		}[] | null;
+
 		let info: {
 			url: string,
 			length: number
 		}
-		console.time("get all info");
 		if (episodeProvider.exactLength != null) {
 			const length = episodeProvider.exactLength;
 			([skipTimes, info] = await Promise.all([
@@ -110,7 +109,6 @@ export class AnimeService {
 			info = await provider.getSourceInfo(episodeId);
 			skipTimes = await AnimeSkip.getSkipTimes(this.malId, episodeProvider.episodeNumber, info.length)
 		}
-		console.timeEnd("get all info");
 		const closestLength = info.length - (info.length % 100);
 		const exactLength = info.length;
 		const episode = await db.episode.upsert({
