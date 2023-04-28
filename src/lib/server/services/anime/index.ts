@@ -37,7 +37,7 @@ export class AnimeService {
 			where: {
 				provider: provider.identifier,
 				animeId: this.malId
-			}, 
+			},
 			orderBy: {
 				episodeNumber: "asc"
 			}
@@ -60,6 +60,7 @@ export class AnimeService {
 						title: ep.title,
 						episodeProviderId: ep.id,
 						provider: provider.identifier,
+						exactLength: ep.length,
 						animeId: this.malId
 					}
 				})
@@ -80,15 +81,36 @@ export class AnimeService {
 			},
 			include: {
 				skipTimes: true
-			}, 
-			
+			},
+
 		});
 		if (!episodeProvider) throw new Error('No such episode'); // TODO add episodes again.
 		if (episodeProvider.source && episodeProvider.skipTimes.length) {
 			return episodeProvider;
 		}
-		
-		const info = await provider.getSourceInfo(episodeId);
+
+		let skipTimes: {
+			type: "OPENING" | "ENDING";
+			start: number;
+			end: number;
+		}[] | null;
+		let info: {
+			url: string,
+			length: number
+		}
+		console.time("get all info");
+		if (episodeProvider.exactLength != null) {
+			const length = episodeProvider.exactLength;
+			([skipTimes, info] = await Promise.all([
+				AnimeSkip.getSkipTimes(this.malId, episodeProvider.episodeNumber, length),
+				provider.getSourceInfo(episodeId, false)
+			]));
+
+		} else {
+			info = await provider.getSourceInfo(episodeId);
+			skipTimes = await AnimeSkip.getSkipTimes(this.malId, episodeProvider.episodeNumber, info.length)
+		}
+		console.timeEnd("get all info");
 		const closestLength = info.length - (info.length % 100);
 		const exactLength = info.length;
 		const episode = await db.episode.upsert({
@@ -120,13 +142,6 @@ export class AnimeService {
 				exactLength
 			}
 		});
-		console.time('get skiptimes');
-		const skipTimes = await AnimeSkip.getSkipTimes(
-			this.malId,
-			episodeProvider.episodeNumber,
-			exactLength
-		);
-		console.timeEnd('get skiptimes');
 		if (skipTimes) {
 			const times = await db.$transaction(
 				skipTimes.map((skip) =>

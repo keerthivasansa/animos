@@ -4,8 +4,9 @@ export type ProviderName = 'Gogoanime' | 'default' | '9anime' | 'zoro' | 'animep
 
 type ProviderEpisode = {
 	id: string;
-	title?: string;
 	number: number;
+	title?: string;
+	length?: number;
 };
 
 /**
@@ -42,7 +43,7 @@ abstract class Provider {
 	 * @param episode The id that uniquely identifies an episode to the provider.
 	 * @returns The primary HLS source of the episode
 	 */
-	abstract getSourceInfo(episodeId: string): Promise<{ url: string; length: number }>;
+	abstract getSourceInfo(episodeId: string, getLength?: boolean): Promise<{ url: string; length: number }>;
 }
 
 export default Provider;

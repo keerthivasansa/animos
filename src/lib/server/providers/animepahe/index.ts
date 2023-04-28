@@ -4,9 +4,10 @@ import { MalSync } from "@server/helpers/malsync";
 import { extractSource } from "./kwik";
 import { getHlsDuration } from "../utils";
 import { createAxios } from "@server/utils/proxy";
+import { getDurationFromString } from "./utils";
 
 interface AnimepaheEpisodeInfo {
-    duration: string,
+    duration: string, // 00:25:43
     session: string,
     title?: string
     episode: number
@@ -55,12 +56,13 @@ export default class AnimePahe extends Provider {
             return {
                 id: ep.session,
                 title: ep.title,
-                number: ep.episode
+                number: ep.episode,
+                length: getDurationFromString(ep.duration)
             }
         }));
     }
 
-    async getSourceInfo(episodeId: string): Promise<{ url: string; length: number; }> {
+    async getSourceInfo(episodeId: string, getLength = true): Promise<{ url: string; length: number; }> {
         console.time('get id');
         const animeId = await this.getProviderId();
         console.timeEnd('get id');
@@ -88,6 +90,9 @@ export default class AnimePahe extends Provider {
         const src = (await extractSource(bestSubSource.src) as string).replace('.cache', '.files');
         console.timeEnd('extract source')
 
+        if (!getLength)
+            return { url: src, length: 0 };
+            
         console.time('get duration');
         const length = await getHlsDuration(src, false);
         console.timeEnd('get duration');
