@@ -1,9 +1,9 @@
-import axios from "axios";
 import Provider, { type ProviderName } from "../generic";
 import { load } from "cheerio";
 import { MalSync } from "@server/helpers/malsync";
 import { extractSource } from "./kwik";
 import { getHlsDuration } from "../utils";
+import { createAxios } from "@server/utils/proxy";
 
 interface AnimepaheEpisodeInfo {
     duration: string,
@@ -22,9 +22,7 @@ export default class AnimePahe extends Provider {
     public identifier: ProviderName = "animepahe";
     private baseUrl = "https://animepahe.com/";
     public malSyncId = "animepahe";
-    private client = axios.create({
-        baseURL: this.baseUrl
-    });
+    private client = createAxios({ baseURL: this.baseUrl });
 
     async getProviderId(): Promise<string> {
         const int_id = await MalSync.getProviderId(this.malId, "animepahe");

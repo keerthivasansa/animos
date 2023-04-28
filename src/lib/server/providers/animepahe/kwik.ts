@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import { dev } from '$app/environment';
-import { proxyAxios } from '@server/utils/proxy';
+import { createAxios, proxyAxios } from '@server/utils/proxy';
 import axios from 'axios';
 
 // Thanks to https://github.com/consumet/consumet.ts for the kwik extractor;
 
 export const extractSource = async (kwikUrl) => {
-    const axiosInstance = proxyAxios;
+    const axiosInstance = createAxios();
     console.log("Fetching source for", kwikUrl);
 
     try {

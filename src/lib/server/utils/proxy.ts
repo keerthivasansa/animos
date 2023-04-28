@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios, { type CreateAxiosDefaults } from "axios";
 import { PROXY_AUTH, PROXY_IP, PROXY_PORT } from "$env/static/private";
 import HttpsProxyAgent from "https-proxy-agent";
+import { dev } from "$app/environment";
 
 export const USER_AGENT = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36`;
 
@@ -12,16 +13,19 @@ const proxyAgent = HttpsProxyAgent({
     auth: PROXY_AUTH,
 });
 
-proxyAgent.on('connection', () => console.log("proxy connected"));
-console.log(proxyAgent);
-export const proxyAxios = axios.create({
-    httpsAgent: proxyAgent,
-    headers: {
-        "User-Agent": USER_AGENT
-    },
-    xsrfCookieName: "XSRF-TOKEN",
-})
-proxyAxios.interceptors.request.use((config) => {
-    console.log(config.httpsAgent)
-    return config;
-})
+function createAxios(config?: CreateAxiosDefaults) {
+    const finalConfig = {
+        ...config,
+        headers: {
+            "User-Agent": USER_AGENT
+        },
+        xsrfCookieName: "XSRF-TOKEN",
+    };
+    if (!dev) {
+        console.log("initializing axios proxy");
+        finalConfig.httpsAgent = proxyAgent;
+    }
+    return axios.create(finalConfig);
+}
+
+export { createAxios };
