@@ -34,6 +34,10 @@ abstract class Provider {
 		return id;
 	}
 
+	/**
+	 * Adds a caching layer on top of `getProviderId()`
+	 * @returns The anime's corresponding ID in the current provider.
+	 */
 	async getId() {
 		const animeProvider = await db.animeProvider.findUnique({
 			where: {
@@ -63,6 +67,7 @@ abstract class Provider {
 	/**
 	 * Used to get the source from the provider
 	 * @param episode The id that uniquely identifies an episode to the provider.
+	 * @param getLength Whether the length of the given episode is to be fetched. If false, length of 0 is returned.
 	 * @returns The primary HLS source of the episode
 	 */
 	abstract getSourceInfo(

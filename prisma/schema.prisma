@@ -27,6 +27,7 @@ model Anime {
   genre    String
   rating   String
   status   AnimeStatus
+  episode  Episode[]
 }
 
 model AnimeProvider {
@@ -41,8 +42,10 @@ model Episode {
   id             String           @id @default(uuid())
   number         Int
   animeMalId     Int
-  length         Int?
-  EpisodeHistory EpisodeHistory[]
+  length         Int
+  episodeHistory EpisodeHistory[]
+
+  anime Anime @relation(fields: [animeMalId], references: [malId])
 
   @@unique([animeMalId, number, length])
 }
