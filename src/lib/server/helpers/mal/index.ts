@@ -1,6 +1,6 @@
-import { extractTopAnimeTable } from './utils';
 import axios, { Axios } from 'axios';
 import { MALSearch } from './search';
+import { AnimeStatus } from '@prisma/client';
 
 export class MAL {
 	private static baseUrl = 'https://myanimelist.net';
@@ -15,10 +15,15 @@ export class MAL {
 		this.url = `/anime/${malId}`;
 	}
 
-	static async getTrending() {
-		const response = await MAL.client.get('/topanime.php');
-		const result = extractTopAnimeTable(response);
-		return result;
+	static getTrending() {
+		const anime = MALSearch.getSearch({
+			sort: {
+				order: 'desc',
+				type: 'popularity'
+			},
+			status: AnimeStatus.CURRENTLY_AIRING
+		});
+		return anime;
 	}
 
 	static async getMostPopular() {

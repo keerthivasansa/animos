@@ -4,7 +4,7 @@ import Mapping from '../mapping';
 type KitsuAnimeResponse = {
 	data: {
 		attributes: {
-			coverImage: {
+			coverImage?: {
 				original: string;
 			};
 		};
@@ -24,6 +24,8 @@ export class Kitsu {
 		const id = await this.getId(malId);
 		const response = await this.client.get<KitsuAnimeResponse>(`/anime/${id}`);
 		const anime = response.data;
-		return anime.data.attributes.coverImage.original;
+		// console.log(anime.data.attributes.coverImage);
+		if (anime.data.attributes.coverImage) return anime.data.attributes.coverImage.original;
+		else return '';
 	}
 }
