@@ -38,10 +38,11 @@ model AnimeProvider {
 }
 
 model Episode {
-  id         String @id @default(uuid())
-  number     Int
-  animeMalId Int
-  length     Int?
+  id             String           @id @default(uuid())
+  number         Int
+  animeMalId     Int
+  length         Int?
+  EpisodeHistory EpisodeHistory[]
 
   @@unique([animeMalId, number, length])
 }
@@ -74,9 +75,20 @@ model SkipTime {
   type            SkipType
   start           Int
   end             Int
-  EpisodeProvider EpisodeProvider? @relation(fields: [episodeProviderId], references: [id])
+  episodeProvider EpisodeProvider? @relation(fields: [episodeProviderId], references: [id])
 
   @@id([episodeProviderId, type])
+  @@index([episodeProviderId])
+}
+
+model EpisodeHistory {
+  episodeId String
+  userId    String
+  watchTime Int
+  episode   Episode @relation(fields: [episodeId], references: [id])
+
+  @@id([episodeId, userId])
+  @@index([episodeId])
 }
 
 model AuthUser {

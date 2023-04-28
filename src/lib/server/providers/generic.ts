@@ -43,8 +43,7 @@ abstract class Provider {
 				}
 			}
 		});
-		if (animeProvider)
-			return animeProvider.providerId;
+		if (animeProvider) return animeProvider.providerId;
 		const id = await this.getProviderId();
 		await db.animeProvider.create({
 			data: {
@@ -52,7 +51,7 @@ abstract class Provider {
 				provider: this.identifier,
 				providerId: id
 			}
-		})
+		});
 		return id;
 	}
 
@@ -66,7 +65,10 @@ abstract class Provider {
 	 * @param episode The id that uniquely identifies an episode to the provider.
 	 * @returns The primary HLS source of the episode
 	 */
-	abstract getSourceInfo(episodeId: string, getLength?: boolean): Promise<{ url: string; length: number }>;
+	abstract getSourceInfo(
+		episodeId: string,
+		getLength?: boolean
+	): Promise<{ url: string; length: number }>;
 }
 
 export default Provider;
