@@ -18,7 +18,7 @@
 		"@iconify/svelte": "^3.1.1",
 		"@skeletonlabs/skeleton": "^1.2.0",
 		"@sveltejs/adapter-auto": "^2.0.0",
-		"@sveltejs/adapter-vercel": "^2.4.3",
+		"@sveltejs/adapter-node": "^1.2.4",
 		"@sveltejs/kit": "^1.5.0",
 		"@tailwindcss/typography": "^0.5.9",
 		"@types/crypto-js": "^4.1.1",
