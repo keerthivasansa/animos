@@ -8,29 +8,38 @@ import axios from 'axios';
 
 export const extractSource = async (kwikUrl) => {
     const axiosInstance = proxyAxios;
-    const { data } = await axiosInstance.get(kwikUrl, {
-        headers: {
-            referer: "https://animepahe.ru/"
-        }
-    });
-    const x = data.match(/p\}.*kwik.*/g)
-    let y = x[0].split('return p}(')[1].split(',');
+    console.log("Fetching source for", kwikUrl);
 
-    const l = y.slice(0, y.length - 5).join('');
-    y = y.slice(y.length - 5, -1);
-    y.unshift(l);
+    try {
+        const { data, config } = await axiosInstance.get(kwikUrl, {
+            headers: {
+                referer: "https://animepahe.ru/"
+            }
+        });
+        console.log(config.proxy)
+        const x = data.match(/p\}.*kwik.*/g)
+        let y = x[0].split('return p}(')[1].split(',');
 
-    const [p, a, c, k, e, d] = y.map(x => x.split('.sp')[0]);
+        const l = y.slice(0, y.length - 5).join('');
+        y = y.slice(y.length - 5, -1);
+        y.unshift(l);
 
-    const formated = format(p, a, c, k, e, {});
+        const [p, a, c, k, e, d] = y.map(x => x.split('.sp')[0]);
 
-    const source = formated
-        .match(/source=\\(.*?)\\'/g)[0]
-        .replace(/'/g, '')
-        .replace(/source=/g, '')
-        .replace(/\\/g, '');
+        const formated = format(p, a, c, k, e, {});
 
-    return source;
+        const source = formated
+            .match(/source=\\(.*?)\\'/g)[0]
+            .replace(/'/g, '')
+            .replace(/source=/g, '')
+            .replace(/\\/g, '');
+
+        return source;
+    }
+    catch (err) {
+        console.log("Failed to fetch kwik")
+        console.error(err);
+    }
 };
 
 function format(p, a, c, k, e, d) {
