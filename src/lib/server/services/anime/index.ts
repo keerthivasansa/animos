@@ -37,6 +37,9 @@ export class AnimeService {
 			where: {
 				provider: provider.identifier,
 				animeId: this.malId
+			}, 
+			orderBy: {
+				episodeNumber: "asc"
 			}
 		});
 
@@ -46,6 +49,8 @@ export class AnimeService {
 		}
 
 		const episodes = await provider.getEpisodes();
+
+		// return episodes;
 
 		const providerEpisodes = await db.$transaction(
 			episodes.map((ep) =>
@@ -75,12 +80,14 @@ export class AnimeService {
 			},
 			include: {
 				skipTimes: true
-			}
+			}, 
+			
 		});
 		if (!episodeProvider) throw new Error('No such episode'); // TODO add episodes again.
 		if (episodeProvider.source && episodeProvider.skipTimes.length) {
 			return episodeProvider;
 		}
+		
 		const info = await provider.getSourceInfo(episodeId);
 		const closestLength = info.length - (info.length % 100);
 		const exactLength = info.length;
@@ -113,11 +120,13 @@ export class AnimeService {
 				exactLength
 			}
 		});
+		console.time('get skiptimes');
 		const skipTimes = await AnimeSkip.getSkipTimes(
 			this.malId,
 			episodeProvider.episodeNumber,
 			exactLength
 		);
+		console.timeEnd('get skiptimes');
 		if (skipTimes) {
 			const times = await db.$transaction(
 				skipTimes.map((skip) =>

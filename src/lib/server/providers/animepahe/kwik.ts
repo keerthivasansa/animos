@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { dev } from '$app/environment';
-import { createAxios, proxyAxios } from '@server/utils/proxy';
-import axios from 'axios';
+import { createAxios } from '@server/utils/proxy';
 
 // Thanks to https://github.com/consumet/consumet.ts for the kwik extractor;
 
@@ -13,7 +11,7 @@ export const extractSource = async (kwikUrl) => {
     try {
         const { data, config } = await axiosInstance.get(kwikUrl, {
             headers: {
-                referer: "https://animepahe.ru/"
+                referer: "https://animepahe.com/"
             }
         });
         console.log(config.proxy)

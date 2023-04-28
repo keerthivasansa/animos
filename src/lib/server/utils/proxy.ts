@@ -1,31 +1,12 @@
 import axios, { type CreateAxiosDefaults } from "axios";
-import { PROXY_AUTH, PROXY_IP, PROXY_PORT } from "$env/static/private";
-import HttpsProxyAgent from "https-proxy-agent";
-import { dev } from "$app/environment";
 
 export const USER_AGENT = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36`;
 
 // for use with cloudflare
-const proxyAgent = HttpsProxyAgent({
-    rejectUnauthorized: true,
-    host: PROXY_IP,
-    port: PROXY_PORT,
-    auth: PROXY_AUTH,
-});
+
 
 function createAxios(config?: CreateAxiosDefaults) {
-    const finalConfig = {
-        ...config,
-        headers: {
-            "User-Agent": USER_AGENT
-        },
-        xsrfCookieName: "XSRF-TOKEN",
-    };
-    if (!dev) {
-        console.log("initializing axios proxy");
-        finalConfig.httpsAgent = proxyAgent;
-    }
-    return axios.create(finalConfig);
+    return axios.create({ ...config, headers: { 'User-Agent': USER_AGENT } });
 }
 
 export { createAxios };
