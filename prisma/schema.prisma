@@ -19,15 +19,32 @@ enum AnimeStatus {
 }
 
 model Anime {
-  malId    Int         @id
-  title    String
-  synopsis String
-  image    String
-  score    Float
-  genre    String
-  rating   String
-  status   AnimeStatus
-  episode  Episode[]
+  malId        Int    @id
+  title        String
+  synopsis     String @db.MediumText
+  image        String
+  score        Float
+  rating       String
+  type         String
+  episodeCount Int
+
+  genre  String?
+  status AnimeStatus?
+
+  createdAt   DateTime @default(now())
+  lastUpdated DateTime @updatedAt
+
+  TrendingAnime TrendingAnime[]
+  episode       Episode[]
+}
+
+model TrendingAnime {
+  index     Int      @id
+  malId     Int
+  poster    String
+  createdAt DateTime @default(now())
+
+  anime Anime @relation(fields: [malId], references: [malId])
 }
 
 model AnimeProvider {

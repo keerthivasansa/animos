@@ -2,7 +2,7 @@ import axios from 'axios';
 import { load } from 'cheerio';
 import { getOriginalImageUrl } from './utils';
 import genres, { type MalGenre } from './search/genre';
-import type { AnimeStatus } from '@prisma/client';
+import type { AnimeStatus, Anime } from '@prisma/client';
 
 const sortKeys = {
 	'episode-count': 4,
@@ -17,17 +17,9 @@ const statusKeys: Record<AnimeStatus, number> = {
 	UNKNOWN: -1
 };
 
-type Anime = {
-	id: number;
-	title: string;
-	synopsis: string;
-	type: string;
-	episodes: number;
-	score: number;
-	rating: string;
-};
+export type AnimeSlim = Omit<Anime, 'createdAt' | 'lastUpdated' | 'genre' | 'status'>;
 
-type AnimeString = Record<keyof Anime, string>;
+type AnimeString = Record<keyof AnimeSlim, string>;
 
 interface SearchFilter {
 	query: string;
@@ -57,17 +49,17 @@ export class MALSearch {
 
 		const headers = [
 			'image',
-			'id',
+			'malId',
 			'title',
 			'synopsis',
 			'type',
-			'episodes',
+			'episodeCount',
 			'score',
-			'members',
+			// 'members',
 			'rating'
 		];
 
-		const result: Anime[] = [];
+		const result: AnimeSlim[] = [];
 
 		rows.each((index, row) => {
 			if (index === 0)
@@ -90,11 +82,11 @@ export class MALSearch {
 					if (!link) throw new Error('Missing link for anime');
 					const linkMatch = link?.match(/anime\/(\d+)/);
 					if (!linkMatch || !linkMatch[1]) throw new Error('ID was not found in the link');
-					const id = linkMatch[1];
+					const malId = linkMatch[1];
 					const title = data$.find('div.title > a > strong').text();
 					const synopsis = data$.find('div.pt4').text();
 
-					valueArr.push(id);
+					valueArr.push(malId);
 					valueArr.push(title);
 					valueArr.push(synopsis);
 				} else {
@@ -105,14 +97,15 @@ export class MALSearch {
 			});
 
 			const animeStr = headers.reduce((prev, current, index) => {
-				return { ...prev, [current]: valueArr[index] };
+				prev[current as keyof AnimeString] = valueArr[index];
+				return prev;
 			}, {} as AnimeString);
 
-			const anime: Anime = {
+			const anime: AnimeSlim = {
 				...animeStr,
-				episodes: Number(animeStr.episodes),
 				score: Number(animeStr.score),
-				id: Number(animeStr.id)
+				malId: Number(animeStr.malId),
+				episodeCount: Number(animeStr.episodeCount === "-" ? "-1" : animeStr.episodeCount)
 			};
 
 			result.push(anime);
@@ -145,7 +138,7 @@ export class MALSearch {
 			params.set('status', key.toString());
 		}
 
-		const columns = ['a', 'b', 'c', 'f', 'g'];
+		const columns = ['a', 'b', 'c', 'g'];
 
 		columns.forEach((col) => params.append('c[]', col));
 

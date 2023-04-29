@@ -4,6 +4,7 @@ import UserService from '../user';
 import { MALSearch } from '@server/helpers/mal/search';
 import type { MalGenre } from '@server/helpers/mal/search/genre';
 import { Kitsu } from '@server/helpers/kitsu';
+import AnimeModel from '@server/models/anime';
 
 export class AnimeService {
 	private malId: number;
@@ -18,20 +19,22 @@ export class AnimeService {
 
 	static async getTrending() {
 		console.time('get trending');
+		const lastWeek = Date.now() - (86400 * 7 * 1000);
+		const trending = await db.trendingAnime.findMany({ include: { anime: true } });
+		if (trending.length) {
+			if (trending[0].createdAt.getTime() > lastWeek)
+				return trending;
+			console.log("Deleting animes available in cache.");
+			await db.trendingAnime.deleteMany(); // delete available trending anime and update with new ones.
+		}
 		const animeList = await MAL.getTrending();
-		console.timeEnd('get trending');
-
-		console.time('get posters');
 		const posterList = await Promise.all(
-			animeList.slice(0, 6).map(async (anime) => {
-				return {
-					title: anime.title,
-					id: anime.id,
-					description: anime.synopsis,
-					poster: await Kitsu.getPoster(anime.id)
-				};
+			animeList.slice(0, 6).map(async (anime, index) => {
+				const [_, poster] = await Promise.all([AnimeModel.insertOrUpdate(anime), Kitsu.getPoster(anime.malId)]);
+				return { malId: anime.malId, poster, index, anime }
 			})
 		);
+		await db.trendingAnime.createMany({ data: posterList })
 		console.timeEnd('get posters');
 
 		return posterList;
