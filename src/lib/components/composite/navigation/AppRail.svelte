@@ -2,9 +2,14 @@
 	import { sidebarExpand, sidebarShowLabel } from '$lib/stores/sidebar';
 </script>
 
-<div class="flex z-50">
+<div
+	class="{$sidebarExpand
+		? 'z-50'
+		: 'z-0'} flex absolute sm:relative top-20 sm:top-0 left-0"
+	style="height: calc(100vh - 5rem);"
+>
 	<div
-		class="rail flex flex-col transition-[width, transform] {$sidebarExpand &&
+		class="rail flex flex-col transition-[width, transform] h-full {$sidebarExpand &&
 			'active'} duration-300 justify-between bg-dark-800 py-2 px-3"
 		class:active={$sidebarExpand}
 		on:transitionend={() => {

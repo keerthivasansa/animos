@@ -1,43 +1,78 @@
 <script lang="ts">
-	import type { Anime } from '@prisma/client';
-	import Carousel from './Carousel.svelte';
+	import { Swipe, SwipeItem } from 'svelte-swipe';
+
 	import type { AnimeSlim } from '@server/helpers/mal/search';
+	import { onDestroy } from 'svelte';
+	import TextClamp from './TextClamp.svelte';
 
 	export let trendingList: {
-        malId: number;
-        poster: string;
-        index: number;
-        anime: AnimeSlim;
-    }[];
+		malId: number;
+		poster: string;
+		index: number;
+		anime: AnimeSlim;
+	}[];
+
+	let nextItemFn: () => void;
+	let pauseAutoPlay = true;
+
+	const slideTimer = setInterval(() => {
+		if (pauseAutoPlay) return;
+		nextItemFn();
+	}, 6000);
+
+	onDestroy(() => {
+		clearInterval(slideTimer);
+	});
 </script>
 
-<Carousel>
-	{#each trendingList as trending (trending.anime.malId)}
-		<swiper-slide class="relative">
-			<img
-				src={trending.poster}
-				alt={trending.anime.title}
-			/>
-            <div class="info w-full h-full px-10 py-12 bg-black bg-opacity-75 rounded-lg absolute top-0 left-0 hover:opacity-100 opacity-0 transition-[opacity] ease-linear duration-200">
-                <span class="text-3xl font-bold">{trending.anime.title}</span>
-                <p class="mt-12 max-w-md">{trending.anime.synopsis}</p>
-            </div>
-		</swiper-slide>
-	{/each}
-</Carousel>
+<div
+	class="w-full p-0 swipe-container"
+	on:focus={() => (pauseAutoPlay = true)}
+	on:blur={() => (pauseAutoPlay = false)}
+	on:mouseenter={() => (pauseAutoPlay = true)}
+	on:mouseleave={() => (pauseAutoPlay = false)}
+>
+	<Swipe showIndicators allow_infinite_swipe bind:nextItem={nextItemFn} transitionDuration={500}>
+		{#each trendingList as trending (trending.anime.malId)}
+			<SwipeItem>
+				<div class="relative w-full h-full slide">
+					<img src={trending.poster} alt={trending.anime.title} />
+					<div
+						class="info w-full flex flex-col gap-2 sm:gap-4 items-start justify-end h-full px-4 sm:px-10 py-12 sm:py-20 absolute bottom-0 left-0"
+					>
+						<TextClamp lines={1}>
+							<span class="text-2xl sm:text-3xl font-bold">{trending.anime.title}</span>
+						</TextClamp>
 
-<style>
-	swiper-slide > img {
-		border-radius: 12px;
-		object-fit: cover;
-        width: 100%;
-        height: 100%;
+						<TextClamp lines={2}>
+							<div class="max-w-md">
+								<span class=" text-sm sm:text-base text-gray-300">{trending.anime.synopsis}</span>
+							</div>
+						</TextClamp>
+					</div>
+				</div>
+			</SwipeItem>
+		{/each}
+	</Swipe>
+</div>
+
+<style lang="postcss">
+	.swipe-container {
+		@apply h-60 sm:h-[32rem];
 	}
 
-	swiper-slide {
+	.slide > img {
+		object-fit: cover;
 		width: 100%;
-		height: 24rem;
+		height: 100%;
+	}
+
+	.slide {
+		@apply h-60 sm:h-[32rem] w-full;
 		background: white;
-		border-radius: 12px;
+	}
+
+	.info {
+		background: linear-gradient(0deg, black, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
 	}
 </style>
