@@ -5,7 +5,7 @@
 <div
 	class="{$sidebarExpand
 		? 'z-50'
-		: 'z-0'} flex absolute sm:relative top-20 sm:top-0 left-0"
+		: 'z-0'} flex absolute top-20 left-0"
 	style="height: calc(100vh - 5rem);"
 >
 	<div

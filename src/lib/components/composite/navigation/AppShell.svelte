@@ -3,10 +3,10 @@
 	import Sidebar from './Sidebar.svelte';
 </script>
 
-<main class="flex flex-col w-screen h-full overflow-hidden">
+<main class="flex flex-col w-screen h-screen">
 	<Header />
-	<div class="flex flex-1 flex-row justify-start">
-		<Sidebar />
+	<Sidebar />
+	<div class="flex-1 overflow-y-scroll sm:pl-18">
 		<slot />
 	</div>
 </main>

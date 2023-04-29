@@ -36,6 +36,16 @@ model Anime {
 
   TrendingAnime TrendingAnime[]
   episode       Episode[]
+  genreAnime    GenreRecommendation[]
+}
+
+model GenreRecommendation {
+  malId Int
+  genre String
+  index Int
+  anime Anime  @relation(fields: [malId], references: [malId])
+
+  @@id([genre, index])
 }
 
 model TrendingAnime {

@@ -1,21 +1,17 @@
 <script lang="ts">
+	import TextClamp from "../composite/TextClamp.svelte";
+
 	export let anime: {
 		image: string;
 		title: string;
 	};
 </script>
 
-<div class="w-48 flex flex-col cursor-pointer rounded-md overflow-hidden">
-	<img src={anime.image} alt="Death note" class="w-48" />
+<div class="w-40 flex flex-col cursor-pointer rounded-md overflow-hidden">
+	<img src={anime.image} alt={anime.title} class="w-40 h-56" />
 	<div class="text-center bg-black py-3">
-		<div class="px-4 text-sm font-semibold text-clipper">{anime.title}</div>
+		<TextClamp lines={1}>
+			<div class="px-4 text-xs font-semibold">{anime.title}</div>
+		</TextClamp>
 	</div>
 </div>
-
-<style>
-	.text-clipper {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-</style>

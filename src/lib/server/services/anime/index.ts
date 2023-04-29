@@ -80,13 +80,45 @@ export class AnimeService {
 	}
 
 	static async getGenre(genre: MalGenre) {
-		const anime = await MALSearch.getSearch({
+		const genreAnime = await db.genreRecommendation.findMany({
+			where: { 
+				genre 
+			},
+			include: {
+				anime: true
+			}
+		});
+		
+		if (genreAnime.length)
+			return genreAnime;
+
+		const list = await MALSearch.getSearch({
 			genre: [genre],
 			sort: {
 				order: 'desc',
 				type: 'popularity'
 			}
 		});
-		return anime;
+
+		const result = await Promise.all(list.map(async (anime, index) => {
+			await AnimeModel.insertOrUpdate(anime);
+			return {
+				malId: anime.malId,
+				index,
+				genre,
+				anime
+			};
+		}));
+
+		await db.genreRecommendation.createMany({
+			data: result.map((anime, index) => {
+				return {
+					genre,
+					index,
+					malId: anime.malId
+				}
+			})
+		});
+		return result;
 	}
 }
