@@ -1,7 +1,15 @@
 <script lang="ts">
+	import { navigating } from '$app/stores';
+	import { sidebarExpand } from '$lib/stores/sidebar';
 	import AppRail from './AppRail.svelte';
 	import Tile from './Tile.svelte';
 	import Icon from '@iconify/svelte';
+
+	navigating.subscribe((val) => {
+		if (val)
+			// if navigating, close sidebar
+			sidebarExpand.set(false);
+	});
 </script>
 
 <AppRail>
