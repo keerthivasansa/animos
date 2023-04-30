@@ -3,14 +3,24 @@
 	import type { AnimeSlim } from '@server/helpers/mal/search';
 	import Badge from '../base/Badge.svelte';
 	import Icon from '@iconify/svelte';
+	import { onMount } from 'svelte';
 
 	export let anime: AnimeSlim;
 
-	let openOnRight = false;
+	let openOnLeft = false;
+	let element: HTMLDivElement;
+
+	onMount(() => {
+		if (anime.malId === 38000) {
+			console.log(element.offsetLeft, window.innerWidth);
+		}
+		openOnLeft = (element.offsetLeft + 300) > window.innerWidth;
+	});
 </script>
 
 <div
 	id={`card-${anime.malId}`}
+	bind:this={element}
 	class="w-40 flex flex-col parent relative hover:nth cursor-pointer rounded-md"
 >
 	<div class="overflow-hidden rounded-md content">
@@ -23,7 +33,7 @@
 	</div>
 	<div
 		class="w-40 sm:w-60 h-full p-4 gap-6 flex translate-x-0 left-0 text-sm -z-10 rounded-r-md transition-all duration-700 info top-0 absolute flex-col bg-black"
-		class:openOnRight
+		class:openOnLeft
 	>
 		<TextClamp lines={2}>
 			{anime.title}
@@ -56,7 +66,7 @@
 		@apply translate-x-40 z-10;
 	}
 
-	.parent:hover > .info.openOnRight {
-		@apply -translate-x-40;
+	.parent:hover > .info.openOnLeft {
+		@apply -translate-x-40 sm:-translate-x-60;
 	}
 </style>
