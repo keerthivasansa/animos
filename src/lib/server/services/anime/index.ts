@@ -19,22 +19,24 @@ export class AnimeService {
 
 	static async getTrending() {
 		console.time('get trending');
-		const lastWeek = Date.now() - (86400 * 7 * 1000);
+		const lastWeek = Date.now() - 86400 * 7 * 1000;
 		const trending = await db.trendingAnime.findMany({ include: { anime: true } });
 		if (trending.length) {
-			if (trending[0].createdAt.getTime() > lastWeek)
-				return trending;
-			console.log("Deleting animes available in cache.");
+			if (trending[0].createdAt.getTime() > lastWeek) return trending;
+			console.log('Deleting animes available in cache.');
 			await db.trendingAnime.deleteMany(); // delete available trending anime and update with new ones.
 		}
 		const animeList = await MAL.getTrending(1);
 		const posterList = await Promise.all(
 			animeList.data.slice(0, 6).map(async (anime, index) => {
-				const [_, poster] = await Promise.all([AnimeModel.insertOrUpdate(anime), Kitsu.getPoster(anime.malId)]);
-				return { malId: anime.malId, poster, index, anime }
+				const [_, poster] = await Promise.all([
+					AnimeModel.insertOrUpdate(anime),
+					Kitsu.getPoster(anime.malId)
+				]);
+				return { malId: anime.malId, poster, index, anime };
 			})
 		);
-		await db.trendingAnime.createMany({ data: posterList })
+		await db.trendingAnime.createMany({ data: posterList });
 		console.timeEnd('get posters');
 
 		return posterList;
@@ -94,8 +96,7 @@ export class AnimeService {
 			}
 		});
 
-		if (genreAnime.length)
-			return genreAnime;
+		if (genreAnime.length) return genreAnime;
 
 		const searchResult = await MALSearch.getSearch({
 			genre: [genre],
@@ -105,15 +106,17 @@ export class AnimeService {
 			}
 		});
 
-		const result = await Promise.all(searchResult.data.map(async (anime, index) => {
-			await AnimeModel.insertOrUpdate(anime);
-			return {
-				malId: anime.malId,
-				index,
-				genre,
-				anime
-			};
-		}));
+		const result = await Promise.all(
+			searchResult.data.map(async (anime, index) => {
+				await AnimeModel.insertOrUpdate(anime);
+				return {
+					malId: anime.malId,
+					index,
+					genre,
+					anime
+				};
+			})
+		);
 
 		await db.genreRecommendation.createMany({
 			data: result.map((anime, index) => {
@@ -121,7 +124,7 @@ export class AnimeService {
 					genre,
 					index,
 					malId: anime.malId
-				}
+				};
 			})
 		});
 		return result;

@@ -3,9 +3,7 @@
 </script>
 
 <div
-	class="{$sidebarExpand
-		? 'z-50'
-		: '-z-10 sm:z-0'} flex absolute top-20 left-0"
+	class="{$sidebarExpand ? 'z-50' : '-z-10 sm:z-0'} flex absolute top-20 left-0"
 	style="height: calc(100dvh - 5rem);"
 >
 	<div

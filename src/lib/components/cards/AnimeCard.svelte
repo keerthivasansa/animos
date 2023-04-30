@@ -1,5 +1,5 @@
 <script lang="ts">
-	import TextClamp from "../composite/TextClamp.svelte";
+	import TextClamp from '../composite/TextClamp.svelte';
 
 	export let anime: {
 		image: string;

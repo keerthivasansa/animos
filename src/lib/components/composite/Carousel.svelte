@@ -19,6 +19,6 @@
 	pagination={{
 		hideOnClick: true
 	}}
-> 
-    <slot/>
+>
+	<slot />
 </swiper-container>

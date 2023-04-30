@@ -6,9 +6,11 @@
 
 <AppRail>
 	<div slot="lead" class="text-white">
-		<Tile label="Top airing">
-			<Icon icon="fa6-solid:chart-line" color="white" width="24px" />
-		</Tile>
+		<a href="/trending">
+			<Tile label="Top airing">
+				<Icon icon="fa6-solid:chart-line" color="white" width="24px" />
+			</Tile>
+		</a>
 		<Tile label="Popular">
 			<Icon icon="fa6-solid:users" color="white" width="24px" />
 		</Tile>
@@ -26,3 +28,10 @@
 		</a>
 	</div>
 </AppRail>
+
+<style>
+	a {
+		text-decoration: none;
+		color: black;
+	}
+</style>

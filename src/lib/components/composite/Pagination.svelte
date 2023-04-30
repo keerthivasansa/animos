@@ -22,7 +22,7 @@
 	on:setPage={(e) => {
 		const newPage = e.detail.page;
 		$page.url.searchParams.set('page', newPage.toString());
-        pageNo = newPage;
+		pageNo = newPage;
 		goto(location.pathname + '?' + $page.url.searchParams.toString());
 		onPageChange(newPage);
 	}}

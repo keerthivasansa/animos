@@ -19,7 +19,7 @@ export class MAL {
 		const anime = MALSearch.getSearch({
 			sort: {
 				order: 'desc',
-				type: 'popularity',
+				type: 'popularity'
 			},
 			status: AnimeStatus.CURRENTLY_AIRING,
 			page

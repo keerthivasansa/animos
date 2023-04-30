@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let lines = 3;
+	export let lines = 3;
 </script>
 
 <div class="line-clamp" style="-webkit-line-clamp: {lines};">
