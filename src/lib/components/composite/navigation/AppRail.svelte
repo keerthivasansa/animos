@@ -6,7 +6,7 @@
 	class="{$sidebarExpand
 		? 'z-50'
 		: '-z-10 sm:z-0'} flex absolute top-20 left-0"
-	style="height: calc(100vh - 5rem);"
+	style="height: calc(100dvh - 5rem);"
 >
 	<div
 		class="rail flex flex-col transition-[width, transform] h-full {$sidebarExpand &&
