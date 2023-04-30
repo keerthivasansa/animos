@@ -33,12 +33,7 @@ export default class AnimePahe extends Provider {
 	}
 
 	async getEpisodes() {
-		console.time('get id');
 		const id = await this.getId();
-		console.log({ id });
-		console.timeEnd('get id');
-
-		console.time('get api');
 
 		const response = await this.client.get<AnimePaheEpisodes>(`/api`, {
 			maxRedirects: 1,
@@ -49,9 +44,7 @@ export default class AnimePahe extends Provider {
 				id
 			}
 		});
-		console.timeEnd('get api');
 
-		console.log(response);
 		return response.data.data.map((ep) => {
 			return {
 				id: ep.session,
@@ -66,15 +59,10 @@ export default class AnimePahe extends Provider {
 		episodeId: string,
 		getLength = true
 	): Promise<{ url: string; length: number }> {
-		console.time('get id');
 		const animeId = await this.getId();
-		console.timeEnd('get id');
-
 		const url = `/play/${animeId}/${episodeId}`;
 
-		console.time('get referrers');
 		const resp = await this.client.get(url);
-		console.timeEnd('get referrers');
 
 		const $ = load(resp.data);
 
@@ -93,15 +81,11 @@ export default class AnimePahe extends Provider {
 			.filter((src) => src.audio === 'jpn')
 			.sort((src1, src2) => src2.resolution - src1.resolution)[0];
 
-		console.time('extract source');
 		const src = ((await extractSource(bestSubSource.src)) as string).replace('.cache', '.files');
-		console.timeEnd('extract source');
 
 		if (!getLength) return { url: src, length: 0 };
 
-		console.time('get duration');
 		const length = await getHlsDuration(src, false);
-		console.timeEnd('get duration');
 
 		return {
 			url: src,

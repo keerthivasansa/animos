@@ -18,7 +18,6 @@ export class AnimeService {
 	}
 
 	static async getTrending() {
-		console.time('get trending');
 		const lastWeek = Date.now() - 86400 * 7 * 1000;
 		const trending = await db.trendingAnime.findMany({ include: { anime: true } });
 		if (trending.length) {
@@ -37,7 +36,6 @@ export class AnimeService {
 			})
 		);
 		await db.trendingAnime.createMany({ data: posterList });
-		console.timeEnd('get posters');
 
 		return posterList;
 	}
