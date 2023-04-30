@@ -11,10 +11,7 @@
 	let element: HTMLDivElement;
 
 	onMount(() => {
-		if (anime.malId === 38000) {
-			console.log(element.offsetLeft, window.innerWidth);
-		}
-		openOnLeft = (element.offsetLeft + 300) > window.innerWidth;
+		openOnLeft = element.offsetLeft + element.offsetWidth * 2.5 > window.innerWidth;
 	});
 </script>
 
