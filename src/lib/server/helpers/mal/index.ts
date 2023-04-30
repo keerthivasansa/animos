@@ -27,12 +27,13 @@ export class MAL {
 		return anime;
 	}
 
-	static async getMostPopular() {
+	static async getMostPopular(page = 1) {
 		const animeArray = await MALSearch.getSearch({
 			sort: {
 				type: 'popularity',
 				order: 'desc'
-			}
+			},
+			page
 		});
 		return animeArray;
 	}

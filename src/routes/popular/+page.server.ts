@@ -2,8 +2,8 @@ import { MAL } from '@server/helpers/mal';
 
 export async function load({ url }) {
 	const page = Number(url.searchParams.get('page') || '1');
-	const trending = await MAL.getTrending(page);
+	const popular = await MAL.getMostPopular(page);
 	return {
-		trending
+		popular
 	};
 }

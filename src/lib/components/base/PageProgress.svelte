@@ -29,7 +29,7 @@
 	navigating.subscribe((val) => {
 		reset();
 		if (val) {
-			delayTimer = setTimeout(startTimer, 1000); // only show progress bar when the page takes a few seconds to load
+			delayTimer = setTimeout(startTimer, 250); // only show progress bar when the page takes a few seconds to load
 		}
 	});
 </script>
@@ -40,6 +40,5 @@
 			class="bg-amber-600 h-1 transition-[width] ease-linear duration-[5000ms]"
 			style="width: {progress}%"
 		/>
-		{progress}
 	{/if}
 </div>

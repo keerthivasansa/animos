@@ -6,14 +6,21 @@
 
 <AppRail>
 	<div slot="lead" class="text-white">
+		<a href="/">
+			<Tile label="Home">
+				<Icon icon="ri:home-2-fill" color="white" width="24px" />
+			</Tile>
+		</a>
 		<a href="/trending">
 			<Tile label="Top airing">
 				<Icon icon="fa6-solid:chart-line" color="white" width="24px" />
 			</Tile>
 		</a>
-		<Tile label="Popular">
-			<Icon icon="fa6-solid:users" color="white" width="24px" />
-		</Tile>
+		<a href="/popular">
+			<Tile label="Popular">
+				<Icon icon="fa6-solid:users" color="white" width="24px" />
+			</Tile>
+		</a>
 	</div>
 	<div slot="trail">
 		<a href="https://twitter.com/keerthivasansa_">
@@ -31,7 +38,7 @@
 
 <style>
 	a {
-		text-decoration: none;
-		color: black;
+		text-decoration: none !important;
+		color: white !important;
 	}
 </style>
