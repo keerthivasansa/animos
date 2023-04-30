@@ -27,9 +27,9 @@ export class AnimeService {
 			console.log("Deleting animes available in cache.");
 			await db.trendingAnime.deleteMany(); // delete available trending anime and update with new ones.
 		}
-		const animeList = await MAL.getTrending();
+		const animeList = await MAL.getTrending(1);
 		const posterList = await Promise.all(
-			animeList.slice(0, 6).map(async (anime, index) => {
+			animeList.data.slice(0, 6).map(async (anime, index) => {
 				const [_, poster] = await Promise.all([AnimeModel.insertOrUpdate(anime), Kitsu.getPoster(anime.malId)]);
 				return { malId: anime.malId, poster, index, anime }
 			})
@@ -38,6 +38,11 @@ export class AnimeService {
 		console.timeEnd('get posters');
 
 		return posterList;
+	}
+
+	async getTrendingList(page: number) {
+		const data = await MAL.getTrending(page);
+		return data;
 	}
 
 	async getEpisodes() {
@@ -81,18 +86,18 @@ export class AnimeService {
 
 	static async getGenre(genre: MalGenre) {
 		const genreAnime = await db.genreRecommendation.findMany({
-			where: { 
-				genre 
+			where: {
+				genre
 			},
 			include: {
 				anime: true
 			}
 		});
-		
+
 		if (genreAnime.length)
 			return genreAnime;
 
-		const list = await MALSearch.getSearch({
+		const searchResult = await MALSearch.getSearch({
 			genre: [genre],
 			sort: {
 				order: 'desc',
@@ -100,7 +105,7 @@ export class AnimeService {
 			}
 		});
 
-		const result = await Promise.all(list.map(async (anime, index) => {
+		const result = await Promise.all(searchResult.data.map(async (anime, index) => {
 			await AnimeModel.insertOrUpdate(anime);
 			return {
 				malId: anime.malId,

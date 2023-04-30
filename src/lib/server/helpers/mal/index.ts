@@ -15,13 +15,14 @@ export class MAL {
 		this.url = `/anime/${malId}`;
 	}
 
-	static getTrending() {
+	static getTrending(page: number) {
 		const anime = MALSearch.getSearch({
 			sort: {
 				order: 'desc',
-				type: 'popularity'
+				type: 'popularity',
 			},
-			status: AnimeStatus.CURRENTLY_AIRING
+			status: AnimeStatus.CURRENTLY_AIRING,
+			page
 		});
 		return anime;
 	}

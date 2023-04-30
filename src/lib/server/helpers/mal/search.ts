@@ -26,6 +26,7 @@ interface SearchFilter {
 	sort: { type: keyof typeof sortKeys; order: 'desc' | 'asc' };
 	status: AnimeStatus;
 	genre: MalGenre[];
+	page: number
 }
 
 export class MALSearch {
@@ -43,6 +44,10 @@ export class MALSearch {
 		});
 
 		const $page = load(response.data);
+
+		const currentPage = filter.page || 1;
+		const lastPage = Number($page("#content > div.normal_header.clearfix.pt16 > div > div > span > a").last
+			().text())
 
 		const table = $page('tbody').last();
 		const rows = table.find('tr');
@@ -111,13 +116,18 @@ export class MALSearch {
 			result.push(anime);
 		});
 
-		return result;
+		return { currentPage, lastPage, data: result };
 	}
 
 	static getSearchParams(filter: Partial<SearchFilter>) {
 		const params = new URLSearchParams();
 
 		if (filter.query) params.set('q', filter.query);
+
+		if (filter.page) {
+			const animeShown = (filter.page - 1) * 50;
+			params.set('show', animeShown.toString());
+		}
 
 		if (filter.sort) {
 			const sortCol = sortKeys[filter.sort.type];
