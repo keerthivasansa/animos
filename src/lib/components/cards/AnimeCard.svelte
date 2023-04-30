@@ -32,7 +32,7 @@
 		</div>
 	</div>
 	<div
-		class="w-40 sm:w-60 h-full p-4 gap-6 flex translate-x-0 left-0 text-sm -z-10 rounded-r-md transition-all duration-700 info top-0 absolute flex-col bg-black"
+		class="w-44 sm:w-60 h-full p-4 gap-6 flex translate-x-0 left-0 text-sm -z-10 rounded-r-md transition-all duration-700 info top-0 absolute flex-col bg-black"
 		class:openOnLeft
 	>
 		<TextClamp lines={2}>
@@ -67,6 +67,6 @@
 	}
 
 	.parent:hover > .info.openOnLeft {
-		@apply -translate-x-40 sm:-translate-x-60;
+		@apply -translate-x-44 sm:-translate-x-60;
 	}
 </style>
