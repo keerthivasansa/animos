@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { load } from 'cheerio';
 import { getOriginalImageUrl } from './utils';
 import genres, { type MalGenre } from './search/genre';
 import type { AnimeStatus, Anime } from '@prisma/client';
+import { createAxios } from '@server/utils/proxy';
 
 const sortKeys = {
 	'episode-count': 4,
@@ -31,7 +31,7 @@ interface SearchFilter {
 
 export class MALSearch {
 	private static baseUrl = 'https://myanimelist.net';
-	private static client = axios.create({
+	private static client = createAxios({
 		baseURL: this.baseUrl
 	});
 
@@ -43,6 +43,7 @@ export class MALSearch {
 			params
 		});
 
+		console.log(response.request.res.responseUrl)
 		const $page = load(response.data);
 
 		const currentPage = filter.page || 1;

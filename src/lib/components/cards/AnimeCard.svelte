@@ -1,6 +1,6 @@
 <script lang="ts">
 	import TextClamp from '../composite/TextClamp.svelte';
-	import type { AnimeSlim } from '@server/helpers/mal/search';
+	import type { AnimeSlim } from '$lib/common/mal/search';
 	import Badge from '../base/Badge.svelte';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';

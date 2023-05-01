@@ -1,6 +1,6 @@
 import Provider, { type ProviderName } from '../generic';
 import { load } from 'cheerio';
-import { MalSync } from '@server/helpers/malsync';
+import { MalSync } from '$lib/common/malsync';
 import { extractSource } from './kwik';
 import { getHlsDuration } from '../utils';
 import { createAxios } from '@server/utils/proxy';

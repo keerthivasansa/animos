@@ -1,5 +1,5 @@
 import db from '@server/database';
-import { MalSync } from '@server/helpers/malsync';
+import { MalSync } from '$lib/common/malsync';
 
 export type ProviderName = 'Gogoanime' | 'default' | '9anime' | 'zoro' | 'animepahe';
 

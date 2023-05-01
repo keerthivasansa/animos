@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Anime } from '@prisma/client';
 	import AnimeCard from '../cards/AnimeCard.svelte';
-	import type { AnimeSlim } from '@server/helpers/mal/search';
+	import type { AnimeSlim } from '$lib/common/mal/search';
 
 	export let animeList: (Anime | AnimeSlim)[];
 	export let title: string;

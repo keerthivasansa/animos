@@ -1,4 +1,4 @@
-import { MAL } from '@server/helpers/mal';
+import { MAL } from '$lib/common/mal';
 
 export async function load({ url }) {
 	const page = Number(url.searchParams.get('page') || '1');

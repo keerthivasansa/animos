@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Swipe, SwipeItem } from 'svelte-swipe';
 
-	import type { AnimeSlim } from '@server/helpers/mal/search';
+	import type { AnimeSlim } from '$lib/common/mal/search';
 	import { onDestroy } from 'svelte';
 	import TextClamp from './TextClamp.svelte';
 

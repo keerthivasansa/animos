@@ -1,4 +1,4 @@
-import { MalSync } from '@server/helpers/malsync';
+import { MalSync } from '$lib/common/malsync';
 import { describe, it, expect } from 'vitest';
 
 const deathNoteIds = {

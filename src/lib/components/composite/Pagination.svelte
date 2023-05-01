@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Anime } from '@prisma/client';
-	import type { AnimeSlim } from '@server/helpers/mal/search';
+	import type { AnimeSlim } from '$lib/common/mal/search';
 	import AnimeList from './AnimeList.svelte';
 	import { DarkPaginationNav } from 'svelte-paginate';
 	import { page } from '$app/stores';
