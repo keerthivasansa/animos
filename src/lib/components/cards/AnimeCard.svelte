@@ -36,7 +36,11 @@
 			{anime.title}
 		</TextClamp>
 		<div class="flex gap-2 flex-wrap">
-			<Badge class="bg-amber-800">EP: {anime.episodeCount}</Badge>
+			{#if anime.episodeCount === -1}
+				<Badge class="bg-amber-800">Ongoing</Badge>
+			{:else}
+				<Badge class="bg-amber-800">EP: {anime.episodeCount}</Badge>
+			{/if}
 			<Badge class="bg-red-800">{anime.rating}</Badge>
 			<Badge class="bg-yellow-800 flex gap-1 justify-center"
 				>{anime.score} <Icon icon="material-symbols:star-rounded" width="14px" /></Badge
