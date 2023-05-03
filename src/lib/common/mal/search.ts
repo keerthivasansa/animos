@@ -43,7 +43,7 @@ export class MALSearch {
 			params
 		});
 
-		console.log(response.request.res.responseUrl)
+		console.log(response.request.res.responseUrl);
 		const $page = load(response.data);
 
 		const currentPage = filter.page || 1;

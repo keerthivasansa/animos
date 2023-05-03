@@ -10,6 +10,7 @@ module.exports = {
 			colors: {
 				accent: '#CAF2FF',
 				dark: {
+					500: '#2D2F33',
 					600: '#202020',
 					800: '#131313'
 				}

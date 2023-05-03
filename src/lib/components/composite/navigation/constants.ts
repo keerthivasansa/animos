@@ -1,1 +1,1 @@
-export const ICON_COLOR = "bg-accent";
+export const ICON_COLOR = 'white';
