@@ -1,30 +1,38 @@
 <script lang="ts">
 	import TextClamp from '../composite/TextClamp.svelte';
-	import type { AnimeSlim } from '@server/helpers/mal/search';
 	import Badge from '../base/Badge.svelte';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import type { Anime } from '@tutkli/jikan-ts';
 
-	export let anime: AnimeSlim;
+	export let anime: Anime;
 
 	let openOnLeft = false;
 	let element: HTMLDivElement;
 
+	const title = anime.title_english || anime.title;
 	onMount(() => {
+		console.log(anime);
 		openOnLeft = element.offsetLeft + element.offsetWidth * 2.5 > window.innerWidth;
 	});
 </script>
 
 <div
-	id={`card-${anime.malId}`}
+	id={`card-${anime.mal_id}`}
 	bind:this={element}
 	class="w-40 flex flex-col parent relative hover:nth cursor-pointer rounded-md"
 >
 	<div class="overflow-hidden rounded-md content">
-		<img src={anime.image} alt={anime.title} class="w-40 h-56" />
+		{#if anime.images}
+			<img
+				src={anime.images.webp?.large_image_url || anime.images.jpg.large_image_url}
+				alt={anime.title}
+				class="w-40 h-56"
+			/>
+		{/if}
 		<div class="text-center bg-black py-3">
 			<TextClamp lines={1}>
-				<div class="px-4 text-xs font-semibold">{anime.title}</div>
+				<div class="px-4 text-xs font-semibold">{title}</div>
 			</TextClamp>
 		</div>
 	</div>
@@ -33,13 +41,13 @@
 		class:openOnLeft
 	>
 		<TextClamp lines={2}>
-			{anime.title}
+			{title}
 		</TextClamp>
 		<div class="flex gap-2 flex-wrap">
-			{#if anime.episodeCount === -1}
+			{#if anime.episodes === -1}
 				<Badge class="bg-amber-800">Ongoing</Badge>
 			{:else}
-				<Badge class="bg-amber-800">EP: {anime.episodeCount}</Badge>
+				<Badge class="bg-amber-800">EP: {anime.episodes}</Badge>
 			{/if}
 			<Badge class="bg-red-800">{anime.rating}</Badge>
 			<Badge class="bg-yellow-800 flex gap-1 justify-center"

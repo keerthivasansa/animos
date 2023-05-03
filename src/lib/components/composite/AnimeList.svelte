@@ -1,16 +1,15 @@
 <script lang="ts">
-	import type { Anime } from '@prisma/client';
+	import type { Anime } from '@tutkli/jikan-ts';
 	import AnimeCard from '../cards/AnimeCard.svelte';
-	import type { AnimeSlim } from '@server/helpers/mal/search';
 
-	export let animeList: (Anime | AnimeSlim)[];
+	export let animeList: Anime[];
 	export let title: string;
 </script>
 
 <div class="wrapper">
 	<h3 class="section-title">{title}</h3>
 	<div class="flex gap-4 sm:gap-12 w-full flex-wrap">
-		{#each animeList as anime (anime.malId)}
+		{#each animeList as anime, index (index)}
 			<AnimeCard {anime} />
 		{/each}
 	</div>

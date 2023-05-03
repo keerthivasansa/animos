@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import Jikan from '$lib/common/jikan/index.js';
 	import ImageHeader from '$lib/components/base/ImageHeader.svelte';
 	import Pagination from '$lib/components/composite/Pagination.svelte';
-	import axios from 'axios';
 
 	export let data;
 
@@ -12,10 +10,7 @@
 	let currentData = trending;
 
 	async function changePage(page: number) {
-		const result = await axios.get('/api/anime/trending', {
-			params: { page }
-		});
-		currentData = result.data;
+		currentData = await Jikan.getTrending(page);
 	}
 </script>
 

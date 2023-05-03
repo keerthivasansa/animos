@@ -10,4 +10,4 @@
 
 <TrendingCarousel {trendingList} />
 
-<AnimeList title="Recommendations" animeList={recommendations.map((data) => data.anime)} />
+<AnimeList title="Recommendations" animeList={recommendations.data} />
