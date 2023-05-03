@@ -21,6 +21,11 @@ class Jikan {
 		return result;
 	}
 
+	static async getSearch(q:string, page = 1) {
+		const result = await this.client.anime.getAnimeSearch({ q, page });
+		return result;
+	}
+
 	static async getGenre(genreId: number) {
 		const result = await this.client.anime.getAnimeSearch({
 			genres: genreId.toString(),

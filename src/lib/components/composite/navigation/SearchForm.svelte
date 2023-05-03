@@ -16,12 +16,14 @@
 		<Icon icon="ic:baseline-close" width="24px" color="black" />
 	</button>
 	<form
+        action="/search"
+        method="GET"
 		class="hidden sm:flex gap-2 flex-1 items-center h-fit justify-end"
 		class:display-flex={mobileSearchOpen}
-		on:submit|preventDefault={() => console.log('hello')}
 	>
 		<input
 			type="text"
+            name="q"
 			class="h-fit flex-1 sm:flex-none sm:w-60 p-3 text-black outline-none font-semibold rounded-md"
 		/>
 		<button type="submit" class="flex items-center justify-center h-12 w-12 bg-accent rounded-md">
