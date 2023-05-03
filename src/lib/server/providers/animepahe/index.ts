@@ -1,9 +1,9 @@
 import Provider, { type ProviderName } from '../generic';
 import { load } from 'cheerio';
-import { MalSync } from '@server/helpers/malsync';
+import { MalSync } from '$lib/common/malsync';
 import { extractSource } from './kwik';
 import { getHlsDuration } from '../utils';
-import { createAxios } from '@server/utils/proxy';
+import axios from 'axios';
 import { getDurationFromString } from './utils';
 
 interface AnimepaheEpisodeInfo {
@@ -23,7 +23,7 @@ export default class AnimePahe extends Provider {
 	public identifier: ProviderName = 'animepahe';
 	private baseUrl = 'https://animepahe.com/';
 	public malSyncId = 'animepahe';
-	private client = createAxios({ baseURL: this.baseUrl });
+	private client = axios.create({ baseURL: this.baseUrl });
 
 	async getProviderId(): Promise<string> {
 		const int_id = await MalSync.getProviderId(this.malId, 'animepahe');

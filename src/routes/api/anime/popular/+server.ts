@@ -1,4 +1,4 @@
-import { MAL } from '@server/helpers/mal/index.js';
+import { MAL } from '$lib/common/mal/index.js';
 import { json } from '@sveltejs/kit';
 
 export async function GET({ url }) {

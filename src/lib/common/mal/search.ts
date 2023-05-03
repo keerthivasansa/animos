@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { load } from 'cheerio';
 import { getOriginalImageUrl } from './utils';
 import genres, { type MalGenre } from './search/genre';
@@ -44,6 +43,7 @@ export class MALSearch {
 			params
 		});
 
+		console.log(response.request.res.responseUrl)
 		const $page = load(response.data);
 
 		const currentPage = filter.page || 1;

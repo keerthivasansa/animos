@@ -1,4 +1,4 @@
-import { createAxios } from '@server/utils/proxy';
+import axiosClient from 'axios';
 import HLSParser from 'hls-parser';
 
 export const USER_AGENT =
@@ -33,7 +33,7 @@ export async function getHlsDuration(url: string, master = false) {
 	// 		"referrer": referrer
 	// 	}
 	// }
-	const axios = createAxios();
+	const axios = axiosClient.create();
 	const resp = await axios.get<string>(finalUrl);
 	const hls = HLSParser.parse(resp.data);
 	if (!hls.isMasterPlaylist) {

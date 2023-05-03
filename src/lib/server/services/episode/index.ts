@@ -1,6 +1,6 @@
 import db from '@server/database';
 import UserService from '../user';
-import { AnimeSkip } from '@server/helpers/aniskip';
+import { AnimeSkip } from '$lib/common/aniskip';
 import type { EpisodeProvider, SkipTime } from '@prisma/client';
 
 class EpisodeService {

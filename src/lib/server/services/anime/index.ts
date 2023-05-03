@@ -1,9 +1,9 @@
-import { MAL } from '@server/helpers/mal';
+import { MAL } from '$lib/common/mal';
 import db from '@server/database';
 import UserService from '../user';
-import { MALSearch } from '@server/helpers/mal/search';
-import type { MalGenre } from '@server/helpers/mal/search/genre';
-import { Kitsu } from '@server/helpers/kitsu';
+import { MALSearch } from '$lib/common/mal/search';
+import type { MalGenre } from '$lib/common/mal/search/genre';
+import { Kitsu } from '$lib/common/kitsu';
 import AnimeModel from '@server/models/anime';
 
 export class AnimeService {
