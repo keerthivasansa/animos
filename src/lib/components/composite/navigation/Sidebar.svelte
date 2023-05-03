@@ -38,7 +38,7 @@
 			</Tile>
 		</a>
 		<a href="https://github.com/keerthivasansa/animos">
-			<Tile class="bg-[#FFFFFF]">
+			<Tile class="bg-white">
 				<Icon icon="mdi:github" color="black" width="24px" />
 			</Tile>
 		</a>
