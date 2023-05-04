@@ -17,7 +17,7 @@
 	})(q, pageNo);
 
 	async function changePage(page: number) {
-		console.log({ q, page });
+		currentData = await Jikan.getSearch(q, page);
 	}
 </script>
 
