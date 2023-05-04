@@ -12,11 +12,11 @@
 <div
 	class={`${
 		expand ? 'w-full' : 'w-14'
-	} h-14 my-4 rounded-md bg-slate-800 flex items-center gap-6 px-4 ${
+	} h-14 my-4 rounded-md text-white flex font-semibold items-center gap-6 px-4 ${
 		label && $sidebarExpand && 'justify-start'
 	} ${!label && 'justify-center'} overflow-hidden
 	${classes} `}
-	{style}
+	style="background: linear-gradient(153.43deg, #162345 16.67%, rgba(31, 79, 105, 0.71) 145.45%); {style}"
 	on:click={onClick}
 	on:keydown={onClick}
 >

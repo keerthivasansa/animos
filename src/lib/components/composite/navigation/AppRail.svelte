@@ -8,7 +8,7 @@
 >
 	<div
 		class="rail flex flex-col transition-[width, transform] h-full {$sidebarExpand &&
-			'active'} duration-300 justify-between bg-dark-800 py-2 px-3"
+			'active'} duration-300 justify-between bg-[#101010] py-2 px-3"
 		class:active={$sidebarExpand}
 		on:transitionend={() => {
 			if ($sidebarExpand) $sidebarShowLabel = true;

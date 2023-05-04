@@ -37,7 +37,7 @@
 <div class="w-screen bg-transparent h-1">
 	{#if progress}
 		<div
-			class="bg-amber-600 h-1 transition-[width] ease-linear duration-[5000ms]"
+			class="bg-accent h-1 transition-[width] ease-linear duration-[5000ms]"
 			style="width: {progress}%"
 		/>
 	{/if}
