@@ -40,6 +40,11 @@ class Jikan {
 		});
 		return result;
 	}
+
+	static async getAnime(malId:number) {
+		const anime = await this.client.anime.getAnimeById(malId);
+		return anime;
+	}
 }
 
 export default Jikan;
