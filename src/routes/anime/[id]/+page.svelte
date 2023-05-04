@@ -24,9 +24,12 @@
 		<TextClamp lines={6}>
 			<p class="max-w-2xl">{anime.synopsis}</p>
 		</TextClamp>
-		<button class="flex gap-2 items-center bg-accent text-black px-4 py-2 rounded-md w-fit font-semibold"
-			>Watch
-			<Icon icon="material-symbols:play-circle-outline" width="24px"/></button
-		>
+		<a href="/anime/{anime.mal_id}/watch">
+			<button
+				class="flex gap-2 items-center bg-accent text-black px-4 py-2 rounded-md w-fit font-semibold"
+				>Watch
+				<Icon icon="material-symbols:play-circle-outline" width="24px" /></button
+			>
+		</a>
 	</div>
 </div>

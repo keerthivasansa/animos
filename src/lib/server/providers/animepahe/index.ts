@@ -34,7 +34,7 @@ export default class AnimePahe extends Provider {
 
 	async getEpisodes() {
 		const id = await this.getId();
-
+		console.log(id);
 		const response = await this.client.get<AnimePaheEpisodes>(`/api`, {
 			maxRedirects: 1,
 			params: {
@@ -44,6 +44,8 @@ export default class AnimePahe extends Provider {
 				id
 			}
 		});
+
+		console.log(response.data);
 
 		return response.data.data.map((ep) => {
 			return {

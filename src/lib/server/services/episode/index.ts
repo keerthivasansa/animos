@@ -5,18 +5,16 @@ import type { EpisodeProvider, SkipTime } from '@prisma/client';
 
 class EpisodeService {
 	private malId: number;
-	private episodeId: string;
 
-	constructor(malId: number, episodeId: string) {
+	constructor(malId: number) {
 		this.malId = malId;
-		this.episodeId = episodeId;
 	}
 
-	async getWatchTime(userId: string) {
+	async getWatchTime(userId: string, episodeId: string) {
 		const history = await db.episodeHistory.findUnique({
 			where: {
 				episodeId_userId: {
-					episodeId: this.episodeId,
+					episodeId,
 					userId
 				}
 			}
@@ -25,11 +23,11 @@ class EpisodeService {
 		return history.watchTime;
 	}
 
-	async updateWatchTime(userId: string, watchTime: number) {
+	async updateWatchTime(userId: string, episodeId: string, watchTime: number) {
 		await db.episodeHistory.upsert({
 			create: {
 				watchTime,
-				episodeId: this.episodeId,
+				episodeId,
 				userId
 			},
 			update: {
@@ -37,16 +35,44 @@ class EpisodeService {
 			},
 			where: {
 				episodeId_userId: {
-					episodeId: this.episodeId,
+					episodeId,
 					userId
 				}
 			}
 		});
 	}
 
-	async getSource(): Promise<EpisodeProvider & { skipTimes?: SkipTime[] }> {
+	async getEpisodes() {
 		const provider = UserService.getProvider(this.malId);
-		const episodeId = this.episodeId;
+		const episodes = await db.episodeProvider.findMany({
+			where: {
+				animeId: this.malId,
+				provider: provider.identifier
+			},
+			orderBy: {
+				episodeNumber: 'asc'
+			}
+		});
+		if (episodes.length) return episodes;
+		const eps = await provider.getEpisodes();
+		const newEpisodes = await db.$transaction(
+			eps.map((ep) => {
+				return db.episodeProvider.create({
+					data: {
+						animeId: this.malId,
+						episodeNumber: ep.number,
+						episodeProviderId: ep.id,
+						provider: provider.identifier
+					}
+				});
+			})
+		);
+		console.log(newEpisodes);
+		return newEpisodes;
+	}
+
+	async getSource(episodeId: string): Promise<EpisodeProvider & { skipTimes?: SkipTime[] }> {
+		const provider = UserService.getProvider(this.malId);
 		const episodeProvider = await db.episodeProvider.findUnique({
 			where: {
 				provider_animeId_episodeProviderId: {

@@ -16,7 +16,10 @@
 		<Badge class="bg-red-800">{getAnimeRating(anime.rating)}</Badge>
 		<Badge class="bg-yellow-800 flex gap-1 justify-center"
 			>{anime.score}
-			<Icon icon="material-symbols:star-rounded" width={size === 'small' ? '14px' : '21px'} /></Badge
+			<Icon
+				icon="material-symbols:star-rounded"
+				width={size === 'small' ? '14px' : '21px'}
+			/></Badge
 		>
 	{:else}
 		<Badge class="bg-yellow-800">Upcoming</Badge>

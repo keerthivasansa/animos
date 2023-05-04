@@ -4,7 +4,7 @@ import genres from './genre';
 
 class Jikan {
 	private static client = new JikanClient({
-		baseURL: 'https://jikan.animos.cf/v4'
+		// baseURL: 'https://jikan.animos.cf/v4'
 	});
 
 	static async getTrending(page = 1) {
@@ -12,6 +12,11 @@ class Jikan {
 			filter: TopAnimeFilter.airing,
 			page
 		});
+		return result;
+	}
+
+	static async getEpisodes(animeMalId: number) {
+		const result = await this.client.anime.getAnimeEpisodes(animeMalId);
 		return result;
 	}
 
@@ -41,7 +46,7 @@ class Jikan {
 		return result;
 	}
 
-	static async getAnime(malId:number) {
+	static async getAnime(malId: number) {
 		const anime = await this.client.anime.getAnimeById(malId);
 		return anime;
 	}
