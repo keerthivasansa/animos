@@ -7,16 +7,17 @@
 	export let data: PageData;
 
 	$: q = $page.url.searchParams.get('q') || '';
-	const { result } = data;
+	$: pageNo = Number($page.url.searchParams.get('page') || '1');
 
+	const { result } = data;
 	let currentData = result;
 
-	$: {
-        
-	}
+	$: (async (q: string, pageNo: number) => {
+		currentData = await Jikan.getSearch(q, pageNo);
+	})(q, pageNo);
 
 	async function changePage(page: number) {
-		currentData = await Jikan.getSearch(q, page);
+		console.log({ q, page });
 	}
 </script>
 

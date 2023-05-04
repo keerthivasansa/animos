@@ -9,7 +9,7 @@
 <div class="wrapper">
 	<h3 class="section-title">{title}</h3>
 	<div class="flex gap-4 sm:gap-12 w-full flex-wrap">
-		{#each animeList as anime, index (index)}
+		{#each animeList as anime (anime.mal_id)}
 			<AnimeCard {anime} />
 		{/each}
 	</div>
