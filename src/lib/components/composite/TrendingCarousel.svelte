@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { Swipe, SwipeItem } from 'svelte-swipe';
-
-	import type { AnimeSlim } from '$lib/common/mal/search';
 	import { onDestroy } from 'svelte';
 	import TextClamp from './TextClamp.svelte';
+	import type { Anime } from '@prisma/client';
 
 	export let trendingList: {
 		malId: number;
 		poster: string;
 		index: number;
-		anime: AnimeSlim;
+		anime: Anime;
 	}[];
 
 	let nextItemFn: () => void;

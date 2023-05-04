@@ -1,5 +1,4 @@
 <script lang="ts">
-	import AnimeCard from '$lib/components/cards/AnimeCard.svelte';
 	import AnimeList from '$lib/components/composite/AnimeList.svelte';
 	import TrendingCarousel from '$lib/components/composite/TrendingCarousel.svelte';
 
@@ -7,6 +6,10 @@
 
 	const { trendingList, recommendations } = data;
 </script>
+
+<svelte:head>
+	<title>animos | Watch anime in HD quality</title>
+</svelte:head>
 
 <TrendingCarousel {trendingList} />
 

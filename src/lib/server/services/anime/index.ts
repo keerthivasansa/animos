@@ -28,11 +28,11 @@ export class AnimeService {
 		const animeList = await Jikan.getTrending(1);
 		const posterList = await Promise.all(
 			animeList.data.slice(0, 6).map(async (anime, index) => {
-				const [_, poster] = await Promise.all([
+				const [db_anime, poster] = await Promise.all([
 					AnimeModel.insertOrUpdate(anime),
 					Kitsu.getPoster(anime.mal_id)
 				]);
-				return { malId: anime.mal_id, poster, index, anime };
+				return { malId: anime.mal_id, poster, index, anime: db_anime };
 			})
 		);
 		await db.trendingAnime.createMany({ data: posterList });
