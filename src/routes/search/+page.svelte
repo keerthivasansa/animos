@@ -11,6 +11,10 @@
 
 	let currentData = result;
 
+	$: {
+        
+	}
+
 	async function changePage(page: number) {
 		currentData = await Jikan.getSearch(q, page);
 	}

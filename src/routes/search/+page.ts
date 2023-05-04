@@ -1,4 +1,5 @@
 import Jikan from '$lib/common/jikan/index.js';
+import { MALSearch } from '$lib/common/mal/search.js';
 import { redirect } from '@sveltejs/kit';
 
 export async function load({ url }) {

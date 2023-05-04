@@ -1,10 +1,10 @@
 import { MAL } from '$lib/common/mal';
 import db from '@server/database';
 import UserService from '../user';
-import { MALSearch } from '$lib/common/mal/search';
 import type { MalGenre } from '$lib/common/mal/search/genre';
 import { Kitsu } from '$lib/common/kitsu';
 import AnimeModel from '@server/models/anime';
+import Jikan from '$lib/common/jikan';
 
 export class AnimeService {
 	private malId: number;
@@ -25,14 +25,14 @@ export class AnimeService {
 			console.log('Deleting animes available in cache.');
 			await db.trendingAnime.deleteMany(); // delete available trending anime and update with new ones.
 		}
-		const animeList = await MAL.getTrending(1);
+		const animeList = await Jikan.getTrending(1);
 		const posterList = await Promise.all(
 			animeList.data.slice(0, 6).map(async (anime, index) => {
 				const [_, poster] = await Promise.all([
 					AnimeModel.insertOrUpdate(anime),
-					Kitsu.getPoster(anime.malId)
+					Kitsu.getPoster(anime.mal_id)
 				]);
-				return { malId: anime.malId, poster, index, anime };
+				return { malId: anime.mal_id, poster, index, anime };
 			})
 		);
 		await db.trendingAnime.createMany({ data: posterList });
@@ -85,46 +85,7 @@ export class AnimeService {
 	}
 
 	static async getGenre(genre: MalGenre) {
-		const genreAnime = await db.genreRecommendation.findMany({
-			where: {
-				genre
-			},
-			include: {
-				anime: true
-			}
-		});
-
-		if (genreAnime.length) return genreAnime;
-
-		const searchResult = await MALSearch.getSearch({
-			genre: [genre],
-			sort: {
-				order: 'desc',
-				type: 'popularity'
-			}
-		});
-
-		const result = await Promise.all(
-			searchResult.data.map(async (anime, index) => {
-				await AnimeModel.insertOrUpdate(anime);
-				return {
-					malId: anime.malId,
-					index,
-					genre,
-					anime
-				};
-			})
-		);
-
-		await db.genreRecommendation.createMany({
-			data: result.map((anime, index) => {
-				return {
-					genre,
-					index,
-					malId: anime.malId
-				};
-			})
-		});
-		return result;
+		const searchResult = await Jikan.getGenre(genre);
+		return searchResult
 	}
 }

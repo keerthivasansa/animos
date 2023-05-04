@@ -1,4 +1,6 @@
 import { JikanClient, TopAnimeFilter } from '@tutkli/jikan-ts';
+import type { MalGenre } from './genre';
+import genres from './genre';
 
 class Jikan {
 	private static client = new JikanClient();
@@ -26,9 +28,10 @@ class Jikan {
 		return result;
 	}
 
-	static async getGenre(genreId: number) {
+	static async getGenre(genreId: MalGenre) {
+		const genreMalId = genres[genreId];
 		const result = await this.client.anime.getAnimeSearch({
-			genres: genreId.toString(),
+			genres: genreMalId.toString(),
 			sort: 'desc',
 			order_by: 'members',
 			sfw: true

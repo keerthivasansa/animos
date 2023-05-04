@@ -3,8 +3,7 @@ import { AnimeService } from '@server/services/anime';
 
 export const load = async () => {
 	const trendingList = await AnimeService.getTrending();
-	const ACTION_GENRE = 1;
-	const recommendations = await Jikan.getGenre(ACTION_GENRE);
+	const recommendations = await AnimeService.getGenre("Action");
 	return {
 		trendingList,
 		recommendations
