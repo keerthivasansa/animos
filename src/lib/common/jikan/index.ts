@@ -3,7 +3,9 @@ import type { MalGenre } from './genre';
 import genres from './genre';
 
 class Jikan {
-	private static client = new JikanClient();
+	private static client = new JikanClient({
+		baseURL: 'https://jikan.animos.cf/v4'
+	});
 
 	static async getTrending(page = 1) {
 		const result = await this.client.top.getTopAnime({
@@ -23,7 +25,7 @@ class Jikan {
 		return result;
 	}
 
-	static async getSearch(q:string, page = 1) {
+	static async getSearch(q: string, page = 1) {
 		const result = await this.client.anime.getAnimeSearch({ q, page });
 		return result;
 	}

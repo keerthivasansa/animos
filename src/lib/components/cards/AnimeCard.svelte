@@ -11,6 +11,20 @@
 	let openOnLeft = false;
 	let element: HTMLDivElement;
 
+	const MAL_NO_IMAGE_URL = 'https://cdn.myanimelist.net/img/sp/icon/apple-touch-icon-256.png';
+	const NO_IMAGE_URL =
+		'https://img.freepik.com/premium-photo/3d-square-ceramic-black-tile-white-grout-background-decor-modern-home-kitchen-wall_73274-609.jpg';
+
+	let imageUrl: string;
+	let noImage = false;
+
+	if (anime.images.jpg.image_url !== MAL_NO_IMAGE_URL) {
+		imageUrl = anime.images.webp?.image_url || anime.images.jpg.image_url;
+	} else {
+		imageUrl = NO_IMAGE_URL;
+		noImage = true;
+	}
+
 	const title = anime.title_english || anime.title;
 	onMount(() => {
 		console.log(anime);
@@ -24,13 +38,12 @@
 	class="w-40 flex flex-col parent relative hover:nth cursor-pointer rounded-md"
 >
 	<div class="overflow-hidden rounded-md content">
-		{#if anime.images}
-			<img
-				src={anime.images.webp?.large_image_url || anime.images.jpg.large_image_url}
-				alt={anime.title}
-				class="w-40 h-56"
-			/>
-		{/if}
+		<img
+			src={imageUrl}
+			alt={anime.title}
+			class="w-40 h-56 object-contain bg-black"
+			class:img-cover={noImage}
+		/>
 		<div class="text-center bg-black py-3">
 			<TextClamp lines={1}>
 				<div class="px-4 text-xs font-semibold">{title}</div>
@@ -80,5 +93,9 @@
 
 	.parent:hover > .info.openOnLeft {
 		@apply -translate-x-44 sm:-translate-x-60;
+	}
+
+	.img-cover {
+		@apply object-cover;
 	}
 </style>

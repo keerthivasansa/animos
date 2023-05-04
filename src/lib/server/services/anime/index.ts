@@ -86,6 +86,6 @@ export class AnimeService {
 
 	static async getGenre(genre: MalGenre) {
 		const searchResult = await Jikan.getGenre(genre);
-		return searchResult
+		return searchResult;
 	}
 }
