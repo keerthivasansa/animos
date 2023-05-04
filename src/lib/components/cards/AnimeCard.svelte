@@ -3,7 +3,7 @@
 	import Badge from '../base/Badge.svelte';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
-	import type { Anime } from '@tutkli/jikan-ts';
+	import { AnimeStatus, type Anime } from '@tutkli/jikan-ts';
 	import { getAnimeRating } from '$lib/utils';
 
 	export let anime: Anime;
@@ -45,13 +45,17 @@
 			{title}
 		</TextClamp>
 		<div class="flex gap-2 flex-wrap">
-			{#if anime.episodes !== null}
-				<Badge class="bg-amber-800">EP: {anime.episodes}</Badge>
+			{#if anime.status !== AnimeStatus.upcoming}
+				{#if anime.episodes !== null}
+					<Badge class="bg-amber-800">EP: {anime.episodes}</Badge>
+				{/if}
+				<Badge class="bg-red-800">{getAnimeRating(anime.rating)}</Badge>
+				<Badge class="bg-yellow-800 flex gap-1 justify-center"
+					>{anime.score} <Icon icon="material-symbols:star-rounded" width="14px" /></Badge
+				>
+			{:else}
+				<Badge class="bg-yellow-800">Upcoming</Badge>
 			{/if}
-			<Badge class="bg-red-800">{getAnimeRating(anime.rating)}</Badge>
-			<Badge class="bg-yellow-800 flex gap-1 justify-center"
-				>{anime.score} <Icon icon="material-symbols:star-rounded" width="14px" /></Badge
-			>
 		</div>
 		<TextClamp lines={4}>
 			<span class="text-gray-300 text-xs">
