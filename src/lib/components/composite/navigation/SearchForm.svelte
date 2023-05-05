@@ -6,7 +6,7 @@
 </script>
 
 <div
-	class="bg-[#101010] h-20 items-center sm:px-4 z-10 w-full sm:relative flex gap-2"
+	class="bg-[#101010] h-14 items-center sm:px-4 z-10 w-full sm:relative flex gap-2"
 	class:expanded={mobileSearchOpen}
 >
 	<button
@@ -27,7 +27,7 @@
 		<input
 			type="text"
 			name="q"
-			class="h-fit flex-1 sm:flex-none sm:w-60 p-3 text-black outline-none font-semibold rounded-md"
+			class="h-fit flex-1 sm:flex-none sm:w-60 py-2 px-3 text-black outline-none font-semibold rounded-md"
 		/>
 		<button type="submit" class="w-fit">
 			<Tile>

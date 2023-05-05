@@ -9,7 +9,7 @@
 
 <div class="bg-[#101010] w-full flex flex-col">
 	<PageProgress />
-	<div class="px-3 flex items-center justify-between relative">
+	<div class="px-2 flex h-16 items-center justify-between relative">
 		<div class="flex-child">
 			<div class="w-fit">
 				<Tile onClick={() => sidebarExpand.set(!$sidebarExpand)}>
@@ -26,7 +26,7 @@
 			</div>
 		</div>
 		<div class="flex-child">
-			<img src="/logo.svg" width="150px" alt="Logo" class="mx-auto" />
+			<img src="/logo.svg" width="120px" alt="Logo" class="mx-auto" />
 		</div>
 		<div class="flex-child">
 			<SearchForm />

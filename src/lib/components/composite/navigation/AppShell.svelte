@@ -6,7 +6,7 @@
 <main class="flex flex-col w-screen box-border" style="height: 100dvh">
 	<Header />
 	<Sidebar />
-	<div class="flex-1 overflow-y-auto sm:pl-18 bg-[#212121]">
+	<div class="flex-1 overflow-y-auto sm:pl-16 bg-[#212121]">
 		<slot />
 	</div>
 </main>

@@ -5,18 +5,17 @@
 	export let style = '';
 	export let onClick: () => void = () => {};
 	export let label = '';
-	export let expand = true;
 	export { classes as class };
 </script>
 
 <div
 	class={`${
-		expand ? 'w-full' : 'w-14'
-	} h-14 my-4 rounded-md text-white flex font-semibold items-center gap-6 px-4 ${
+		$sidebarExpand ? 'w-full px-3' : 'w-12 justify-center'
+	} h-12 my-3 rounded-md text-white flex font-semibold items-center gap-6 ${
 		label && $sidebarExpand && 'justify-start'
-	} ${!label && 'justify-center'} overflow-hidden
+	} ${!label && 'justify-center'} overflow-hidden text-sm
 	${classes} `}
-	style="background: linear-gradient(153.43deg, #162345 16.67%, rgba(31, 79, 105, 0.71) 145.45%); {style}"
+	style="background: linear-gradient(153.43deg, #210768 16.67%, rgba(22, 36, 31, 0.71) 145.45%); {style}"
 	on:click={onClick}
 	on:keydown={onClick}
 >
