@@ -5,5 +5,6 @@ export async function load({ params }) {
 	console.log('parent laod');
 	const malId = Number(id);
 	const result = await Jikan.getAnime(malId);
-	return { result };
+	const recommendations = await Jikan.getRecommendations(malId);
+	return { result, recommendations };
 }

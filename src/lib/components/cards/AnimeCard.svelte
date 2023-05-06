@@ -1,17 +1,18 @@
 <script lang="ts">
 	import TextClamp from '../composite/TextClamp.svelte';
 	import { onMount } from 'svelte';
-	import { getImageUrl, getTitle } from '$lib/utils/anime';
+	import { getImageUrl, getTitle, isFullAnime } from '$lib/utils/anime';
 	import AnimeBadges from '../composite/AnimeBadges.svelte';
-	import type { Anime } from '@tutkli/jikan-ts';
+	import type { Anime, RecommendationEntry } from '@tutkli/jikan-ts';
 
-	export let anime: Anime;
+	export let anime: Anime | RecommendationEntry;
 
 	let openOnLeft = false;
 	let element: HTMLDivElement;
 
 	const { imageUrl, noImage } = getImageUrl(anime);
 	const title = getTitle(anime);
+	const fullAnime = isFullAnime(anime);
 
 	onMount(() => {
 		console.log(anime);
@@ -39,20 +40,23 @@
 			</div>
 		</div>
 	</a>
-	<div
-		class="w-44 sm:w-60 h-full p-4 gap-6 flex translate-x-0 left-0 text-sm -z-10 rounded-r-md transition-all duration-700 info top-0 absolute flex-col bg-black"
-		class:openOnLeft
-	>
-		<TextClamp lines={2}>
-			{title}
-		</TextClamp>
-		<AnimeBadges {anime} />
-		<TextClamp lines={4}>
-			<span class="text-gray-300 text-xs">
-				{anime.synopsis}
-			</span>
-		</TextClamp>
-	</div>
+	{#if fullAnime.fullAnime}
+		{@const result = fullAnime.anime}
+		<div
+			class="w-44 sm:w-60 h-full p-4 gap-6 flex translate-x-0 left-0 text-sm -z-10 rounded-r-md transition-all duration-700 info top-0 absolute flex-col bg-black"
+			class:openOnLeft
+		>
+			<TextClamp lines={2}>
+				{title}
+			</TextClamp>
+			<AnimeBadges anime={result} />
+			<TextClamp lines={4}>
+				<span class="text-gray-300 text-xs">
+					{result.synopsis}
+				</span>
+			</TextClamp>
+		</div>
+	{/if}
 </div>
 
 <style lang="postcss">

@@ -50,6 +50,11 @@ class Jikan {
 		const anime = await this.client.anime.getAnimeById(malId);
 		return anime;
 	}
+
+	static async getRecommendations(malId:number) {
+		const recommendations = await this.client.anime.getAnimeRecommendations(malId);
+		return recommendations;
+	}
 }
 
 export default Jikan;
