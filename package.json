@@ -12,7 +12,8 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"test": "vitest",
-		"coverage": "vitest run --coverage"
+		"coverage": "vitest run --coverage", 
+		"start": "node ./build"
 	},
 	"devDependencies": {
 		"@iconify/svelte": "^3.1.1",
