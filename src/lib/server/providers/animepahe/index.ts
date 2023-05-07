@@ -21,7 +21,7 @@ type AnimePaheEpisodes = {
 
 export default class AnimePahe extends Provider {
 	public identifier: ProviderName = 'animepahe';
-	private baseUrl = 'https://animepahe.com/';
+	private baseUrl = 'https://animepahe.ru/';
 	public malSyncId = 'animepahe';
 	private client = axios.create({ baseURL: this.baseUrl });
 

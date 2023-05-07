@@ -1,30 +1,36 @@
 <script lang="ts">
 	import type { EpisodeProvider } from '@prisma/client';
-	import { onMount } from 'svelte';
 	import Hls from 'hls.js';
 	import Plyr from 'plyr';
+	import { onDestroy, onMount } from 'svelte';
 
 	export let episode: EpisodeProvider;
+	let htmlVideo: HTMLVideoElement;
 
-	onMount(() => {
-		if (!episode.source) {
-			alert('Failed to get source of episode');
-			return;
-		}
-		if (!Hls.isSupported()) {
-			alert('Streaming HLS is not supported in your device!');
-			return;
-		}
-		const hls = new Hls();
-		hls.loadSource(episode.source);
-		const element = document.getElementById('player') as HTMLVideoElement;
-		hls.attachMedia(element);
+	let currentPlayer: {
+		hls: Hls;
+		plyr: Plyr | null;
+	} = {
+		hls: new Hls(),
+		plyr: null
+	};
 
-		const plyr = new Plyr('#player');
-		console.log(plyr);
+	$: {
+		if (!episode.source) throw new Error('Source empty. EP: ' + episode.episodeNumber);
+		currentPlayer.hls.loadSource(episode.source);
+		currentPlayer.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+			currentPlayer.hls.attachMedia(htmlVideo);
+		});
+	}
+
+	onMount(() => currentPlayer.plyr = new Plyr(htmlVideo));
+
+	onDestroy(() => {
+		if (currentPlayer.plyr) currentPlayer.plyr.destroy();
+		currentPlayer.hls.destroy();
 	});
 </script>
 
-<div class="w-full max-w-3xl">
-	<video src={episode.source} id="player" />
+<div class="w-full max-w-3xl" id="player-container">
+	<video controls id="player" class="bg-black h-full w-full" bind:this={htmlVideo} />
 </div>

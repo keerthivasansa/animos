@@ -5,7 +5,7 @@
 
 	export let data;
 
-	const { episodes, current, anime, malEpisodes } = data;
+	$: ({ episodes, current, anime, malEpisodes } = data);
 
 	function getEpisodeTitle(ep: EpisodeProvider, includeNumber = true) {
 		const malEpisode = malEpisodes.data.find((malEp) => malEp.mal_id === ep.episodeNumber);
@@ -16,7 +16,7 @@
 		return ep.title || ep.episodeNumber;
 	}
 
-	const animeTitle = getTitle(anime.data);
+	$: animeTitle = getTitle(anime.data);
 </script>
 
 <svelte:head>
@@ -28,7 +28,9 @@
 	<div class="py-10 w-full">
 		<EpisodePlayer episode={current} />
 		<div class="my-4">
-			<small class="text-gray-400">{animeTitle}</small>
+			<a href="/anime/{anime.data.mal_id}">
+				<small class="text-gray-400">{animeTitle} / Episode {current.episodeNumber}</small></a
+			>
 			<h5 class="font-semibold">
 				{getEpisodeTitle(current, false)}
 			</h5>

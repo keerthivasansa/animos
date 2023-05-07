@@ -3,9 +3,7 @@ import db from '@server/database';
 import UserService from '../user';
 import type { MalGenre } from '$lib/common/mal/search/genre';
 import { Kitsu } from '$lib/common/kitsu';
-import AnimeModel from '@server/models/anime';
 import Jikan from '$lib/common/jikan';
-import type { TrendingAnime } from '@prisma/client';
 import { getTitle } from '$lib/utils/anime';
 import { getAnimeRating } from '$lib/utils';
 

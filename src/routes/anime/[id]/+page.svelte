@@ -8,12 +8,13 @@
 
 	export let data;
 
-	const { result, recommendations } = data;
 
-	const anime = result.data;
+	$: anime = data.result.data;
 
-	const { imageUrl } = getImageUrl(anime);
-	const title = getTitle(anime);
+	$: recommendations = data.recommendations;
+
+	$: ({ imageUrl } = getImageUrl(anime));
+	$: title = getTitle(anime);
 </script>
 
 <svelte:head>
@@ -44,7 +45,7 @@
 			>
 		</a>
 		<div class="my-4">
-			<span class="text-lg font-semibold">More recommendations:</span>
+			<span class="text-lg font-semibold">More like this:</span>
 			<div class="flex flex-wrap gap-5 my-4">
 				{#each recommendations.data.slice(0, 5) as recAnime (recAnime.entry.mal_id)}
 					<AnimeCard anime={recAnime.entry} />
