@@ -5,7 +5,7 @@ import type { Anime } from '@tutkli/jikan-ts';
 class AnimeModel {
 	static async insertOrUpdate(anime: Anime) {
 		const animeData = {
-			episodeCount: -1,
+			episodeCount: anime.episodes || -1,
 			image: anime.images.webp?.image_url || anime.images.jpg.image_url,
 			malId: anime.mal_id,
 			rating: getAnimeRating(anime.rating),
@@ -14,8 +14,6 @@ class AnimeModel {
 			title: anime.title_english || anime.title,
 			type: anime.title
 		};
-		if (animeData)
-			animeData['episodeCount'] = anime.episodes; 
 		const result = await db.anime.upsert({
 			create: animeData,
 			update: animeData,
