@@ -34,9 +34,8 @@ model Anime {
   createdAt   DateTime @default(now())
   lastUpdated DateTime @updatedAt
 
-  TrendingAnime TrendingAnime[]
-  episode       Episode[]
-  genreAnime    GenreRecommendation[]
+  episode    Episode[]
+  genreAnime GenreRecommendation[]
 }
 
 model GenreRecommendation {
@@ -54,7 +53,10 @@ model TrendingAnime {
   poster    String
   createdAt DateTime @default(now())
 
-  anime Anime @relation(fields: [malId], references: [malId])
+  title    String
+  synopsis String
+  episodes Int
+  rating   String
 }
 
 model AnimeProvider {

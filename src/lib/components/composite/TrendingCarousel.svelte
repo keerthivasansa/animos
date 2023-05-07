@@ -2,14 +2,9 @@
 	import { Swipe, SwipeItem } from 'svelte-swipe';
 	import { onDestroy } from 'svelte';
 	import TextClamp from './TextClamp.svelte';
-	import type { Anime } from '@prisma/client';
+	import type { TrendingAnime } from '@prisma/client';
 
-	export let trendingList: {
-		malId: number;
-		poster: string;
-		index: number;
-		anime: Anime;
-	}[];
+	export let trendingList: TrendingAnime[];
 
 	let nextItemFn: () => void;
 	let pauseAutoPlay = true;
@@ -32,20 +27,20 @@
 	on:mouseleave={() => (pauseAutoPlay = false)}
 >
 	<Swipe showIndicators allow_infinite_swipe bind:nextItem={nextItemFn} transitionDuration={500}>
-		{#each trendingList as trending (trending.anime.malId)}
+		{#each trendingList as trending (trending.malId)}
 			<SwipeItem>
 				<div class="relative w-full h-full slide">
-					<img src={trending.poster} alt={trending.anime.title} />
+					<img src={trending.poster} alt={trending.title} />
 					<div
 						class="info w-full flex flex-col gap-2 sm:gap-4 items-start justify-end h-full px-4 sm:px-10 py-12 sm:py-20 absolute bottom-0 left-0"
 					>
 						<TextClamp lines={1}>
-							<span class="text-2xl sm:text-3xl font-bold">{trending.anime.title}</span>
+							<span class="text-2xl sm:text-3xl font-bold">{trending.title}</span>
 						</TextClamp>
 
 						<TextClamp lines={2}>
 							<div class="max-w-md">
-								<span class=" text-sm sm:text-base text-gray-300">{trending.anime.synopsis}</span>
+								<span class=" text-sm sm:text-base text-gray-300">{trending.synopsis}</span>
 							</div>
 						</TextClamp>
 					</div>
