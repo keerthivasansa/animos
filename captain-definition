@@ -1,18 +1,18 @@
 {
-  "schemaVersion": 2,
-  "dockerfileLines": [
-    "FROM node:16-alpine",
-    "WORKDIR /app",
-    "ARG GOOGLE_CLIENT_ID",
-    "ARG GOOGLE_CLIENT_SECRET",
-    "ARG DATABASE URL",
-    "ENV DATABASE_URL=$DATABASE_URL",
-    "ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID",
-    "ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET",
-    "COPY package.json package-lock.json ./",
-    "COPY . .",
-    "RUN npm run build",
-    "EXPOSE 3000",
-    "CMD [\"node\", \"build\"]",
-  ]
+	"schemaVersion": 2,
+	"dockerfileLines": [
+		"FROM node:16-alpine",
+		"WORKDIR /app",
+		"ARG GOOGLE_CLIENT_ID",
+		"ARG GOOGLE_CLIENT_SECRET",
+		"ARG DATABASE URL",
+		"ENV DATABASE_URL=$DATABASE_URL",
+		"ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID",
+		"ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET",
+		"COPY package.json package-lock.json ./",
+		"COPY . .",
+		"RUN npm run build",
+		"EXPOSE 3000",
+		"CMD [\"node\", \"build\"]"
+	]
 }
