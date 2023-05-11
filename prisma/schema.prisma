@@ -6,9 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum AnimeStatus {
@@ -21,7 +20,7 @@ enum AnimeStatus {
 model Anime {
   malId        Int    @id
   title        String
-  synopsis     String @db.MediumText
+  synopsis     String @db.VarChar(256)
   image        String
   score        Float
   rating       String
