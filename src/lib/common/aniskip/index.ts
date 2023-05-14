@@ -42,8 +42,11 @@ export class AnimeSkip {
 
 			return skip;
 		} catch (err) {
-			if (err instanceof AxiosError && err.status == 404) {
-				console.log('No skip times found');
+			if (err instanceof AxiosError) {
+				if (err.status === 404)
+					console.log('No skip times found');
+				else if (err.status === 500)
+					console.log("AniSkip: Internal Server Error.")
 			} else {
 				console.log('unknown error while loading skip times:');
 				console.log(err);

@@ -18,14 +18,14 @@ enum AnimeStatus {
 }
 
 model Anime {
-  malId        Int    @id
-  title        String
-  synopsis     String @db.VarChar(256)
-  image        String
-  score        Float
-  rating       String
-  type         String
-  episodeCount Int
+  malId    Int    @id
+  title    String
+  synopsis String @db.VarChar(512)
+  image    String
+  score    Float
+  rating   String
+  type     String
+  episodes Int    @map("episodeCount")
 
   genre  String?
   status AnimeStatus?
@@ -72,8 +72,7 @@ model Episode {
   animeMalId     Int
   length         Int
   episodeHistory EpisodeHistory[]
-
-  anime Anime @relation(fields: [animeMalId], references: [malId])
+  anime          Anime            @relation(fields: [animeMalId], references: [malId])
 
   @@unique([animeMalId, number, length])
 }

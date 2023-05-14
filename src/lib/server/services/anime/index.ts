@@ -4,13 +4,44 @@ import UserService from '../user';
 import type { MalGenre } from '$lib/common/mal/search/genre';
 import { Kitsu } from '$lib/common/kitsu';
 import Jikan from '$lib/common/jikan';
-import { getTitle } from '$lib/utils/anime';
+import { getImageUrl, getTitle } from '$lib/utils/anime';
 import { getAnimeRating } from '$lib/utils';
 
 export class AnimeService {
 	private malId: number;
 	constructor(malId: number) {
 		this.malId = malId;
+	}
+
+	async getInfo() {
+		const anime = await db.anime.findUnique({
+			where: {
+				malId: this.malId
+			}
+		});
+		const cacheExpire = new Date().getTime() - (86400 * 1000 * 3) // cache for 3 days.
+		if (anime && anime.createdAt.getTime() > cacheExpire)
+			return anime;
+		const { data } = await Jikan.getAnime(this.malId);
+		const { imageUrl } = getImageUrl(data);
+		const jikanData = {
+			episodes: data.episodes, 
+			image: imageUrl,
+			malId: this.malId,
+			rating: getAnimeRating(data.rating), 
+			score: data.score, 
+			synopsis: data.synopsis.slice(0, 512),
+			title: getTitle(data),
+			type: data.type,
+		}
+		const newAnime = await db.anime.upsert({
+			create: jikanData,
+			update: jikanData,
+			where: {
+				malId: this.malId
+			} 
+		})
+		return newAnime;
 	}
 
 	static async getMostPopular() {

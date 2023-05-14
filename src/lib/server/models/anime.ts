@@ -5,7 +5,7 @@ import type { Anime } from '@tutkli/jikan-ts';
 class AnimeModel {
 	static async insertOrUpdate(anime: Anime) {
 		const animeData = {
-			episodeCount: anime.episodes || -1,
+			episodes: anime.episodes || -1,
 			image: anime.images.webp?.image_url || anime.images.jpg.image_url,
 			malId: anime.mal_id,
 			rating: getAnimeRating(anime.rating),

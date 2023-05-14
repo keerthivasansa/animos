@@ -10,7 +10,7 @@
 
 <div class="flex gap-2 flex-wrap {size == 'small' ? 'text-xs' : 'text-base'}">
 	{#if anime.status !== AnimeStatus.upcoming}
-		{#if anime.episodes !== null}
+		{#if anime.episodes !== -1}
 			<Badge class="bg-amber-800">EP: {anime.episodes}</Badge>
 		{/if}
 		<Badge class="bg-red-800">{getAnimeRating(anime.rating)}</Badge>

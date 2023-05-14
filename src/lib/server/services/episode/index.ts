@@ -118,6 +118,7 @@ class EpisodeService {
 		}
 		const closestLength = info.length - (info.length % 100);
 		const exactLength = info.length;
+		console.log({ closestLength, exactLength, malID: this.malId });
 		const episode = await db.episode.upsert({
 			create: {
 				animeMalId: this.malId,
