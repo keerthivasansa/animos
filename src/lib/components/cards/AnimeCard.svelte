@@ -15,7 +15,6 @@
 	const fullAnime = isFullAnime(anime);
 
 	onMount(() => {
-		console.log(anime);
 		openOnLeft = element.offsetLeft + element.offsetWidth * 2.5 > window.innerWidth;
 	});
 </script>
@@ -23,9 +22,9 @@
 <div
 	id={`card-${anime.mal_id}`}
 	bind:this={element}
-	class="w-40 flex flex-col parent relative hover:nth cursor-pointer rounded-md"
+	class="w-40 flex flex-col relative hover:nth cursor-pointer rounded-md"
 >
-	<a href="/anime/{anime.mal_id}">
+	<a href="/anime/{anime.mal_id}" class="hover-trigger">
 		<div class="overflow-hidden rounded-md content">
 			<img
 				src={imageUrl}
@@ -60,15 +59,11 @@
 </div>
 
 <style lang="postcss">
-	.parent:hover {
-		@apply rounded-l-md;
-	}
-
-	.parent:hover > .info {
+	.hover-trigger:hover + .info {
 		@apply translate-x-40 z-10;
 	}
 
-	.parent:hover > .info.openOnLeft {
+	.hover-trigger:hover > .info.openOnLeft {
 		@apply -translate-x-44 sm:-translate-x-60;
 	}
 
