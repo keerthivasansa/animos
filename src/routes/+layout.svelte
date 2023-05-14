@@ -9,6 +9,10 @@
 	import PageProgress from '$lib/components/base/PageProgress.svelte';
 </script>
 
+<svelte:head>
+	<script defer data-domain="animos.cf" src="https://analytics.animos.cf/js/script.js"></script>
+</svelte:head>
+
 <AppShell>
 	<slot />
 </AppShell>

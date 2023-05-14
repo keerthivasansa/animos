@@ -22,10 +22,16 @@ export class Kitsu {
 
 	static async getPoster(malId: number) {
 		const id = await this.getId(malId);
-		const response = await this.client.get<KitsuAnimeResponse>(`/anime/${id}`);
-		const anime = response.data;
-		// console.log(anime.data.attributes.coverImage);
-		if (anime.data.attributes.coverImage) return anime.data.attributes.coverImage.original;
-		else return '';
+		try {
+			const response = await this.client.get<KitsuAnimeResponse>(`/anime/${id}`);
+			const anime = response.data;
+			// console.log(anime.data.attributes.coverImage);
+			console.log("Fetched poster for ", malId);
+			if (anime.data.attributes.coverImage) return anime.data.attributes.coverImage.original;
+			else return '';
+		} catch (err) {
+			console.log("Failed to fetch poster for", malId);
+			return '';
+		}
 	}
 }

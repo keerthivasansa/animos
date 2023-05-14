@@ -9,7 +9,7 @@ class Mapping {
 	private static client = axios.create({ baseURL: this.baseUrl });
 
 	static async getId(malId: number, externalService: ExternalServices) {
-		const response = await this.client.get<MappingApiResponse>(`/mal/${malId}`);
+		const response = await this.client.get<MappingApiResponse>(`/mappings/${malId}`);
 		const map = response.data;
 		const id = map[externalService];
 		return id;

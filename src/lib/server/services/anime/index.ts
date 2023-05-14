@@ -29,7 +29,6 @@ export class AnimeService {
 		const animeList = await Jikan.getTrending(1);
 		const posterList = await Promise.all(
 			animeList.data.slice(0, 6).map(async (anime, index) => {
-				console.log(anime);
 				const poster = await Kitsu.getPoster(anime.mal_id)
 				const title = getTitle(anime);
 				const rating = getAnimeRating(anime.rating);
