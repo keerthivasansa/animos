@@ -1,38 +1,18 @@
-# create-svelte
+<img src="./static/logo.svg" style="background-color:#0d1117" />
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+an adless anime streaming website
 
-## Creating a project
+<a href="https://discord.gg/TdfwMSXjeP">
+<img src="https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white" />
+</a>
 
-If you're seeing this, you've probably already done this step. Congrats!
+---
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## notice
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+This website is in heavy development for the next while. The newest changes appear at [dev.animos.cf](https://dev.animos.cf) and stable versions will be at [animos.cf](https://animos.cf).
 
-## Developing
+## contribute
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Visit [CONTRIBUTE.md](https://github.com/keerthivasansa/animos/blob/dev/CONTRIBUTE.md).
+<!-- change to master branch once synced -->
