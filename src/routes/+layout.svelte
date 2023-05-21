@@ -6,7 +6,7 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 	import AppShell from '$lib/components/composite/navigation/AppShell.svelte';
-	import PageProgress from '$lib/components/base/PageProgress.svelte';
+
 </script>
 
 <svelte:head>

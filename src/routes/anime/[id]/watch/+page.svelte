@@ -17,6 +17,10 @@
 	}
 
 	$: animeTitle = getTitle(anime.data);
+
+	let epPage: number;
+	
+	// const totalEpisodePages = Math.ceil(anime.data.episodes / 30);
 </script>
 
 <svelte:head>
@@ -36,15 +40,24 @@
 			</h5>
 		</div>
 	</div>
-	<div class="py-4 flex flex-wrap max-w-md h-full">
-		{#each episodes as ep (ep.id)}
-			<a href="/anime/{anime.data.mal_id}/watch?episode={ep.episodeNumber}" class="w-full">
-				<button
-					class="border-2 min-w-[200px] text-sm border-gray-500 w-full py-4 text-start px-10 text-gray-300 my-3 rounded-md"
-				>
-					{getEpisodeTitle(ep)}
-				</button>
-			</a>
-		{/each}
+	<div>
+		<div class="my-2">
+			<select>
+				{#each Array.from({ length: 10 }) as _, index}
+					<option>{index * 30} - {(index + 1) * 30}</option>
+				{/each}}
+			</select>
+		</div>
+		<div class="py-4 flex flex-wrap max-w-md h-full">
+			{#each episodes as ep (ep.id)}
+				<a href="/anime/{anime.data.mal_id}/watch?episode={ep.episodeNumber}" class="w-full">
+					<button
+						class="border-2 min-w-[200px] text-sm border-gray-500 w-full py-4 text-start px-10 text-gray-300 my-3 rounded-md"
+					>
+						{getEpisodeTitle(ep)}
+					</button>
+				</a>
+			{/each}
+		</div>
 	</div>
 </div>

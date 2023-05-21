@@ -8,26 +8,34 @@
 	let htmlVideo: HTMLVideoElement;
 
 	let currentPlayer: {
-		hls: Hls;
+		hls: Hls | null;
 		plyr: Plyr | null;
 	} = {
-		hls: new Hls(),
+		hls: null,
 		plyr: null
 	};
 
 	$: {
 		if (!episode.source) throw new Error('Source empty. EP: ' + episode.episodeNumber);
-		currentPlayer.hls.loadSource(episode.source);
-		currentPlayer.hls.on(Hls.Events.MANIFEST_PARSED, () => {
-			currentPlayer.hls.attachMedia(htmlVideo);
-		});
+		console.log('hls not init')
+		if (currentPlayer.hls !== null) {
+			currentPlayer.hls.loadSource(episode.source);
+			currentPlayer.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+				currentPlayer.hls?.attachMedia(htmlVideo);
+			});
+		}
 	}
 
-	onMount(() => currentPlayer.plyr = new Plyr(htmlVideo));
+	onMount(() => {
+		currentPlayer.hls = new Hls();
+		currentPlayer.plyr = new Plyr(htmlVideo, {
+			 
+		});
+	});
 
 	onDestroy(() => {
 		if (currentPlayer.plyr) currentPlayer.plyr.destroy();
-		currentPlayer.hls.destroy();
+		if (currentPlayer.hls) currentPlayer.hls.destroy();
 	});
 </script>
 

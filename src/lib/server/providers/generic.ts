@@ -62,7 +62,7 @@ abstract class Provider {
 	/**
 	 * @returns All the episodes from the provider assoiciated with the anime
 	 */
-	abstract getEpisodes(): Promise<ProviderEpisode[]>;
+	abstract getEpisodes(page: number): Promise<ProviderEpisode[]>;
 
 	/**
 	 * Used to get the source from the provider

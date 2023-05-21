@@ -5,10 +5,12 @@ import { redirect } from '@sveltejs/kit';
 export async function load({ params, url }) {
 	const { id } = params;
 	const episode = url.searchParams.get('episode');
+	const page = url.searchParams.get('page') || '1';
 	console.log('child load');
 	const malId = Number(id);
+	const pageNo = Number(page);
 	const episodeService = new EpisodeService(malId);
-	const episodes = await episodeService.getEpisodes();
+	const episodes = await episodeService.getEpisodes(pageNo);
 	console.log(episodes);
 	const ep = episode
 		? episodes.find((ep) => ep.episodeNumber === Number(episode))

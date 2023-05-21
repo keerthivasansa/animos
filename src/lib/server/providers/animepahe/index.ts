@@ -32,7 +32,7 @@ export default class AnimePahe extends Provider {
 		return id;
 	}
 
-	async getEpisodes() {
+	async getEpisodes(page: number) {
 		const id = await this.getId();
 		console.log(id);
 		const response = await this.client.get<AnimePaheEpisodes>(`/api`, {
@@ -40,7 +40,7 @@ export default class AnimePahe extends Provider {
 			params: {
 				m: 'release',
 				sort: 'episode_asc',
-				page: 1,
+				page,
 				id
 			}
 		});

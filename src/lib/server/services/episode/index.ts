@@ -42,19 +42,21 @@ class EpisodeService {
 		});
 	}
 
-	async getEpisodes() {
+	async getEpisodes(page = 1) {
 		const provider = UserService.getProvider(this.malId);
 		const episodes = await db.episodeProvider.findMany({
 			where: {
 				animeId: this.malId,
-				provider: provider.identifier
+				provider: provider.identifier,
 			},
 			orderBy: {
 				episodeNumber: 'asc'
-			}
+			},
+			take: 30,
+			skip: (page - 1) * 30
 		});
 		if (episodes.length) return episodes;
-		const eps = await provider.getEpisodes();
+		const eps = await provider.getEpisodes(page);
 		const newEpisodes = await db.$transaction(
 			eps.map((ep) => {
 				return db.episodeProvider.create({
@@ -92,10 +94,10 @@ class EpisodeService {
 
 		let skipTimes:
 			| {
-					type: 'OPENING' | 'ENDING';
-					start: number;
-					end: number;
-			  }[]
+				type: 'OPENING' | 'ENDING';
+				start: number;
+				end: number;
+			}[]
 			| null;
 
 		let info: {

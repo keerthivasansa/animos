@@ -4,7 +4,7 @@ import genres from './genre';
 
 class Jikan {
 	private static client = new JikanClient({
-		// baseURL: 'https://jikan.animos.cf/v4'
+		baseURL: 'https://jikan.animos.cf/v4'
 	});
 
 	static async getTrending(page = 1) {
